@@ -107,12 +107,37 @@ function HeroDark({ setRoute }) {
   const h = c.hero;
   const isMobile = useWindowWidth() < 768;
   const firstId = c.fleet[0]?.id || "home";
+
+  if (isMobile) {
+    return (
+      <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
+        <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
+          plateStyle={{ background: "#f4f6f9" }}
+          style={{ width: "100%", height: 260 }} />
+        <div style={{ padding: "32px 24px 40px 32px" }}>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 10 }}>
+            <span style={{ width: 20, height: 1, background: "#b5212b" }} />
+            {h.kicker}
+          </div>
+          <h1 style={{ font: '700 38px/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>
+            {h.titleLine1}<br />{h.titleLine2}
+          </h1>
+          <p style={{ font: '300 15px/1.6 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, marginBottom: 28 }}>
+            {h.body}
+          </p>
+          <MkButton onClick={() => setRoute("booking")} style={{ width: "100%" }}>{h.primaryCta}</MkButton>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <div style={{
-        padding: isMobile ? "48px 24px 48px 32px" : "80px 80px 80px 96px",
-        display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.1fr 1fr",
+        padding: "80px 80px 80px 96px",
+        display: "grid", gridTemplateColumns: "1.1fr 1fr",
         gap: 48, alignItems: "center"
       }}>
         <div>
@@ -120,21 +145,22 @@ function HeroDark({ setRoute }) {
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             {h.kicker}
           </div>
-          <h1 style={{ font: `700 ${isMobile ? "44px" : "72px"}/1.05 "Inter", sans-serif`, margin: 0, color: "#262626" }}>
+          <h1 style={{ font: '700 72px/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>
             {h.titleLine1}<br />{h.titleLine2}
           </h1>
-          <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
+          <p style={{ font: '300 18px/1.55 "Inter", sans-serif', color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
             {h.body}
           </p>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12 }}>
             <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
           </div>
         </div>
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
-          plateStyle={{ background: "#fff", padding: isMobile ? 12 : 16 }}
-          style={{ width: "100%", height: isMobile ? 220 : 400 }} />
+          plateStyle={{ background: "#fff", padding: 16 }}
+          style={{ width: "100%", height: 400 }} />
       </div>
-    </section>);
+    </section>
+  );
 
 }
 
