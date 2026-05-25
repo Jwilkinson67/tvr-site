@@ -16,6 +16,7 @@ window.TVR_CONTENT = {
   /* ---------- Brand ---------- */
   brand: {
     phone:    "(321) 765-3077",
+    email:    "bookings@rentwithtvr.com",
     city:     "Chattanooga, TN",
     yearFooter: "© 2026 Tennessee Valley Rentals, LLC",
   },
@@ -130,11 +131,7 @@ window.TVR_CONTENT = {
   /* ---------- Marketing · footer ---------- */
   footer: {
     blurb: "Tennessee Valley Rentals — trailer rental operation based in Chattanooga, TN. Pickup details sent with your confirmation.",
-    columns: [
-      { h: "",      links: [] },
-      { h: "",      links: [] },
-      { h: "Legal", links: ["Rental agreement", "Insurance terms", "Privacy"] },
-    ],
+    columns: [],
   },
 
   /* ---------- Booking · misc copy ---------- */

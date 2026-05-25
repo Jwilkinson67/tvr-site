@@ -328,10 +328,9 @@ function CTABand({ setRoute }) {
 function Footer() {
   const c = C();
   const isMobile = useWindowWidth() < 768;
-  const cols = c.footer.columns.filter((col) => col.h || col.links && col.links.length);
   return (
     <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : `2fr repeat(${cols.length}, 1fr)`, gap: isMobile ? 32 : 48 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: isMobile ? 32 : 48 }}>
         <div>
           <img src="assets/tvr-logo-primary-transparent.png" alt="TVR" style={{ height: 48, marginBottom: 24, width: "auto" }} />
           <p style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#6b6b6b", maxWidth: 320 }}>
@@ -339,14 +338,13 @@ function Footer() {
           </p>
           <div style={{ marginTop: 16, height: 2, width: 64, background: "#b5212b" }} />
         </div>
-        {cols.map((col, i) =>
-        <div key={i}>
-            {col.h && <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>{col.h}</div>}
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-              {col.links.map((l) => <li key={l}><a style={{ font: '300 14px/1 "Inter", sans-serif', color: "#3c3c3c" }}>{l}</a></li>)}
-            </ul>
+        <div>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Contact</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <a href={`tel:${c.brand.phone}`} style={{ font: '300 14px/1 "Inter", sans-serif', color: "#3c3c3c", textDecoration: "none" }}>{c.brand.phone}</a>
+            <a href={`mailto:${c.brand.email}`} style={{ font: '300 14px/1 "Inter", sans-serif', color: "#3c3c3c", textDecoration: "none" }}>{c.brand.email}</a>
           </div>
-        )}
+        </div>
       </div>
       <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid #e6e6e6", display: "flex", justifyContent: "space-between", font: '300 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
         <span>{c.brand.yearFooter}</span>
