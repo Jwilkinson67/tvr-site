@@ -16,7 +16,7 @@ window.TVR_CONTENT = {
   /* ---------- Brand ---------- */
   brand: {
     phone:    "(321) 765-3077",
-    email:    "bookings@rentwithtvr.com",
+    email:    "info@rentwithtvr.com",
     city:     "Chattanooga, TN",
     yearFooter: "© 2026 Tennessee Valley Rentals, LLC",
   },
