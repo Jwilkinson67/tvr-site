@@ -77,7 +77,7 @@ function TopNav({ route, setRoute }) {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-          <img src="assets/tvr-logo-primary-transparent.png" alt="TVR Tennessee Valley Rentals" style={{ height: isMobile ? 36 : 44, width: "auto" }} />
+          <img src="assets/tvr-logo-primary-transparent.png" alt="TVR Tennessee Valley Rentals" style={{ height: isMobile ? 36 : 44, width: "auto", mixBlendMode: "multiply" }} />
         </a>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 32 }}>
@@ -128,7 +128,6 @@ function HeroDark({ setRoute }) {
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
-            <MkButton variant="secondary" onClick={() => setRoute(firstId)}>{h.secondaryCta}</MkButton>
           </div>
         </div>
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
@@ -332,7 +331,7 @@ function Footer() {
     <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr", gap: isMobile ? 32 : 48 }}>
         <div>
-          <img src="assets/tvr-logo-primary-transparent.png" alt="TVR" style={{ height: 48, marginBottom: 24, width: "auto" }} />
+          <img src="assets/tvr-logo-primary-transparent.png" alt="TVR" style={{ height: 48, marginBottom: 24, width: "auto", mixBlendMode: "multiply" }} />
           <p style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#6b6b6b", maxWidth: 320 }}>
             {c.footer.blurb}
           </p>
