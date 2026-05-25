@@ -33,7 +33,7 @@ window.TVR_CONTENT = {
     titleLine1:    "Your Cargo,",
     titleLine2:    "Our Equipment.",
     body:          "Reserve online and pick up today. Support local with simple trailer rentals, no upsells or hassle.",
-    primaryCta:    "Reserve",
+    primaryCta:    "Book Today",
     secondaryCta:  "View fleet",
     photo:         "assets/fleet/yard-tractor-hauler.png", // fallback if no drop
   },

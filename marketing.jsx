@@ -65,8 +65,7 @@ function TopNav({ route, setRoute }) {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   const items = [
-  ...c.fleet.map((t) => ({ id: t.id, label: t.navLabel || t.name })),
-  { id: "booking", label: c.nav.reserveLabel }];
+  ...c.fleet.map((t) => ({ id: t.id, label: t.navLabel || t.name }))];
 
   return (
     <header style={{
