@@ -3,6 +3,16 @@
 const { useState } = React;
 const C = () => window.TVR_CONTENT;
 
+function useWindowWidth() {
+  const [w, setW] = React.useState(() => window.innerWidth);
+  React.useEffect(() => {
+    const h = () => setW(window.innerWidth);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return w;
+}
+
 /* ----------- Primitives ----------- */
 function MkButton({ variant = "primary", children, onClick, ...rest }) {
   const base = {
@@ -53,6 +63,7 @@ function PhotoSlot({ id, src, scale = 1, placeholder = "Drop a photo", style, pl
 /* ----------- Top nav ----------- */
 function TopNav({ route, setRoute }) {
   const c = C();
+  const isMobile = useWindowWidth() < 768;
   const items = [
   ...c.fleet.map((t) => ({ id: t.id, label: t.navLabel || t.name })),
   { id: "booking", label: c.nav.reserveLabel }];
@@ -61,27 +72,29 @@ function TopNav({ route, setRoute }) {
     <header style={{
       position: "sticky", top: 0, zIndex: 50,
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      height: 72, padding: "0 32px",
+      height: isMobile ? 60 : 72, padding: isMobile ? "0 16px" : "0 32px",
       background: "#fff", borderBottom: "1px solid #e6e6e6"
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-          <img src="assets/tvr-logo-primary.png" alt="TVR Tennessee Valley Rentals" style={{ height: 44, objectFit: "cover", width: "80px" }} />
+          <img src="assets/tvr-logo-primary.png" alt="TVR Tennessee Valley Rentals" style={{ height: isMobile ? 36 : 44, objectFit: "cover", width: isMobile ? "66px" : "80px" }} />
         </a>
-        <nav style={{ display: "flex", gap: 32 }}>
-          {items.map((i) =>
-          <a key={i.id} onClick={() => setRoute(i.id)} style={{
-            cursor: "pointer",
-            font: '400 14px/1.4 "Inter", sans-serif',
-            letterSpacing: "0.3px",
-            color: route === i.id ? "#1568be" : "#262626",
-            fontWeight: route === i.id ? 700 : 400
-          }}>{i.label}</a>
-          )}
-        </nav>
+        {!isMobile && (
+          <nav style={{ display: "flex", gap: 32 }}>
+            {items.map((i) =>
+            <a key={i.id} onClick={() => setRoute(i.id)} style={{
+              cursor: "pointer",
+              font: '400 14px/1.4 "Inter", sans-serif',
+              letterSpacing: "0.3px",
+              color: route === i.id ? "#1568be" : "#262626",
+              fontWeight: route === i.id ? 700 : 400
+            }}>{i.label}</a>
+            )}
+          </nav>
+        )}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>
+        {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
         <MkButton onClick={() => setRoute("booking")}>{c.nav.reserveLabel}</MkButton>
       </div>
     </header>);
@@ -92,30 +105,37 @@ function TopNav({ route, setRoute }) {
 function HeroDark({ setRoute }) {
   const c = C();
   const h = c.hero;
+  const isMobile = useWindowWidth() < 768;
   const firstId = c.fleet[0]?.id || "home";
   return (
     <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
-      <div style={{ padding: "80px 80px 80px 96px", display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 48, alignItems: "center" }}>
+      <div style={{
+        padding: isMobile ? "48px 24px 48px 32px" : "80px 80px 80px 96px",
+        display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.1fr 1fr",
+        gap: 48, alignItems: "center"
+      }}>
         <div>
           <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20, display: "inline-flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             {h.kicker}
           </div>
-          <h1 style={{ font: '700 72px/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>
+          <h1 style={{ font: `700 ${isMobile ? "44px" : "72px"}/1.05 "Inter", sans-serif`, margin: 0, color: "#262626" }}>
             {h.titleLine1}<br />{h.titleLine2}
           </h1>
-          <p style={{ font: '300 18px/1.55 "Inter", sans-serif', color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
+          <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
             {h.body}
           </p>
-          <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
             <MkButton variant="secondary" onClick={() => setRoute(firstId)}>{h.secondaryCta}</MkButton>
           </div>
         </div>
-        <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
-        plateStyle={{ background: "#fff", padding: 16 }}
-        style={{ width: "100%", height: 400 }} />
+        {!isMobile && (
+          <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
+          plateStyle={{ background: "#fff", padding: 16 }}
+          style={{ width: "100%", height: 400 }} />
+        )}
       </div>
     </section>);
 
@@ -152,14 +172,15 @@ function FleetCard({ trailer, onSpecs }) {
 /* ----------- Fleet grid ----------- */
 function FleetGrid({ setRoute }) {
   const c = C();
-  const cols = Math.min(c.fleet.length, 3); // 1–3 trailers single row, else wrap
+  const isMobile = useWindowWidth() < 768;
+  const cols = isMobile ? 1 : Math.min(c.fleet.length, 3);
   return (
-    <section style={{ padding: "80px 80px", background: "#fff" }}>
-      <header style={{ display: "flex", alignItems: "end", justifyContent: "space-between", marginBottom: 48 }}>
-        <h2 style={{ font: '700 48px/1.1 "Inter", sans-serif', margin: 0, color: "#262626" }}>{c.fleetSection.heading}</h2>
+    <section style={{ padding: isMobile ? "48px 16px" : "80px 80px", background: "#fff" }}>
+      <header style={{ display: "flex", alignItems: isMobile ? "flex-start" : "end", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", marginBottom: isMobile ? 24 : 48, gap: isMobile ? 8 : 0 }}>
+        <h2 style={{ font: `700 ${isMobile ? "32px" : "48px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#262626" }}>{c.fleetSection.heading}</h2>
         <UpperLink onClick={() => setRoute("booking")}>{c.fleetSection.link}</UpperLink>
       </header>
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: isMobile ? 16 : 32 }}>
         {c.fleet.map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} />)}
       </div>
     </section>);
@@ -168,8 +189,9 @@ function FleetGrid({ setRoute }) {
 
 /* ----------- Spec grid ----------- */
 function SpecGrid({ specs }) {
+  const isMobile = useWindowWidth() < 640;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${specs.length}, 1fr)`, borderTop: "1px solid #e6e6e6", borderBottom: "1px solid #e6e6e6" }}>
+    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : `repeat(${specs.length}, 1fr)`, borderTop: "1px solid #e6e6e6", borderBottom: "1px solid #e6e6e6" }}>
       {specs.map((s, i) =>
       <div key={i} style={{
         padding: "32px 24px", display: "flex", flexDirection: "column", gap: 8,
@@ -186,6 +208,7 @@ function SpecGrid({ specs }) {
 /* ----------- Fleet detail page ----------- */
 function FleetDetail({ trailerId, setRoute }) {
   const c = C();
+  const isMobile = useWindowWidth() < 768;
   const t = c.fleet.find((x) => x.id === trailerId);
   if (!t) {
     return <section style={{ padding: 80 }}><p>Trailer not found. <a onClick={() => setRoute("home")}>Back</a></p></section>;
@@ -194,36 +217,42 @@ function FleetDetail({ trailerId, setRoute }) {
     <article>
       <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
-        <div style={{ padding: "80px 80px 80px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+        <div style={{
+          padding: isMobile ? "48px 24px 48px 32px" : "80px 80px 80px 96px",
+          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: 48, alignItems: "center"
+        }}>
           <div>
             <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 12 }}>
               <span style={{ width: 24, height: 1, background: "#b5212b" }} />
               {t.kickerLong}
             </div>
-            <h1 style={{ font: '700 40px/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>{t.name}</h1>
+            <h1 style={{ font: `700 ${isMobile ? "30px" : "40px"}/1.05 "Inter", sans-serif`, margin: 0, color: "#262626" }}>{t.name}</h1>
             {t.subheading &&
             <div style={{ font: '700 13px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", marginTop: 14, display: "inline-flex", alignItems: "center", gap: 12 }}>
                 <span style={{ width: 24, height: 1, background: "#b5212b" }} />
                 {t.subheading}
               </div>
             }
-            <p style={{ font: '300 18px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 24, marginBottom: 32, maxWidth: 460 }}>{t.detailTagline || t.tagline}</p>
-            <div style={{ display: "flex", gap: 12 }}>
+            <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", marginTop: 24, marginBottom: 32, maxWidth: 460 }}>{t.detailTagline || t.tagline}</p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <MkButton onClick={() => setRoute("booking")}>Reserve · ${t.daily}/day</MkButton>
               <MkButton variant="secondary" onClick={() => setRoute("home")}> ›</MkButton>
             </div>
           </div>
-          <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
-          placeholder={`Drop a photo of the ${t.name}`}
-          plateStyle={{ background: "#fff", padding: 16 }}
-          style={{ width: "100%", height: 360 }} />
+          {!isMobile && (
+            <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
+            placeholder={`Drop a photo of the ${t.name}`}
+            plateStyle={{ background: "#fff", padding: 16 }}
+            style={{ width: "100%", height: 360 }} />
+          )}
         </div>
       </section>
 
-      <section style={{ padding: "80px 80px", background: "#fff" }}>
+      <section style={{ padding: isMobile ? "40px 16px" : "80px 80px", background: "#fff" }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 24 }}>SPECIFICATIONS</div>
         <SpecGrid specs={t.specs} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 48, marginTop: 80 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: isMobile ? 24 : 48, marginTop: isMobile ? 40 : 80 }}>
           {[
           { t: "Daily rate", v: `$${t.daily}/day`, note: "24-hour rental period" },
           { t: "Weekly rate", v: `$${t.weekly}/week`, note: "7 consecutive days" },
@@ -244,18 +273,19 @@ function FleetDetail({ trailerId, setRoute }) {
 /* ----------- Rental Terms band ----------- */
 function PickupBand() {
   const c = C();
+  const isMobile = useWindowWidth() < 768;
   return (
-    <section style={{ padding: "80px 80px", background: "#f4f6f9", position: "relative" }}>
+    <section style={{ padding: isMobile ? "48px 16px 48px 24px" : "80px 80px", background: "#f4f6f9", position: "relative" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
-      <header style={{ marginBottom: 56, paddingLeft: 16 }}>
+      <header style={{ marginBottom: isMobile ? 32 : 56, paddingLeft: isMobile ? 0 : 16 }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 12 }}>
           <span style={{ width: 24, height: 1, background: "#b5212b" }} />
           {c.termsBand.kicker}
         </div>
-        <h2 style={{ font: '700 48px/1.1 "Inter", sans-serif', margin: 0, color: "#262626" }}>{c.termsBand.heading}</h2>
+        <h2 style={{ font: `700 ${isMobile ? "32px" : "48px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#262626" }}>{c.termsBand.heading}</h2>
       </header>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, paddingLeft: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 16 : 24, paddingLeft: isMobile ? 0 : 16 }}>
         {c.termsBand.items.map((t, i) =>
         <article key={i} style={{
           background: "#fff",
@@ -284,10 +314,11 @@ function PickupBand() {
 /* ----------- Pre-footer CTA ----------- */
 function CTABand({ setRoute }) {
   const c = C();
+  const isMobile = useWindowWidth() < 768;
   return (
-    <section style={{ position: "relative", background: "#f4f6f9", padding: "80px 80px", textAlign: "center" }}>
+    <section style={{ position: "relative", background: "#f4f6f9", padding: isMobile ? "48px 24px" : "80px 80px", textAlign: "center" }}>
       <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 64, height: 4, background: "#b5212b" }} />
-      <h2 style={{ font: '700 36px/1.15 "Inter", sans-serif', margin: 0, color: "#262626", maxWidth: 760, marginInline: "auto" }}>
+      <h2 style={{ font: `700 ${isMobile ? "28px" : "36px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#262626", maxWidth: 760, marginInline: "auto" }}>
         {c.ctaBand.line1}<br />{c.ctaBand.line2}
       </h2>
       <div style={{ marginTop: 32, display: "flex", gap: 12, justifyContent: "center" }}>
@@ -300,11 +331,11 @@ function CTABand({ setRoute }) {
 /* ----------- Footer ----------- */
 function Footer() {
   const c = C();
-  // Drop columns that have neither a header nor any links
+  const isMobile = useWindowWidth() < 768;
   const cols = c.footer.columns.filter((col) => col.h || col.links && col.links.length);
   return (
-    <footer style={{ background: "#f6f7f9", padding: "64px 80px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: `2fr repeat(${cols.length}, 1fr)`, gap: 48 }}>
+    <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : `2fr repeat(${cols.length}, 1fr)`, gap: isMobile ? 32 : 48 }}>
         <div>
           <img src="assets/tvr-logo-primary.png" alt="TVR" style={{ height: 48, marginBottom: 24, objectFit: "cover", width: "100px" }} />
           <p style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#6b6b6b", maxWidth: 320 }}>

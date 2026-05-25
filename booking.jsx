@@ -47,6 +47,32 @@ const Bookings = {
 // Expose for debugging (run `TVR_Bookings.clear()` in DevTools to wipe).
 window.TVR_Bookings = Bookings;
 
+function useWindowWidth() {
+  const [w, setW] = React.useState(() => window.innerWidth);
+  React.useEffect(() => {
+    const h = () => setW(window.innerWidth);
+    window.addEventListener("resize", h);
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return w;
+}
+
+function calcRental(trailer, days) {
+  if (!trailer || !days) return 0;
+  const weeks = Math.floor(days / 7);
+  const extra = days % 7;
+  if (!weeks || !trailer.weekly) return trailer.daily * days;
+  return weeks * trailer.weekly + extra * trailer.daily;
+}
+
+function rentalLabel(trailer, days) {
+  const weeks = Math.floor(days / 7);
+  const extra = days % 7;
+  if (!weeks || !trailer?.weekly) return "Rental · " + days + "d";
+  if (extra === 0) return weeks === 1 ? "Rental · 1 week" : "Rental · " + weeks + " weeks";
+  return "Rental · " + weeks + "wk + " + extra + "d";
+}
+
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function fmtDate(s) {
   if (!s) return "";
@@ -119,10 +145,12 @@ function Select({ value, onChange, options }) {
 
 /* ----------- Top bar + Stepper ----------- */
 function TopBar() {
+  const isMobile = useWindowWidth() < 768;
   return (
     <header style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      height: 64, padding: "0 32px", background: "#fff", borderBottom: "1px solid #e6e6e6",
+      height: 64, padding: isMobile ? "0 16px" : "0 32px",
+      background: "#fff", borderBottom: "1px solid #e6e6e6",
       position: "sticky", top: 0, zIndex: 60,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -130,14 +158,17 @@ function TopBar() {
         <img src="assets/tvr-logo-primary.png" alt="TVR" style={{ height: 36 }}/>
         <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 12, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>Booking</span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 24, font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
-        <span>Need help? <span style={{ color: "#262626", fontWeight: 700 }}>(321) 765-3077</span></span>
-      </div>
+      {!isMobile && (
+        <div style={{ display: "flex", alignItems: "center", gap: 24, font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
+          <span>Need help? <span style={{ color: "#262626", fontWeight: 700 }}>(321) 765-3077</span></span>
+        </div>
+      )}
     </header>
   );
 }
 
 function Stepper({ steps, current }) {
+  const isMobile = useWindowWidth() < 640;
   return (
     <nav style={{
       display: "grid", gridTemplateColumns: `repeat(${steps.length}, 1fr)`,
@@ -147,21 +178,24 @@ function Stepper({ steps, current }) {
         const state = i < current ? "done" : i === current ? "active" : "pending";
         return (
           <div key={i} style={{
-            padding: "20px 16px",
+            padding: isMobile ? "12px 4px" : "20px 16px",
             borderBottom: state === "active" ? "2px solid #1568be" : "2px solid transparent",
-            display: "flex", alignItems: "center", gap: 12,
+            display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "flex-start", gap: 12,
           }}>
             <span style={{
-              width: 24, height: 24, display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: 24, height: 24, flexShrink: 0,
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
               background: state === "done" ? "#1568be" : state === "active" ? "#262626" : "#fff",
               color: state === "pending" ? "#9a9a9a" : "#fff",
               border: state === "pending" ? "1px solid #cccccc" : "0",
               font: '700 11px/1 "Inter", sans-serif',
             }}>{state === "done" ? "✓" : i + 1}</span>
-            <span style={{
-              font: '700 11px/1.3 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
-              color: state === "pending" ? "#9a9a9a" : "#262626",
-            }}>{s}</span>
+            {!isMobile && (
+              <span style={{
+                font: '700 11px/1.3 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
+                color: state === "pending" ? "#9a9a9a" : "#262626",
+              }}>{s}</span>
+            )}
           </div>
         );
       })}
@@ -173,10 +207,10 @@ function Stepper({ steps, current }) {
 function OrderSummary({ state }) {
   const trailer = TRAILERS[state.trailerId];
   const days = state.days || 1;
-  const rental = trailer ? trailer.daily * days : 0;
+  const rental = trailer ? calcRental(trailer, days) : 0;
   const subtotal = rental;
   const tax = Math.round(subtotal * 0.0925);
-  const deposit = 200;
+  const deposit = trailer?.deposit || 200;
   const total = subtotal + tax + deposit;
 
   return (
@@ -204,7 +238,7 @@ function OrderSummary({ state }) {
       </div>
 
       <div style={{ display: "grid", gap: 8, padding: "16px 0", borderBottom: "1px solid #e6e6e6" }}>
-        <PriceRow k={"Rental · " + days + "d"} v={rental ? "$" + rental : "—"}/>
+        <PriceRow k={rentalLabel(trailer, days)} v={rental ? "$" + rental : "—"}/>
         <PriceRow k="Tax (9.25%)" v={subtotal ? "$" + tax : "—"}/>
         <PriceRow k="Refundable deposit" v={"$" + deposit}/>
       </div>
@@ -242,7 +276,8 @@ const TRAILERS = new Proxy({}, {
     if (key === Symbol.iterator || key === "length") return undefined;
     const t = fleet.find(x => x.id === key);
     return t ? { id: t.id, name: t.name, kicker: t.kickerBooking || t.kicker,
-                 photo: t.photo, daily: t.daily, photoScale: t.photoScale || 1 } : undefined;
+                 photo: t.photo, daily: t.daily, weekly: t.weekly, deposit: t.deposit,
+                 photoScale: t.photoScale || 1 } : undefined;
   },
   ownKeys() { return ((window.TVR_CONTENT && window.TVR_CONTENT.fleet) || []).map(t => t.id); },
   getOwnPropertyDescriptor() { return { enumerable: true, configurable: true }; },
@@ -251,7 +286,7 @@ const TRAILERS = new Proxy({}, {
 function listTrailers() {
   const fleet = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
   return fleet.map(t => ({ id: t.id, name: t.name, kicker: t.kickerBooking || t.kicker,
-                           photo: t.photo, daily: t.daily, photoScale: t.photoScale || 1 }));
+                           photo: t.photo, daily: t.daily, weekly: t.weekly, photoScale: t.photoScale || 1 }));
 }
 
 /* ====================================================
@@ -313,12 +348,15 @@ function StepTrailerDates({ state, setState, onNext }) {
               <div style={{ background: "#f4f6f9", padding: 16, display: "flex", justifyContent: "center", alignItems: "center", height: 160, overflow: "hidden" }}>
                 <img src={t.photo} alt="" style={{ width: "85%", height: "100%", objectFit: "contain", transform: `scale(${t.photoScale || 1})`, transformOrigin: "center center" }}/>
               </div>
-              <div style={{ padding: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ padding: 20, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                   <div style={{ font: '700 18px/1.3 "Inter", sans-serif', color: "#262626" }}>{t.name}</div>
                   <div style={{ font: '300 13px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 4 }}>{t.kicker}</div>
                 </div>
-                <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${t.daily}<span style={{ font: '300 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>/d</span></div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${t.daily}<span style={{ font: '300 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>/d</span></div>
+                  {t.weekly && <div style={{ font: '300 12px/1.3 "Inter", sans-serif', color: "#6b6b6b", marginTop: 4 }}>${t.weekly}/wk</div>}
+                </div>
               </div>
             </button>
           );
@@ -395,10 +433,11 @@ function computeDays(p, d) {
 
 /* ---------- 2. Customer info ---------- */
 function StepCustomer({ state, setState, onNext, onBack }) {
+  const isMobile = useWindowWidth() < 768;
   const valid = state.name && state.email && state.phone && state.tow;
   return (
     <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
         <Field label="Full name" hint="As shown on your driver's license">
           <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd"/>
         </Field>
@@ -516,6 +555,7 @@ function StepDocs({ state, setState, onNext, onBack }) {
 
 /* ---------- 5. Agreement ---------- */
 function StepAgreement({ state, setState, onNext, onBack }) {
+  const isMobile = useWindowWidth() < 640;
   const valid = state.signature && state.signature.trim().length > 2 && state.agreed;
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   return (
@@ -555,7 +595,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
       {/* Signature block — contract-grade */}
       <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9" }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Signature</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
           <div>
             <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || "Type your full legal name"}
               style={{
@@ -792,6 +832,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
 
 /* ---------- 7. Confirmation ---------- */
 function StepDone({ state, onReset }) {
+  const isMobile = useWindowWidth() < 640;
   const trailer = TRAILERS[state.trailerId];
   return (
     <StepShell title={null} kicker={null} wide>
@@ -813,13 +854,13 @@ function StepDone({ state, onReset }) {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 24 }}>
         {[
           { k: "Pickup", v: state.pickup },
           { k: "Return", v: state.dropoff },
           { k: "Confirmation", v: "Sent to phone" },
         ].map((c, i) => (
-          <div key={i} style={{ padding: 24, borderRight: i < 2 ? "1px solid #e6e6e6" : "0" }}>
+          <div key={i} style={{ padding: 24, borderRight: !isMobile && i < 2 ? "1px solid #e6e6e6" : 0, borderBottom: isMobile && i < 2 ? "1px solid #e6e6e6" : 0 }}>
             <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 12 }}>{c.k}</div>
             <div style={{ font: '700 18px/1.3 "Inter", sans-serif', color: "#262626" }}>{c.v}</div>
           </div>
@@ -836,10 +877,11 @@ function StepDone({ state, onReset }) {
 
 /* ---------- Step shell + footer ---------- */
 function StepShell({ kicker, title, children, wide }) {
+  const isMobile = useWindowWidth() < 768;
   return (
     <div>
       {kicker && <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>{kicker}</div>}
-      {title && <h1 style={{ font: '700 36px/1.1 "Inter", sans-serif', color: "#262626", margin: 0, marginBottom: 40 }}>{title}</h1>}
+      {title && <h1 style={{ font: `700 ${isMobile ? "26px" : "36px"}/1.1 "Inter", sans-serif`, color: "#262626", margin: 0, marginBottom: 40 }}>{title}</h1>}
       {children}
     </div>
   );
