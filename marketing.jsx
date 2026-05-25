@@ -99,7 +99,7 @@ function TopNav({ route, setRoute }) {
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
-        <MkButton onClick={() => setRoute("booking")} style={isMobile ? { height: 36, padding: "0 18px", fontSize: 13 } : {}}>{c.nav.reserveLabel}</MkButton>
+        <MkButton onClick={() => setRoute("booking")} style={isMobile ? { height: 36, padding: "0 18px", fontSize: "13px" } : { background: "#1568be", color: "#fff", border: 0 }}>{c.nav.reserveLabel}</MkButton>
       </div>
     </header>);
 
@@ -242,7 +242,7 @@ function FleetDetail({ trailerId, setRoute }) {
   }
   return (
     <article>
-      <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
+      <section style={{ position: "relative", background: "#ebebeb", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
         <div style={{
           padding: isMobile ? "48px 24px 48px 32px" : "80px 80px 80px 96px",
@@ -269,7 +269,7 @@ function FleetDetail({ trailerId, setRoute }) {
           </div>
           <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
           placeholder={`Drop a photo of the ${t.name}`}
-          plateStyle={{ background: "#ebebeb", padding: isMobile ? 12 : 16 }}
+          plateStyle={{ background: "#ebebeb" }}
           style={{ width: "100%", height: isMobile ? 220 : 360 }} />
         </div>
       </section>
