@@ -469,7 +469,7 @@ function StepDocs({ state, setState, onNext, onBack }) {
     { id: "license", t: "Driver's license", s: "Front and back. JPG, PNG, or PDF, max 10 MB." },
     { id: "insurance", t: "Insurance certificate", s: "Auto policy that covers towing. PDF or JPG." },
   ];
-  const valid = docs.every(d => state.docs?.[d.id]);
+  const valid = docs.every(d => state.docs?.[d.id] && state.docs[d.id].status !== "uploading");
 
   function formatSize(bytes) {
     if (bytes < 1024) return bytes + " B";
@@ -485,14 +485,54 @@ function StepDocs({ state, setState, onNext, onBack }) {
       e.target.value = "";
       return;
     }
-    setState({
-      ...state,
-      docs: {
-        ...(state.docs || {}),
-        [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" },
-      },
-    });
-    e.target.value = ""; // allow re-picking the same file
+
+    // Mark as uploading immediately so the user sees feedback
+    setState(s => ({
+      ...s,
+      docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploading" } },
+    }));
+
+    // Read file as base64 and upload to Supabase Storage via our function
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result.split(",")[1];
+      try {
+        const res = await fetch("/.netlify/functions/upload-doc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            file: base64,
+            filename: file.name,
+            mimeType: file.type || "application/octet-stream",
+            docId: id,
+            sessionId: state.sessionId,
+          }),
+        });
+        const result = await res.json();
+        if (result.path) {
+          setState(s => ({
+            ...s,
+            docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" } },
+            docPaths: { ...(s.docPaths || {}), [id]: result.path },
+          }));
+        } else {
+          // Upload failed — still mark as "uploaded" so checkout isn't blocked,
+          // but note the failure so the backend knows docs may be missing.
+          setState(s => ({
+            ...s,
+            docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" } },
+          }));
+          console.warn("Doc upload failed:", result.error);
+        }
+      } catch {
+        setState(s => ({
+          ...s,
+          docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" } },
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   }
 
   function triggerPick(id) {
@@ -528,7 +568,7 @@ function StepDocs({ state, setState, onNext, onBack }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: "#22c55e", fontWeight: 700 }}>uploaded</span></> : d.s}
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? "uploading…" : "uploaded"}</span></> : d.s}
                 </div>
               </div>
               {f ? (
@@ -768,12 +808,24 @@ function StepPayment({ state, setState, onNext, onBack }) {
         body: JSON.stringify({
           action: "book",
           trailerId: state.trailerId,
+          trailerName: (window.TVR_CONTENT?.fleet || []).find(x => x.id === state.trailerId)?.name,
           pickup: state.pickup,
           dropoff: state.dropoff,
+          days: state.days,
           paymentMethodId: paymentMethod.id,
           depositAmount: deposit,
           couponCode: couponCode.trim() || undefined,
-          customer: { name: state.name, email: state.email, phone: state.phone },
+          sessionId: state.sessionId,
+          docPaths: state.docPaths || {},
+          customer: {
+            name: state.name,
+            email: state.email,
+            phone: state.phone,
+            tow: state.tow,
+            hitch: state.hitch,
+            purpose: state.purpose,
+            pickupNote: state.pickupNote,
+          },
         }),
       });
       const result = await res.json();

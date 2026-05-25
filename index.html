@@ -141,6 +141,8 @@
         days: 3,
         name: "", email: "", phone: "", tow: "", hitch: "", purpose: "",
         docs: {},
+        sessionId: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        docPaths: {},
         signature: "", agreed: false,
         card: "", exp: "", cvv: "", cardName: "", zip: "",
       };

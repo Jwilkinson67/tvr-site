@@ -1,22 +1,30 @@
 /**
  * TVR Booking API — Netlify Function
  *
- * Handles two actions (sent as JSON body):
+ * Actions (JSON body):
  *   { action: "availability", trailerId }
- *     → returns booked date ranges for that trailer from Supabase
+ *   { action: "coupon", code }
+ *   { action: "book", trailerId, trailerName, pickup, dropoff, days,
+ *              paymentMethodId, depositAmount, couponCode,
+ *              sessionId, docPaths: { license, insurance },
+ *              customer: { name, email, phone, tow, hitch, purpose, pickupNote } }
  *
- *   { action: "book", trailerId, pickup, dropoff, paymentMethodId,
- *             depositAmount, customer: { name, email, phone } }
- *     → checks availability, charges Stripe, saves booking to Supabase
- *
- * Required environment variables (set in Netlify dashboard → Site settings → Env vars):
- *   STRIPE_SECRET_KEY      sk_live_... (or sk_test_... while testing)
+ * Required env vars:
+ *   STRIPE_SECRET_KEY      sk_live_…
  *   SUPABASE_URL           https://xxxx.supabase.co
- *   SUPABASE_SERVICE_KEY   service_role key (NOT the anon key)
+ *   SUPABASE_SERVICE_KEY   service_role key
+ *   RESEND_API_KEY         re_…
+ *   OWNER_EMAIL            your email address
+ *   BOOKING_SECRET         random secret for signing approve/decline tokens
+ *   SITE_URL               https://rentwithtvr.com
+ *   ADMIN_COUPON_CODE      your test coupon code
+ *   CARGO_LOCKBOX_CODE     (optional) set when lockbox is installed
+ *   HAULER_LOCKBOX_CODE    (optional) set when lockbox is installed
  */
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require("@supabase/supabase-js");
+const crypto = require("crypto");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -29,78 +37,157 @@ const HEADERS = {
   "Content-Type": "application/json",
 };
 
-function ok(body) {
-  return { statusCode: 200, headers: HEADERS, body: JSON.stringify(body) };
-}
-function err(status, message) {
-  return { statusCode: status, headers: HEADERS, body: JSON.stringify({ error: message }) };
+function ok(body)         { return { statusCode: 200, headers: HEADERS, body: JSON.stringify(body) }; }
+function err(status, msg) { return { statusCode: status, headers: HEADERS, body: JSON.stringify({ error: msg }) }; }
+
+/* ── Signed token for approve/decline links ─────────────────────────────── */
+function makeToken(action, bookingId) {
+  return crypto
+    .createHmac("sha256", process.env.BOOKING_SECRET || "dev-secret")
+    .update(`${action}:${bookingId}`)
+    .digest("hex");
 }
 
-exports.handler = async (event) => {
-  // CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: HEADERS, body: "" };
+/* ── Resend email ───────────────────────────────────────────────────────── */
+async function sendEmail({ to, subject, html }) {
+  const fromDomain = (process.env.SITE_URL || "rentwithtvr.com")
+    .replace(/https?:\/\//, "").replace(/\/.*/, "");
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: `Tennessee Valley Rentals <bookings@${fromDomain}>`,
+      to,
+      subject,
+      html,
+    }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+/* ── Owner notification email ───────────────────────────────────────────── */
+function ownerEmail({ booking, docUrls, approveUrl, declineUrl }) {
+  const docRows = [
+    docUrls.license   ? `<tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:130px;">Driver's License</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;"><a href="${docUrls.license}" style="color:#1568be;">View document →</a></td></tr>` : "",
+    docUrls.insurance ? `<tr><td style="padding:10px 14px;font-weight:700;">Insurance</td><td style="padding:10px 14px;"><a href="${docUrls.insurance}" style="color:#1568be;">View document →</a></td></tr>` : "",
+  ].join("");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
+<div style="max-width:600px;margin:0 auto;background:#fff;">
+
+  <div style="background:#1568be;padding:24px 32px;">
+    <div style="color:#fff;font-size:22px;font-weight:700;">New Booking Request</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals</div>
+  </div>
+
+  <div style="background:#f4f6f9;border-left:6px solid #b5212b;padding:20px 32px;">
+    <div style="font-size:20px;font-weight:700;">${booking.trailer_name} · ${booking.pickup} → ${booking.dropoff}</div>
+    <div style="font-size:14px;color:#3c3c3c;margin-top:4px;">${booking.days || "?"} day rental · $${booking.deposit_amount} authorized on card (not yet charged)</div>
+  </div>
+
+  <div style="padding:32px;">
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Customer Info</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:130px;">Name</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.customer_name}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Email</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;"><a href="mailto:${booking.customer_email}" style="color:#1568be;">${booking.customer_email}</a></td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Phone</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;"><a href="tel:${booking.customer_phone}" style="color:#1568be;">${booking.customer_phone}</a></td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Tow Vehicle</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.tow_vehicle || "—"}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Hitch Class</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.hitch_class || "—"}</td></tr>
+      ${booking.trip_purpose ? `<tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Trip Purpose</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.trip_purpose}</td></tr>` : ""}
+      ${booking.pickup_note ? `<tr><td style="padding:10px 14px;font-weight:700;">Pickup Note</td><td style="padding:10px 14px;">${booking.pickup_note}</td></tr>` : ""}
+    </table>
+
+    ${docRows ? `
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Documents to Review</td></tr>
+      ${docRows}
+    </table>` : `<p style="color:#b88017;background:#fff8e6;padding:12px 16px;border-left:3px solid #b88017;margin-bottom:28px;">No documents were uploaded with this booking.</p>`}
+
+    <div style="margin:32px 0;text-align:center;">
+      <a href="${approveUrl}" style="background:#1568be;color:#fff;padding:16px 36px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;margin-right:12px;">✓ Approve Booking</a>
+      <a href="${declineUrl}" style="background:#b5212b;color:#fff;padding:16px 36px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">✕ Decline</a>
+    </div>
+
+    <p style="color:#6b6b6b;font-size:12px;text-align:center;margin:0;">Booking ID: ${booking.id} · The $${booking.deposit_amount} is authorized but not captured until you click Approve.</p>
+  </div>
+
+</div>
+</body>
+</html>`;
+}
+
+/* ── Generate signed document URLs (7-day expiry) ───────────────────────── */
+async function signedDocUrls(docPaths) {
+  const urls = {};
+  for (const [key, path] of Object.entries(docPaths || {})) {
+    if (!path) continue;
+    const { data } = await supabase.storage
+      .from("rental-docs")
+      .createSignedUrl(path, 60 * 60 * 24 * 7); // 7 days
+    if (data?.signedUrl) urls[key] = data.signedUrl;
   }
+  return urls;
+}
+
+/* ── Main handler ───────────────────────────────────────────────────────── */
+exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers: HEADERS, body: "" };
 
   let body;
-  try {
-    body = JSON.parse(event.body || "{}");
-  } catch {
+  try { body = JSON.parse(event.body || "{}"); } catch {
     return err(400, "Invalid JSON body.");
   }
 
   // ── coupon validation ─────────────────────────────────────────────────────
   if (body.action === "coupon") {
-    const { code } = body;
     const adminCode = process.env.ADMIN_COUPON_CODE;
-    if (adminCode && code === adminCode) {
-      return ok({ valid: true });
-    }
-    return ok({ valid: false });
+    return ok({ valid: !!(adminCode && body.code === adminCode) });
   }
 
   // ── availability ──────────────────────────────────────────────────────────
   if (body.action === "availability") {
     const { trailerId } = body;
     if (!trailerId) return err(400, "trailerId required.");
-
     const today = new Date().toISOString().slice(0, 10);
     const { data, error } = await supabase
       .from("bookings")
       .select("id, pickup, dropoff")
       .eq("trailer_id", trailerId)
-      .gte("dropoff", today); // only future + current bookings
-
-    if (error) {
-      console.error("Supabase availability error:", error);
-      return err(500, "Could not load availability.");
-    }
-
+      .gte("dropoff", today);
+    if (error) { console.error("Supabase availability error:", error); return err(500, "Could not load availability."); }
     return ok({ bookings: data || [] });
   }
 
   // ── book ──────────────────────────────────────────────────────────────────
   if (body.action === "book") {
-    const { trailerId, pickup, dropoff, paymentMethodId, depositAmount, couponCode, customer } = body;
+    const {
+      trailerId, trailerName, pickup, dropoff, days,
+      paymentMethodId, depositAmount, couponCode,
+      sessionId, docPaths,
+      customer,
+    } = body;
 
-    // Admin coupon: override charge to $1 regardless of depositAmount from client.
+    // Admin coupon overrides charge to $1
     const adminCode = process.env.ADMIN_COUPON_CODE;
     const couponValid = adminCode && couponCode === adminCode;
     const chargeAmount = couponValid ? 1 : depositAmount;
 
-    // Validate required fields
     if (!trailerId || !pickup || !dropoff || !paymentMethodId || !chargeAmount) {
       return err(400, "Missing required booking fields.");
     }
     if (!customer?.name || !customer?.email) {
       return err(400, "Customer name and email required.");
     }
-    if (pickup > dropoff) {
-      return err(400, "Pickup must be before dropoff.");
-    }
+    if (pickup > dropoff) return err(400, "Pickup must be before dropoff.");
 
-    // 1. Authoritative conflict check in Supabase
-    //    A conflict exists when: existing.pickup <= new.dropoff AND existing.dropoff >= new.pickup
+    // Authoritative conflict check
     const { data: conflicts, error: conflictErr } = await supabase
       .from("bookings")
       .select("pickup, dropoff")
@@ -108,22 +195,20 @@ exports.handler = async (event) => {
       .lte("pickup", dropoff)
       .gte("dropoff", pickup);
 
-    if (conflictErr) {
-      console.error("Conflict check error:", conflictErr);
-      return err(500, "Could not verify availability. Please try again.");
-    }
+    if (conflictErr) { console.error("Conflict check error:", conflictErr); return err(500, "Could not verify availability."); }
     if (conflicts && conflicts.length > 0) {
-      return err(409, `That trailer is already booked for those dates (${conflicts[0].pickup} – ${conflicts[0].dropoff}). Please choose different dates.`);
+      return err(409, `That trailer is already booked for those dates (${conflicts[0].pickup} – ${conflicts[0].dropoff}).`);
     }
 
-    // 2. Charge the deposit via Stripe
+    // Authorize card — manual capture so charge only happens on owner approval
     let paymentIntent;
     try {
       paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(chargeAmount * 100), // Stripe uses cents
+        amount: Math.round(chargeAmount * 100),
         currency: "usd",
         payment_method: paymentMethodId,
         payment_method_types: ["card"],
+        capture_method: "manual",    // <-- authorize only, not captured yet
         confirm: true,
         description: `TVR deposit — ${trailerId} ${pickup} → ${dropoff}`,
         receipt_email: customer.email,
@@ -137,39 +222,60 @@ exports.handler = async (event) => {
       });
     } catch (stripeErr) {
       console.error("Stripe error:", stripeErr);
-      return err(402, stripeErr.message || "Card was declined. Please try a different card.");
+      return err(402, stripeErr.message || "Card was declined.");
     }
 
-    if (paymentIntent.status !== "succeeded") {
-      return err(402, `Payment status: ${paymentIntent.status}. Please try again or use a different card.`);
+    if (!["requires_capture", "succeeded"].includes(paymentIntent.status)) {
+      return err(402, `Payment status: ${paymentIntent.status}. Please try again.`);
     }
 
-    // 3. Save confirmed booking to Supabase
+    // Save booking to Supabase
     const bookingId = "TVR-" + Date.now().toString(36).toUpperCase();
-    const { error: insertErr } = await supabase.from("bookings").insert({
+    const bookingRow = {
       id: bookingId,
       trailer_id: trailerId,
+      trailer_name: trailerName || trailerId,
       pickup,
       dropoff,
+      days: days || null,
+      status: "pending",
+      session_id: sessionId || null,
+      doc_paths: docPaths || null,
       customer_name: customer.name,
       customer_email: customer.email,
       customer_phone: customer.phone || "",
+      tow_vehicle: customer.tow || "",
+      hitch_class: customer.hitch || "",
+      trip_purpose: customer.purpose || "",
+      pickup_note: customer.pickupNote || "",
       payment_intent_id: paymentIntent.id,
       deposit_amount: chargeAmount,
-    });
+    };
 
+    const { error: insertErr } = await supabase.from("bookings").insert(bookingRow);
     if (insertErr) {
-      // Payment succeeded but DB write failed — log for manual recovery.
-      // Don't return an error to the customer; their card was charged successfully.
-      console.error("BOOKING SAVE FAILED — NEEDS MANUAL ATTENTION", {
-        bookingId,
-        paymentIntentId: paymentIntent.id,
-        trailerId,
-        pickup,
-        dropoff,
-        customer,
-        supabaseError: insertErr,
+      // Payment authorized but DB write failed — log for manual recovery
+      console.error("BOOKING SAVE FAILED — MANUAL ATTENTION NEEDED", {
+        bookingId, paymentIntentId: paymentIntent.id, insertErr,
       });
+    }
+
+    // Generate signed document URLs and send owner notification
+    try {
+      const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
+      const fnBase = `${siteUrl}/.netlify/functions/approve`;
+      const approveUrl = `${fnBase}?action=approve&id=${bookingId}&token=${makeToken("approve", bookingId)}`;
+      const declineUrl = `${fnBase}?action=decline&id=${bookingId}&token=${makeToken("decline", bookingId)}`;
+      const docUrls = await signedDocUrls(docPaths);
+
+      await sendEmail({
+        to: process.env.OWNER_EMAIL,
+        subject: `New booking — ${trailerName || trailerId} — ${pickup}`,
+        html: ownerEmail({ booking: bookingRow, docUrls, approveUrl, declineUrl }),
+      });
+    } catch (emailErr) {
+      // Don't fail the booking if email fails — just log it
+      console.error("Owner notification email failed:", emailErr);
     }
 
     return ok({ success: true, bookingId });
