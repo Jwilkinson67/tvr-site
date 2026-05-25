@@ -1,0 +1,237 @@
+/* ============================================================
+   TVR Design System — design tokens
+   Tennessee Valley Rentals · Chattanooga, TN
+   Import this anywhere. Every value is a token; never inline hex.
+   ============================================================ */
+
+/* ---------- Font: Inter (substitute for licensed corp face) ---- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("fonts/Inter-Light.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/Inter-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/Inter-Bold.woff2") format("woff2");
+}
+/* CDN fallback in case the local fonts aren't bundled */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap");
+
+:root {
+  /* ---------- Brand & Action ----------
+     Patriotic palette — Freedom Blue is the action color (every primary CTA,
+     kicker label, active nav state). Patriot Red is the secondary accent —
+     Tennessee 3-stars motif, sash divider, badges. NEVER as the primary CTA
+     fill; reserve it for accent. Old Glory Navy is the deep-dark surface. */
+
+  /* Freedom Blue — primary action */
+  --tvr-blue:               #1568be;
+  --tvr-blue-active:        #0e4f95;
+  --tvr-blue-disabled:      #c7d6ea;
+
+  /* Old Glory Navy — kept under --tvr-navy for back-compat; used as dark surface */
+  --tvr-navy:               var(--tvr-blue);
+  --tvr-navy-active:        var(--tvr-blue-active);
+  --tvr-navy-disabled:      var(--tvr-blue-disabled);
+
+  /* Patriot Red — accent */
+  --tvr-red:                #b5212b;
+  --tvr-red-active:         #8c1820;
+
+  /* Battleship Grey — neutral accent */
+  --tvr-battleship:         #a4a8ab;
+
+  /* ---------- Surface ---------- */
+  --tvr-canvas:             #ffffff;          /* Star-Spangled White */
+  --tvr-surface-soft:       #f6f7f9;          /* footer, sub-nav */
+  --tvr-surface-card:       #f4f6f9;          /* photo plate inside cards */
+  --tvr-surface-strong:     #e6e9ee;          /* heavier divider band */
+  --tvr-surface-dark:       #16264a;          /* Old Glory Navy hero band */
+  --tvr-surface-dark-elev:  #1f3360;          /* one step lighter on dark */
+
+  /* ---------- Hairlines ---------- */
+  --tvr-hairline:           #e6e6e6;
+  --tvr-hairline-strong:    #cccccc;
+
+  /* ---------- Text ---------- */
+  --tvr-ink:                #262626;   /* display + primary */
+  --tvr-body:               #3c3c3c;   /* default running text */
+  --tvr-body-strong:        #1a1a1a;   /* lead / emphasized */
+  --tvr-muted:              #6b6b6b;   /* breadcrumbs, captions */
+  --tvr-muted-soft:         #9a9a9a;   /* disabled, fine print */
+  --tvr-on-primary:         #ffffff;   /* on blue */
+  --tvr-on-dark:            #ffffff;   /* on dark hero */
+  --tvr-on-dark-soft:       #bbbbbb;   /* secondary on dark */
+
+  /* ---------- Semantic ---------- */
+  --tvr-success:            #22c55e;
+  --tvr-warning:            #f59e0b;
+  --tvr-error:              #dc2626;
+
+  /* ---------- Spacing ---------- */
+  --tvr-space-xxs:          4px;
+  --tvr-space-xs:           8px;
+  --tvr-space-sm:           12px;
+  --tvr-space-md:           16px;
+  --tvr-space-lg:           24px;
+  --tvr-space-xl:           32px;
+  --tvr-space-xxl:          48px;
+  --tvr-space-section:      80px;
+
+  /* ---------- Radius ---------- */
+  --tvr-radius-none:        0px;
+  --tvr-radius-xs:          2px;
+  --tvr-radius-sm:          4px;
+  --tvr-radius-md:          8px;
+  --tvr-radius-lg:          12px;
+  --tvr-radius-pill:        9999px;
+  --tvr-radius-full:        9999px;
+
+  /* ---------- Type stack ---------- */
+  --tvr-font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", Roboto, sans-serif;
+
+  /* ---------- Type tokens (size / weight / line / track) ---------- */
+  --tvr-display-xl-size:    64px;  --tvr-display-xl-weight:    700;  --tvr-display-xl-line: 1.05;
+  --tvr-display-lg-size:    48px;  --tvr-display-lg-weight:    700;  --tvr-display-lg-line: 1.10;
+  --tvr-display-md-size:    32px;  --tvr-display-md-weight:    700;  --tvr-display-md-line: 1.15;
+  --tvr-display-sm-size:    24px;  --tvr-display-sm-weight:    700;  --tvr-display-sm-line: 1.25;
+  --tvr-title-lg-size:      20px;  --tvr-title-lg-weight:      700;  --tvr-title-lg-line: 1.30;
+  --tvr-title-md-size:      18px;  --tvr-title-md-weight:      700;  --tvr-title-md-line: 1.40;
+  --tvr-title-sm-size:      16px;  --tvr-title-sm-weight:      700;  --tvr-title-sm-line: 1.40;
+  --tvr-body-md-size:       16px;  --tvr-body-md-weight:       300;  --tvr-body-md-line: 1.55;
+  --tvr-body-sm-size:       14px;  --tvr-body-sm-weight:       300;  --tvr-body-sm-line: 1.55;
+  --tvr-caption-size:       12px;  --tvr-caption-weight:       400;  --tvr-caption-line: 1.40;  --tvr-caption-track: 0.5px;
+  --tvr-label-size:         13px;  --tvr-label-weight:         700;  --tvr-label-line: 1.30;    --tvr-label-track: 1.5px;
+  --tvr-button-size:        14px;  --tvr-button-weight:        700;  --tvr-button-line: 1.00;   --tvr-button-track: 0.5px;
+  --tvr-nav-size:           14px;  --tvr-nav-weight:           400;  --tvr-nav-line: 1.40;      --tvr-nav-track: 0.3px;
+}
+
+/* ============================================================
+   Base reset + semantic mappings
+   ============================================================ */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--tvr-canvas);
+  color: var(--tvr-body);
+  font-family: var(--tvr-font-sans);
+  font-size: var(--tvr-body-md-size);
+  font-weight: var(--tvr-body-md-weight);
+  line-height: var(--tvr-body-md-line);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--tvr-ink);
+  font-family: var(--tvr-font-sans);
+  letter-spacing: 0;
+}
+h1 { font-size: var(--tvr-display-xl-size); font-weight: 700; line-height: 1.05; }
+h2 { font-size: var(--tvr-display-lg-size); font-weight: 700; line-height: 1.10; }
+h3 { font-size: var(--tvr-display-md-size); font-weight: 700; line-height: 1.15; }
+h4 { font-size: var(--tvr-display-sm-size); font-weight: 700; line-height: 1.25; }
+h5 { font-size: var(--tvr-title-lg-size);   font-weight: 700; line-height: 1.30; }
+h6 { font-size: var(--tvr-title-md-size);   font-weight: 700; line-height: 1.40; }
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Reusable utility classes ---------- */
+.tvr-display-xl   { font: 700 64px/1.05 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-display-lg   { font: 700 48px/1.10 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-display-md   { font: 700 32px/1.15 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-display-sm   { font: 700 24px/1.25 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-title-lg     { font: 700 20px/1.30 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-title-md     { font: 700 18px/1.40 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-title-sm     { font: 700 16px/1.40 var(--tvr-font-sans); color: var(--tvr-ink); }
+.tvr-body-md      { font: 300 16px/1.55 var(--tvr-font-sans); color: var(--tvr-body); }
+.tvr-body-sm      { font: 300 14px/1.55 var(--tvr-font-sans); color: var(--tvr-body); }
+.tvr-caption      { font: 400 12px/1.4  var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: 0.5px; }
+.tvr-label        { font: 700 13px/1.3  var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1.5px; text-transform: uppercase; }
+
+/* ---------- Button primitives ---------- */
+.tvr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tvr-space-xs);
+  height: 48px;
+  padding: 0 32px;
+  border: 0;
+  border-radius: var(--tvr-radius-none);
+  font: 700 14px/1 var(--tvr-font-sans);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out;
+  white-space: nowrap;
+}
+.tvr-btn--primary {
+  background: var(--tvr-blue);
+  color: var(--tvr-on-primary);
+}
+.tvr-btn--primary:hover    { background: var(--tvr-blue-active); }
+.tvr-btn--primary:disabled { background: var(--tvr-blue-disabled); color: var(--tvr-muted); cursor: not-allowed; }
+
+.tvr-btn--secondary {
+  background: var(--tvr-canvas);
+  color: var(--tvr-ink);
+  border: 1px solid var(--tvr-hairline-strong);
+}
+.tvr-btn--secondary:hover { border-color: var(--tvr-ink); }
+
+.tvr-btn--on-dark {
+  background: transparent;
+  color: var(--tvr-on-dark);
+  border: 1px solid var(--tvr-on-dark);
+}
+.tvr-btn--on-dark:hover { background: rgba(255,255,255,.08); }
+
+.tvr-link-uppercase {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tvr-space-xs);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: 700 13px/1.3 var(--tvr-font-sans);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--tvr-ink);
+}
+.tvr-link-uppercase:hover { color: var(--tvr-blue); }
+
+/* ---------- Input primitive ---------- */
+.tvr-input {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 14px 16px;
+  background: var(--tvr-canvas);
+  color: var(--tvr-ink);
+  border: 1px solid var(--tvr-hairline);
+  border-radius: var(--tvr-radius-none);
+  font: 300 16px/1.55 var(--tvr-font-sans);
+  outline: none;
+  transition: border-color 120ms ease-out;
+}
+.tvr-input:focus { border-color: var(--tvr-ink); border-width: 1px; }
+.tvr-input::placeholder { color: var(--tvr-muted-soft); }

@@ -1,0 +1,10 @@
+{
+  "name": "tvr-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tennessee Valley Rentals — trailer rental site",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "stripe": "^14.10.0"
+  }
+}

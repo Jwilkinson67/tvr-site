@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TVR · Tennessee Valley Rentals</title>
+  <meta name="description" content="Trailer rentals in Chattanooga, TN. Enclosed cargo and car hauler available. Reserve online.">
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="icon" href="assets/tvr-logo-mark.png">
+  <script src="image-slot.js"></script>
+  <script src="content.js"></script>
+  <!-- Stripe.js — used by StepPayment for the real Stripe Elements card form.
+       Loaded async; StepPayment waits for window.Stripe before mounting. -->
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    /* Stripe TEST-mode publishable key. Publishable keys are designed to be
+       public — they can only tokenize a card, not charge it. Swap this for
+       your own pk_test_… (or pk_live_…) when you're ready. Charging real cards
+       requires a backend that uses your SECRET key — see StepPayment's
+       handlePay() for the integration point. */
+    window.TVR_STRIPE_KEY = "pk_test_TYooMQauvdEDq54NiTphI7jx";
+  </script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { background: #fff; }
+
+    /* Booking shell */
+    .tvr-booking-bg { background: #f6f7f9; }
+    .booking-shell {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 380px; gap: 48px;
+      padding: 48px 32px;
+      align-items: start;
+    }
+    .booking-main { background: #fff; padding: 48px; }
+
+    @media (max-width: 900px) {
+      .booking-shell {
+        grid-template-columns: 1fr;
+        padding: 24px 16px;
+      }
+      .booking-main { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="marketing.jsx"></script>
+  <script type="text/babel" src="booking.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    /* ------- Tweak defaults — persist live edits back to disk ------- */
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "hero_title1": "Your Cargo,",
+      "hero_title2": "Our Equipment.",
+      "hero_body": "Reserve online and pick up today. Support local with simple trailer rentals, no upsells or hassle.",
+      "cargo_name": "Enclosed Cargo",
+      "cargo_subheading": "7ft x 14ft, 6000lbs",
+      "cargo_tagline": "Secure, weather-protected enclosed trailer perfect for moving, storage, and keeping your items protected. Includes straps, a dolly, and an adjustable hitch for an easy pickup-and-go rental.",
+      "cargo_daily": 120,
+      "hauler_name": "Car Hauler / Equipment",
+      "hauler_subheading": "7ft x 20ft, 9000lbs",
+      "hauler_tagline": "Heavy-duty open-deck car hauler with loading ramps, perfect for vehicles, ATVs, equipment, and project hauls. Includes a toolbox with various straps, a 12K winch, and a roadside kit for a smoother, more prepared rental.",
+      "hauler_daily": 100
+    }/*EDITMODE-END*/;
+
+    /* Apply tweak values into the live TVR_CONTENT object so all components pick them up. */
+    function applyTweaks(t) {
+      window.TVR_CONTENT.hero.titleLine1 = t.hero_title1;
+      window.TVR_CONTENT.hero.titleLine2 = t.hero_title2;
+      window.TVR_CONTENT.hero.body       = t.hero_body;
+      const apply = (id, prefix) => {
+        const f = window.TVR_CONTENT.fleet.find(x => x.id === id);
+        if (!f) return;
+        f.name       = t[prefix + "_name"];
+        // navLabel stays from content.js so the top-nav can use a shorter form
+        f.subheading = t[prefix + "_subheading"];
+        f.tagline    = t[prefix + "_tagline"];
+        f.daily      = Number(t[prefix + "_daily"]) || f.daily;
+      };
+      apply("cargo",  "cargo");
+      apply("hauler", "hauler");
+    }
+
+    /* ------- Marketing app (intercepts route="booking" → switches outer view) ------- */
+    function MarketingApp({ setView }) {
+      const { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, Footer } = window.MK;
+      const [route, setRouteRaw] = useState("home");
+
+      // Intercept setRoute: any switch to "booking" jumps to the booking view at the App level.
+      const setRoute = (r) => {
+        if (r === "booking") {
+          setView("booking");
+          window.scrollTo(0, 0);
+          return;
+        }
+        setRouteRaw(r);
+        window.scrollTo(0, 0);
+      };
+
+      return (
+        <div data-screen-label={"Marketing · " + route}>
+          <TopNav route={route} setRoute={setRoute}/>
+          {route === "home" && <>
+            <HeroDark setRoute={setRoute}/>
+            <FleetGrid setRoute={setRoute}/>
+            <PickupBand setRoute={setRoute}/>
+            <CTABand setRoute={setRoute}/>
+          </>}
+          {route === "cargo"  && <FleetDetail trailerId="cargo"  setRoute={setRoute}/>}
+          {route === "hauler" && <FleetDetail trailerId="hauler" setRoute={setRoute}/>}
+          <Footer/>
+        </div>
+      );
+    }
+
+    /* ------- Booking app ------- */
+    const STEPS = ["Trailer", "Customer", "Documents", "Sign", "Pay", "Done"];
+
+    function BookingApp({ setView, presetTrailer }) {
+      const C = window.TVR_CONTENT.booking;
+      const {
+        TopBar, Stepper, OrderSummary,
+        StepTrailerDates, StepCustomer, StepDocs, StepAgreement, StepPayment, StepDone,
+      } = window.BK;
+
+      const today = new Date();
+      const inThree = new Date(today.getTime() + 3 * 86400 * 1000);
+      const fmt = d => d.toISOString().slice(0, 10);
+
+      const initial = {
+        trailerId: presetTrailer || "",
+        pickup: fmt(today), dropoff: fmt(inThree), pickupNote: "",
+        days: 3,
+        name: "", email: "", phone: "", tow: "", hitch: "", purpose: "",
+        docs: {},
+        signature: "", agreed: false,
+        card: "", exp: "", cvv: "", cardName: "", zip: "",
+      };
+
+      const [state, setState] = useState(initial);
+      const [step, setStep]   = useState(0);
+
+      const goNext = () => { setStep(s => Math.min(STEPS.length - 1, s + 1)); window.scrollTo(0, 0); };
+      const goBack = () => { setStep(s => Math.max(0, s - 1)); window.scrollTo(0, 0); };
+      const reset  = () => { setState(initial); setStep(0); setView("marketing"); };
+
+      const StepComp = [
+        StepTrailerDates, StepCustomer, StepDocs,
+        StepAgreement, StepPayment, StepDone,
+      ][step];
+
+      return (
+        <div data-screen-label={"Booking · step " + (step + 1) + " · " + STEPS[step]} className="tvr-booking-bg">
+          {/* Back-to-marketing strip */}
+          <div style={{
+            background: "#1568be", color: "#fff",
+            padding: "10px 32px",
+            font: '400 12px/1 "Inter", sans-serif', letterSpacing: "0.3px",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <button onClick={() => setView("marketing")} style={{
+              background: "transparent", border: 0, color: "#fff", cursor: "pointer", padding: 0,
+              font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
+              display: "inline-flex", alignItems: "center", gap: 8,
+            }}>← {C.backToSite}</button>
+            <span style={{ opacity: 0.75 }}>{C.secureNote}</span>
+          </div>
+
+          <TopBar/>
+          <Stepper steps={STEPS} current={step}/>
+          <div className="booking-shell">
+            <div className="booking-main">
+              <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
+            </div>
+            {step < STEPS.length - 1 && <OrderSummary state={state}/>}
+          </div>
+        </div>
+      );
+    }
+
+    /* ------- Top-level router ------- */
+    function App() {
+      const [view, setView] = useState("marketing"); // "marketing" | "booking"
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      applyTweaks(t); // run before child renders so they read updated content
+      return (
+        <>
+          {view === "marketing"
+            ? <MarketingApp setView={setView}/>
+            : <BookingApp setView={setView}/>}
+          <TweaksPanel title="Tweaks" noDeckControls>
+            <TweakSection label="Hero">
+              <TweakText label="Title (line 1)" value={t.hero_title1} onChange={v => setTweak('hero_title1', v)}/>
+              <TweakText label="Title (line 2)" value={t.hero_title2} onChange={v => setTweak('hero_title2', v)}/>
+              <TweakText label="Body"           value={t.hero_body}   onChange={v => setTweak('hero_body', v)}/>
+            </TweakSection>
+            <TweakSection label="Enclosed Cargo 7 × 14">
+              <TweakText   label="Name"        value={t.cargo_name}       onChange={v => setTweak('cargo_name', v)}/>
+              <TweakText   label="Subheading"  value={t.cargo_subheading} onChange={v => setTweak('cargo_subheading', v)}/>
+              <TweakText   label="Tagline"     value={t.cargo_tagline}    onChange={v => setTweak('cargo_tagline', v)}/>
+              <TweakNumber label="Daily price" value={t.cargo_daily} min={0} max={9999} unit="$" onChange={v => setTweak('cargo_daily', v)}/>
+            </TweakSection>
+            <TweakSection label="Car Hauler / Equipment 7 × 20">
+              <TweakText   label="Name"        value={t.hauler_name}       onChange={v => setTweak('hauler_name', v)}/>
+              <TweakText   label="Subheading"  value={t.hauler_subheading} onChange={v => setTweak('hauler_subheading', v)}/>
+              <TweakText   label="Tagline"     value={t.hauler_tagline}    onChange={v => setTweak('hauler_tagline', v)}/>
+              <TweakNumber label="Daily price" value={t.hauler_daily} min={0} max={9999} unit="$" onChange={v => setTweak('hauler_daily', v)}/>
+            </TweakSection>
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  </script>
+</body>
+</html>
