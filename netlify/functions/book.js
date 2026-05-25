@@ -49,6 +49,16 @@ exports.handler = async (event) => {
     return err(400, "Invalid JSON body.");
   }
 
+  // ── coupon validation ─────────────────────────────────────────────────────
+  if (body.action === "coupon") {
+    const { code } = body;
+    const adminCode = process.env.ADMIN_COUPON_CODE;
+    if (adminCode && code === adminCode) {
+      return ok({ valid: true });
+    }
+    return ok({ valid: false });
+  }
+
   // ── availability ──────────────────────────────────────────────────────────
   if (body.action === "availability") {
     const { trailerId } = body;
@@ -71,10 +81,15 @@ exports.handler = async (event) => {
 
   // ── book ──────────────────────────────────────────────────────────────────
   if (body.action === "book") {
-    const { trailerId, pickup, dropoff, paymentMethodId, depositAmount, customer } = body;
+    const { trailerId, pickup, dropoff, paymentMethodId, depositAmount, couponCode, customer } = body;
+
+    // Admin coupon: override charge to $1 regardless of depositAmount from client.
+    const adminCode = process.env.ADMIN_COUPON_CODE;
+    const couponValid = adminCode && couponCode === adminCode;
+    const chargeAmount = couponValid ? 1 : depositAmount;
 
     // Validate required fields
-    if (!trailerId || !pickup || !dropoff || !paymentMethodId || !depositAmount) {
+    if (!trailerId || !pickup || !dropoff || !paymentMethodId || !chargeAmount) {
       return err(400, "Missing required booking fields.");
     }
     if (!customer?.name || !customer?.email) {
@@ -105,7 +120,7 @@ exports.handler = async (event) => {
     let paymentIntent;
     try {
       paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(depositAmount * 100), // Stripe uses cents
+        amount: Math.round(chargeAmount * 100), // Stripe uses cents
         currency: "usd",
         payment_method: paymentMethodId,
         payment_method_types: ["card"],
@@ -140,7 +155,7 @@ exports.handler = async (event) => {
       customer_email: customer.email,
       customer_phone: customer.phone || "",
       payment_intent_id: paymentIntent.id,
-      deposit_amount: depositAmount,
+      deposit_amount: chargeAmount,
     });
 
     if (insertErr) {

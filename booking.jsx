@@ -692,7 +692,39 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const trailer = TRAILERS[state.trailerId];
   const fleet   = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
   const fleetT  = fleet.find(x => x.id === state.trailerId);
-  const deposit = fleetT?.deposit || 200;
+  const baseDeposit = fleetT?.deposit || 200;
+
+  const [couponCode,    setCouponCode]    = React.useState("");
+  const [couponOpen,    setCouponOpen]    = React.useState(false);
+  const [couponApplied, setCouponApplied] = React.useState(false);
+  const [couponError,   setCouponError]   = React.useState(null);
+  const [couponLoading, setCouponLoading] = React.useState(false);
+
+  const deposit = couponApplied ? 1 : baseDeposit;
+
+  async function applyCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError(null);
+    try {
+      const res = await fetch("/.netlify/functions/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "coupon", code: couponCode.trim() }),
+      });
+      const result = await res.json();
+      if (result.valid) {
+        setCouponApplied(true);
+      } else {
+        setCouponError("Invalid code.");
+        setCouponApplied(false);
+      }
+    } catch {
+      setCouponError("Could not validate — try submitting anyway.");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
 
   const valid = stripeReady && cardComplete && !processing;
 
@@ -740,6 +772,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           dropoff: state.dropoff,
           paymentMethodId: paymentMethod.id,
           depositAmount: deposit,
+          couponCode: couponCode.trim() || undefined,
           customer: { name: state.name, email: state.email, phone: state.phone },
         }),
       });
@@ -813,17 +846,62 @@ function StepPayment({ state, setState, onNext, onBack }) {
         )}
       </div>
 
-      <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 24, marginBottom: 32 }}>
+      {/* Coupon code */}
+      <div style={{ marginTop: 20 }}>
+        <button type="button" onClick={() => setCouponOpen(o => !o)} style={{
+          background: "none", border: 0, padding: 0, cursor: "pointer",
+          font: '400 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px",
+        }}>
+          {couponOpen ? "▲ Hide coupon code" : "▼ Have a coupon code?"}
+        </button>
+        {couponOpen && (
+          <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+            <input
+              value={couponCode}
+              onChange={e => { setCouponCode(e.target.value); setCouponApplied(false); setCouponError(null); }}
+              onKeyDown={e => e.key === "Enter" && applyCoupon()}
+              placeholder="Enter code"
+              style={{
+                flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6",
+                borderRadius: 0, outline: "none", background: "#fff", color: "#262626",
+                font: '300 14px/1 "Inter", sans-serif',
+              }}
+            />
+            <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{
+              height: 40, padding: "0 16px", background: "#262626", color: "#fff", border: 0,
+              cursor: couponLoading || !couponCode.trim() ? "not-allowed" : "pointer",
+              font: '700 12px/1 "Inter", sans-serif', letterSpacing: "0.5px",
+              opacity: couponLoading || !couponCode.trim() ? 0.5 : 1,
+            }}>
+              {couponLoading ? "…" : "Apply"}
+            </button>
+          </div>
+        )}
+        {couponApplied && (
+          <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>
+            Code applied — total reduced to <strong style={{ fontWeight: 700 }}>$1</strong>.
+          </div>
+        )}
+        {couponError && (
+          <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#dc2626" }}>{couponError}</div>
+        )}
+      </div>
+
+      <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 32 }}>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          Card data goes directly to Stripe — TVR never sees the full number. A <strong style={{ fontWeight: 700, color: "#262626" }}>${deposit} refundable deposit</strong> will be authorized on this card.
+          Card data goes directly to Stripe — TVR never sees the full number.{" "}
+          {couponApplied
+            ? <strong style={{ fontWeight: 700, color: "#262626" }}>Coupon applied — $1 charge only.</strong>
+            : <>A <strong style={{ fontWeight: 700, color: "#262626" }}>${deposit} refundable deposit</strong> will be authorized on this card.</>
+          }
         </span>
       </div>
 
       <StepFooter
         onBack={processing ? null : onBack}
         onNext={handlePay}
-        nextLabel={processing ? "Processing…" : `Pay $${deposit} deposit & confirm`}
+        nextLabel={processing ? "Processing…" : `Pay $${deposit} & confirm`}
         disabled={!valid}
       />
     </StepShell>
