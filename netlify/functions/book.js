@@ -50,8 +50,9 @@ function makeToken(action, bookingId) {
 
 /* ── Resend email ───────────────────────────────────────────────────────── */
 async function sendEmail({ to, subject, html }) {
-  const fromDomain = (process.env.SITE_URL || "rentwithtvr.com")
-    .replace(/https?:\/\//, "").replace(/\/.*/, "");
+  // Use a custom from address once rentwithtvr.com is verified in Resend.
+  // Until then, onboarding@resend.dev works without domain verification.
+  const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -59,7 +60,7 @@ async function sendEmail({ to, subject, html }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Tennessee Valley Rentals <bookings@${fromDomain}>`,
+      from: `Tennessee Valley Rentals <${from}>`,
       to,
       subject,
       html,
