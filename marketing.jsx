@@ -173,7 +173,7 @@ function FleetCard({ trailer, onSpecs }) {
     <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column" }}>
       <PhotoSlot id={`detail-${trailer.id}`} src={trailer.photo} scale={trailer.photoScale || 1}
       placeholder={`Drop a photo of the ${trailer.name}`}
-      plateStyle={{ background: "#f4f6f9", aspectRatio: "16 / 10", overflow: "hidden" }}
+      plateStyle={{ background: "#ebebeb", aspectRatio: "16 / 10", overflow: "hidden" }}
       style={{ width: "85%", height: "100%" }} />
       <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8 }}>
         <h3 style={{ font: '700 24px/1.25 "Inter", sans-serif', margin: 0, color: "#262626" }}>{trailer.name}</h3>
@@ -268,7 +268,7 @@ function FleetDetail({ trailerId, setRoute }) {
           </div>
           <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
           placeholder={`Drop a photo of the ${t.name}`}
-          plateStyle={{ background: "#fff", padding: isMobile ? 12 : 16 }}
+          plateStyle={{ background: "#ebebeb", padding: isMobile ? 12 : 16 }}
           style={{ width: "100%", height: isMobile ? 220 : 360 }} />
         </div>
       </section>
