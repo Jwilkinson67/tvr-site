@@ -296,6 +296,7 @@ function listTrailers() {
 /* ---------- 1. Pick trailer + dates ---------- */
 function StepTrailerDates({ state, setState, onNext }) {
   const today = todayISO();
+  const isMobile = useWindowWidth() < 768;
   const [loadingAvail, setLoadingAvail] = React.useState(false);
 
   // When a trailer is selected, pull its booked ranges from the server and
@@ -363,20 +364,46 @@ function StepTrailerDates({ state, setState, onNext }) {
         })}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
-        <Field label="Pickup date" error={state.pickup && !pickupPastOk ? "Pickup date can't be in the past." : null}>
-          <Input type="date" min={today} value={state.pickup} onChange={v => {
-            const d = computeDays(v, state.dropoff);
-            setState({...state, pickup: v, days: d});
-          }}/>
-        </Field>
-        <Field label="Return date" error={state.pickup && state.dropoff && !dateOrderOk ? "Return must be on or after pickup." : null}>
-          <Input type="date" min={state.pickup || today} value={state.dropoff} onChange={v => {
-            const d = computeDays(state.pickup, v);
-            setState({...state, dropoff: v, days: d});
-          }}/>
-        </Field>
-      </div>
+      {isMobile ? (
+        <div style={{ border: "1px solid #e6e6e6", marginBottom: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+            <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup date</div>
+              <input type="date" min={today} value={state.pickup || ""}
+                onChange={e => { const d = computeDays(e.target.value, state.dropoff); setState({...state, pickup: e.target.value, days: d}); }}
+                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+              />
+            </div>
+            <div style={{ padding: "14px 16px" }}>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return date</div>
+              <input type="date" min={state.pickup || today} value={state.dropoff || ""}
+                onChange={e => { const d = computeDays(state.pickup, e.target.value); setState({...state, dropoff: e.target.value, days: d}); }}
+                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+              />
+            </div>
+          </div>
+          {(state.pickup && !pickupPastOk) || (state.pickup && state.dropoff && !dateOrderOk) ? (
+            <div style={{ padding: "8px 16px", background: "#fff2f2", borderTop: "1px solid #fecaca", font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626" }}>
+              {!pickupPastOk ? "Pickup date can't be in the past." : "Return must be on or after pickup."}
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
+          <Field label="Pickup date" error={state.pickup && !pickupPastOk ? "Pickup date can't be in the past." : null}>
+            <Input type="date" min={today} value={state.pickup} onChange={v => {
+              const d = computeDays(v, state.dropoff);
+              setState({...state, pickup: v, days: d});
+            }}/>
+          </Field>
+          <Field label="Return date" error={state.pickup && state.dropoff && !dateOrderOk ? "Return must be on or after pickup." : null}>
+            <Input type="date" min={state.pickup || today} value={state.dropoff} onChange={v => {
+              const d = computeDays(state.pickup, v);
+              setState({...state, dropoff: v, days: d});
+            }}/>
+          </Field>
+        </div>
+      )}
 
       {conflict && (
         <div style={{ padding: "14px 16px", background: "#fff2f2", borderLeft: "3px solid #b5212b", marginBottom: 24, display: "flex", gap: 12, alignItems: "flex-start" }}>
