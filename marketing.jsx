@@ -76,12 +76,12 @@ function TopNav({ route, setRoute }) {
       background: "#fff", borderBottom: "1px solid #e6e6e6"
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
-        <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", textDecoration: "none" }}>
-          <span style={{ width: 4, height: isMobile ? 28 : 34, background: "#b5212b", borderRadius: 2, flexShrink: 0 }} />
-          <div>
-            <div style={{ font: `700 ${isMobile ? "13px" : "15px"}/1.1 "Inter", sans-serif`, color: "#1568be", letterSpacing: "0.3px" }}>Tennessee Valley</div>
-            <div style={{ font: `700 ${isMobile ? "13px" : "15px"}/1.1 "Inter", sans-serif`, color: "#262626", letterSpacing: "0.3px" }}>Rentals</div>
-          </div>
+        <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", gap: isMobile ? 8 : 10, cursor: "pointer", textDecoration: "none" }}>
+          <span style={{ width: isMobile ? 28 : 40, height: 2.5, background: "#b5212b", flexShrink: 0 }} />
+          <span style={{
+            font: `800 ${isMobile ? "15px" : "19px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
+            fontStyle: "italic", color: "#1568be", letterSpacing: "0.5px", textTransform: "uppercase",
+          }}>Tennessee Valley Rentals</span>
         </a>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 32 }}>
