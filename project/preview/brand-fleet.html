@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 18px 20px; background: #fff; margin: 0; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .card { background: #fafafa; padding: 0; display: flex; flex-direction: column; }
+  .photo { aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; padding: 12px; }
+  .photo img { width: 100%; height: 100%; object-fit: contain; }
+  .label { padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline; background: #fff; }
+  .name { font: 700 13px/1.3 var(--tvr-font-sans); color: var(--tvr-ink); }
+  .tag { font: 400 10px/1 var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+  .wide { grid-column: 1 / -1; }
+  .wide .photo { aspect-ratio: 21/9; padding: 0; }
+  .wide .photo img { object-fit: cover; }
+</style></head><body>
+<div class="grid">
+  <div class="card">
+    <div class="photo"><img src="../assets/fleet/cargo-8x16.png" alt="Cargo trailer"/></div>
+    <div class="label"><span class="name">Enclosed Cargo 8.5 × 16</span><span class="tag">Studio · 3/4</span></div>
+  </div>
+  <div class="card">
+    <div class="photo"><img src="../assets/fleet/hauler-8x20.png" alt="Hauler trailer"/></div>
+    <div class="label"><span class="name">Car Hauler / Equipment 8.5 × 20</span><span class="tag">Studio · 3/4</span></div>
+  </div>
+  <div class="card wide">
+    <div class="photo"><img src="../assets/fleet/yard-tractor-hauler.png" alt="Hauler in use"/></div>
+    <div class="label"><span class="name">Yard · hauler in use</span><span class="tag">Lifestyle · 21:9 hero crop</span></div>
+  </div>
+</div>
+</body></html>

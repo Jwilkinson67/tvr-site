@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px; background: #ffffff; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .sw { display: flex; flex-direction: column; gap: 8px; }
+  .chip { height: 80px; border: 1px solid var(--tvr-hairline); position: relative; }
+  .chip .v { position: absolute; bottom: 8px; left: 10px; font: 700 11px/1 var(--tvr-font-sans); letter-spacing: .5px; color: #262626; }
+  .meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .name { font: 700 11px/1 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1px; text-transform: uppercase; }
+  .hex  { font: 400 11px/1 var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: .5px; }
+</style></head><body>
+<div class="row">
+  <div class="sw"><div class="chip" style="background:#ffffff"><span class="v">Canvas</span></div>
+    <div class="meta"><span class="name">Canvas</span><span class="hex">#FFFFFF</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fafafa"><span class="v">Card</span></div>
+    <div class="meta"><span class="name">Surface Card</span><span class="hex">#FAFAFA</span></div></div>
+  <div class="sw"><div class="chip" style="background:#f7f7f7"><span class="v">Soft</span></div>
+    <div class="meta"><span class="name">Surface Soft</span><span class="hex">#F7F7F7</span></div></div>
+  <div class="sw"><div class="chip" style="background:#ebebeb"><span class="v">Strong</span></div>
+    <div class="meta"><span class="name">Surface Strong</span><span class="hex">#EBEBEB</span></div></div>
+</div>
+</body></html>

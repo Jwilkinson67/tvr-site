@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 24px; background: #ffffff; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: end; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .box { width: 80px; height: 80px; background: var(--tvr-canvas); border: 1.5px solid var(--tvr-ink); }
+  .name { font: 700 11px/1 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1px; text-transform: uppercase; }
+  .val { font: 400 11px/1 var(--tvr-font-sans); color: var(--tvr-muted); }
+  .blue { background: #1568be; border: 0; }
+  .note { grid-column: 1 / -1; font: 400 12px/1.55 var(--tvr-font-sans); color: var(--tvr-muted); padding-top: 8px; border-top: 1px solid var(--tvr-hairline); }
+</style></head><body>
+<div class="row">
+  <div class="item"><div class="box blue" style="border-radius:0"></div><div class="name">None</div><div class="val">0px</div></div>
+  <div class="item"><div class="box blue" style="border-radius:2px"></div><div class="name">XS</div><div class="val">2px</div></div>
+  <div class="item"><div class="box blue" style="border-radius:8px"></div><div class="name">MD</div><div class="val">8px</div></div>
+  <div class="item"><div class="box blue" style="border-radius:9999px"></div><div class="name">Full</div><div class="val">circle</div></div>
+  <div class="note">Production usage is binary: <strong style="color: var(--tvr-ink); font-weight:700">0px for everything</strong>, 9999px for icon buttons + avatar marks only.</div>
+</div>
+</body></html>

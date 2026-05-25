@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px; background: #ffffff; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sw { display: flex; flex-direction: column; gap: 8px; }
+  .chip { height: 80px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid var(--tvr-hairline); }
+  .dot { width: 12px; height: 12px; border-radius: 9999px; }
+  .label { font: 700 13px/1.3 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1px; text-transform: uppercase; }
+  .meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .name { font: 700 11px/1 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1px; text-transform: uppercase; }
+  .hex  { font: 400 11px/1 var(--tvr-font-sans); color: var(--tvr-muted); }
+</style></head><body>
+<div class="row">
+  <div class="sw">
+    <div class="chip"><span class="dot" style="background:#22c55e"></span><span class="label">Reservation confirmed</span></div>
+    <div class="meta"><span class="name">Success</span><span class="hex">#22C55E</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip"><span class="dot" style="background:#f59e0b"></span><span class="label">ID expires soon</span></div>
+    <div class="meta"><span class="name">Warning</span><span class="hex">#F59E0B</span></div>
+  </div>
+  <div class="sw">
+    <div class="chip"><span class="dot" style="background:#dc2626"></span><span class="label">Payment failed</span></div>
+    <div class="meta"><span class="name">Error</span><span class="hex">#DC2626</span></div>
+  </div>
+</div>
+</body></html>

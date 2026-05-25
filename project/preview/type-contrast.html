@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px; background: #ffffff; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+  .demo { font-family: var(--tvr-font-sans); color: var(--tvr-ink); }
+  .demo .heavy { font-weight: 700; font-size: 38px; line-height: 1; }
+  .demo .light { font-weight: 300; font-size: 38px; line-height: 1; color: var(--tvr-body); }
+  .lockup { display: flex; gap: 0; align-items: baseline; }
+  .meta { font: 400 12px/1.55 var(--tvr-font-sans); color: var(--tvr-muted); }
+  .meta strong { color: var(--tvr-ink); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 11px; display: block; margin-bottom: 6px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 14px; border: 1px solid var(--tvr-hairline); }
+  .pair span { font: 700 32px/1 var(--tvr-font-sans); color: var(--tvr-ink); }
+  .pair span.l { font-weight: 300; color: var(--tvr-body); }
+  .pair small { display: block; font: 400 10px/1 var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; }
+</style></head><body>
+<div class="grid">
+  <div>
+    <div class="pair">
+      <div><span>Aa</span><small>700 · Display</small></div>
+      <div><span class="l">Aa</span><small>300 · Light Body</small></div>
+    </div>
+  </div>
+  <div class="meta">
+    <strong>Editorial signature</strong>
+    The 700/300 contrast is the brand voice — heavy display next to light body. Weight 500 is absent from the system. Weight 400 lives only in caption + nav.
+  </div>
+</div>
+</body></html>

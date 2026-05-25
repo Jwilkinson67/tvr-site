@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 0; background: #fff; }
+  .hero { position: relative; background: #f4f6f9; padding: 36px 32px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: center; }
+  .red-sash { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #b5212b; }
+  .kicker { font: 700 11px/1 var(--tvr-font-sans); letter-spacing: 2px; text-transform: uppercase; color: #1568be; margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+  .kicker::before { content: ""; width: 24px; height: 1px; background: #b5212b; display: inline-block; }
+  .h1 { font: 700 36px/1.05 var(--tvr-font-sans); color: #262626; margin: 0 0 12px 0; }
+  .sub { font: 300 14px/1.55 var(--tvr-font-sans); color: #3c3c3c; max-width: 380px; margin-bottom: 18px; }
+  .ctas { display: flex; gap: 10px; }
+  .btn-p { background: #1568be; color: #fff; height: 44px; padding: 0 24px; font: 700 13px/1 var(--tvr-font-sans); letter-spacing: 0.5px; border: 0; cursor: pointer; }
+  .btn-s { background: #fff; color: #262626; border: 1px solid #cccccc; height: 44px; padding: 0 24px; font: 700 13px/1 var(--tvr-font-sans); letter-spacing: 0.5px; cursor: pointer; }
+  .img { background: #fff; padding: 12px; }
+  .img img { width: 100%; height: auto; display: block; }
+</style></head><body>
+<div class="hero">
+  <span class="red-sash"></span>
+  <div style="padding-left: 16px;">
+    <div class="kicker">TVR · CHATTANOOGA TN</div>
+    <div class="h1">Your Cargo,<br/>Our Equipment.</div>
+    <div class="sub">Reserve online. Pick up in Chattanooga.</div>
+    <div class="ctas">
+      <button class="btn-p">Reserve</button>
+      <button class="btn-s">View fleet</button>
+    </div>
+  </div>
+  <div class="img"><img src="../assets/fleet/yard-tractor-hauler.png" alt=""/></div>
+</div>
+</body></html>

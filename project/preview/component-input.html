@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 24px; background: #ffffff; display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+  label { display: block; font: 700 13px/1.3 var(--tvr-font-sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--tvr-ink); margin-bottom: 8px; }
+  .input { display: block; width: 100%; height: 48px; padding: 14px 16px; background: #fff; color: #262626; border: 1px solid #e6e6e6; font: 300 16px/1.55 var(--tvr-font-sans); outline: none; }
+  .input.focus { border-color: #262626; }
+  .input.error { border-color: #dc2626; }
+  .help { font: 400 11px/1.4 var(--tvr-font-sans); color: var(--tvr-muted); margin-top: 6px; letter-spacing: 0.3px; }
+  .help.err { color: #dc2626; }
+  .meta { font: 400 12px/1.55 var(--tvr-font-sans); color: var(--tvr-muted); }
+  .meta strong { color: var(--tvr-ink); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 11px; display: block; margin-bottom: 6px; }
+</style></head><body>
+<div>
+  <label>Full name</label>
+  <input class="input focus" placeholder="" value="Walker Boyd"/>
+  <div class="help">As shown on driver's license.</div>
+</div>
+<div class="meta">
+  <strong>Text input</strong>
+  48px height · 1px hairline (#E6E6E6) · 0px radius · Inter 300 16px body. Focus thickens border to ink. Error swaps to #DC2626.
+</div>
+</body></html>

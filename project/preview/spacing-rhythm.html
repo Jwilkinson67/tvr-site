@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 0; background: #ffffff; margin: 0; }
+  .canvas { background: #ffffff; }
+  .band { display: flex; align-items: center; justify-content: center; }
+  .soft { background: #f6f7f9; }
+  .card-soft { background: #f4f6f9; }
+  .pad-section { padding: 28px 24px; }
+  .marker { font: 700 10px/1 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1.5px; text-transform: uppercase; }
+  .marker .red { color: #b5212b; }
+  .annot { position: absolute; right: 12px; font: 400 10px/1 var(--tvr-font-sans); letter-spacing: 1px; color: #9a9a9a; }
+  .wrap { position: relative; }
+  .red-sash { height: 4px; background: #b5212b; width: 100%; }
+</style></head><body>
+<div class="canvas">
+  <div class="wrap"><div class="band pad-section"><span class="marker">CANVAS BAND</span></div><span class="annot" style="top:14px;">80px</span></div>
+  <div class="wrap"><div class="band card-soft pad-section"><span class="marker">FLEET BAND \u00b7 SOFT</span></div><span class="annot" style="top:14px;">80px</span></div>
+  <div class="wrap"><div class="band pad-section"><span class="marker"><span class="red">\u25A0\u25A0\u25A0</span>&nbsp;&nbsp;FEATURE BAND</span></div><span class="annot" style="top:14px;">80px</span></div>
+  <div class="red-sash"></div>
+  <div class="wrap"><div class="band soft pad-section"><span class="marker">FOOTER</span></div><span class="annot" style="top:14px;">64px</span></div>
+</div>
+</body></html>

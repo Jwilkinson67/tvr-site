@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px; background: #ffffff; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .card { background: #fff; padding: 0; border: 1px solid var(--tvr-hairline); }
+  .photo { background: #fafafa; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .photo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .photo.hauler img { transform: scale(1.18); transform-origin: center center; }
+  .body { padding: 20px; display: grid; gap: 8px; }
+  .title { font: 700 18px/1.4 var(--tvr-font-sans); color: var(--tvr-ink); }
+  .tag { font: 300 14px/1.55 var(--tvr-font-sans); color: var(--tvr-body); }
+  .row { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--tvr-hairline); }
+  .price { font: 700 18px/1 var(--tvr-font-sans); color: var(--tvr-ink); }
+  .price small { font: 300 12px/1 var(--tvr-font-sans); color: var(--tvr-muted); }
+  .link { font: 700 12px/1.3 var(--tvr-font-sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--tvr-ink); }
+</style></head><body>
+  <div class="card">
+    <div class="photo"><img src="../assets/fleet/cargo-8x16.png" alt=""/></div>
+    <div class="body">
+      <div class="title">Enclosed Cargo 8.5 × 16</div>
+      <div class="tag">Enclosed · 7,000 lb GVWR · tandem axle</div>
+      <div class="row">
+        <span class="price">$125<small> / day</small></span>
+        <span class="link">Reserve ›</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="photo hauler"><img src="../assets/fleet/hauler-8x20.png" alt=""/></div>
+    <div class="body">
+      <div class="title">Car Hauler / Equipment 8.5 × 20</div>
+      <div class="tag">Open deck · 9,990 lb GVWR · loading ramp</div>
+      <div class="row">
+        <span class="price">$110<small> / day</small></span>
+        <span class="link">Reserve ›</span>
+      </div>
+    </div>
+  </div>
+</body></html>

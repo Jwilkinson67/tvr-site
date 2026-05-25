@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 20px; background: #ffffff; }
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .sw { display: flex; flex-direction: column; gap: 8px; }
+  .chip { height: 80px; border: 1px solid var(--tvr-hairline); display: flex; align-items: flex-end; padding: 8px 10px; }
+  .chip .preview { font: 700 22px/1 var(--tvr-font-sans); }
+  .meta { display: flex; flex-direction: column; gap: 2px; }
+  .name { font: 700 11px/1.2 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1px; text-transform: uppercase; }
+  .hex  { font: 400 11px/1 var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: .5px; }
+</style></head><body>
+<div class="row">
+  <div class="sw"><div class="chip" style="background:#fff"><span class="preview" style="color:#262626">Aa</span></div>
+    <div class="meta"><span class="name">Ink</span><span class="hex">#262626 · display</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fff"><span class="preview" style="color:#3c3c3c; font-weight:300">Aa</span></div>
+    <div class="meta"><span class="name">Body</span><span class="hex">#3C3C3C · body</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fff"><span class="preview" style="color:#1568be">Aa</span></div>
+    <div class="meta"><span class="name">Navy</span><span class="hex">#1568be · action</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fff"><span class="preview" style="color:#6b6b6b; font-weight:300">Aa</span></div>
+    <div class="meta"><span class="name">Muted</span><span class="hex">#6B6B6B · captions</span></div></div>
+  <div class="sw"><div class="chip" style="background:#fff"><span class="preview" style="color:#9a9a9a; font-weight:300">Aa</span></div>
+    <div class="meta"><span class="name">Muted Soft</span><span class="hex">#9A9A9A · disabled</span></div></div>
+  <div class="sw"><div class="chip" style="background:#1568be"><span class="preview" style="color:#ffffff">Aa</span></div>
+    <div class="meta"><span class="name">On Navy</span><span class="hex">#FFFFFF on navy CTA</span></div></div>
+</div>
+</body></html>

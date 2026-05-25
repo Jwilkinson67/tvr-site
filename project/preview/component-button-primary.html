@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 24px; background: #ffffff; display: grid; grid-template-columns: repeat(2, auto); gap: 14px; justify-content: start; align-items: center; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 32px; border: 0; font: 700 14px/1 var(--tvr-font-sans); letter-spacing: 0.5px; cursor: pointer; }
+  .primary { background: #1568be; color: #fff; }
+  .primary.active { background: #0e4f95; color: #fff; }
+  .primary.disabled { background: #d6d6d6; color: #6b6b6b; cursor: not-allowed; }
+  .label { font: 400 11px/1 var(--tvr-font-sans); color: var(--tvr-muted); letter-spacing: 1px; text-transform: uppercase; }
+</style></head><body>
+  <button class="btn primary">Reserve</button>
+  <span class="label">Primary · default</span>
+  <button class="btn primary active">Reserve</button>
+  <span class="label">Primary · pressed</span>
+  <button class="btn primary disabled">Reserve</button>
+  <span class="label">Primary · disabled</span>
+</body></html>

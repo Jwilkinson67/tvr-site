@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { padding: 0; background: #fff; margin: 0; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .wm { padding: 28px; display: flex; align-items: center; justify-content: center; min-height: 130px; }
+  .wm.light { background: #ffffff; border-right: 1px solid #e6e6e6; }
+  .wm.soft  { background: #f4f6f9; }
+  .wm img { max-width: 90%; max-height: 110px; height: auto; display: block; }
+  .meta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid #e6e6e6; }
+  .meta { padding: 12px 16px; border-right: 1px solid #e6e6e6; }
+  .meta:last-child { border-right: 0; }
+  .meta .name { font: 700 11px/1 var(--tvr-font-sans); color: var(--tvr-ink); letter-spacing: 1.5px; text-transform: uppercase; }
+  .meta .sub  { font: 400 11px/1.4 var(--tvr-font-sans); color: var(--tvr-muted); margin-top: 6px; }
+</style></head><body>
+<div class="row">
+  <div class="wm light"><img src="../assets/tvr-logo-primary.png" alt="TVR primary"/></div>
+  <div class="wm soft"><img src="../assets/tvr-logo-primary.png" alt="TVR on soft"/></div>
+</div>
+<div class="meta-row">
+  <div class="meta"><div class="name">Primary lockup · on white</div><div class="sub">Top nav · footer · email · invoices</div></div>
+  <div class="meta"><div class="name">On soft surface</div><div class="sub">Card plate (#f4f6f9) · sub-nav band</div></div>
+</div>
+<div class="row" style="border-top: 1px solid #e6e6e6;">
+  <div class="wm light" style="min-height: 96px; gap: 24px;">
+    <img src="../assets/tvr-logo-mark.png" alt="" style="max-height:64px"/>
+    <img src="../assets/tvr-logo-mark.png" alt="" style="max-height:40px"/>
+    <img src="../assets/tvr-logo-mark.png" alt="" style="max-height:24px"/>
+  </div>
+  <div class="wm soft" style="min-height: 96px; gap: 24px;">
+    <img src="../assets/tvr-logo-mark.png" alt="" style="max-height:64px"/>
+    <img src="../assets/tvr-logo-mark.png" alt="" style="max-height:40px"/>
+  </div>
+</div>
+<div class="meta-row">
+  <div class="meta"><div class="name">Monogram · 64 / 40 / 24</div><div class="sub">App icon · avatar · favicon · compact nav</div></div>
+  <div class="meta"><div class="name">Monogram on soft</div><div class="sub">Document headers · receipts</div></div>
+</div>
+</body></html>
