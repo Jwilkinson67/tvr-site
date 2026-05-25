@@ -76,8 +76,12 @@ function TopNav({ route, setRoute }) {
       background: "#fff", borderBottom: "1px solid #e6e6e6"
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
-        <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-          <img src="assets/tvr-logo-primary-transparent.png" alt="TVR Tennessee Valley Rentals" style={{ height: isMobile ? 36 : 44, width: "auto", mixBlendMode: "multiply" }} />
+        <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", textDecoration: "none" }}>
+          <span style={{ width: 4, height: isMobile ? 28 : 34, background: "#b5212b", borderRadius: 2, flexShrink: 0 }} />
+          <div>
+            <div style={{ font: `700 ${isMobile ? "13px" : "15px"}/1.1 "Inter", sans-serif`, color: "#1568be", letterSpacing: "0.3px" }}>Tennessee Valley</div>
+            <div style={{ font: `700 ${isMobile ? "13px" : "15px"}/1.1 "Inter", sans-serif`, color: "#262626", letterSpacing: "0.3px" }}>Rentals</div>
+          </div>
         </a>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 32 }}>
@@ -136,7 +140,7 @@ function HeroDark({ setRoute }) {
     <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <div style={{
-        padding: "80px 80px 80px 96px",
+        padding: "56px 80px 56px 96px",
         display: "grid", gridTemplateColumns: "1.1fr 1fr",
         gap: 48, alignItems: "center"
       }}>
@@ -156,8 +160,8 @@ function HeroDark({ setRoute }) {
           </div>
         </div>
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
-          plateStyle={{ background: "#fff", padding: 16 }}
-          style={{ width: "100%", height: 400 }} />
+          plateStyle={{ background: "#fff", padding: 0 }}
+          style={{ width: "100%", height: 300 }} />
       </div>
     </section>
   );

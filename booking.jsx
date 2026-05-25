@@ -154,9 +154,12 @@ function TopBar() {
       position: "sticky", top: 0, zIndex: 60,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ width: 4, height: 28, background: "#1568be" }}/>
-        <img src="assets/tvr-logo-primary-transparent.png" alt="TVR" style={{ height: 36, mixBlendMode: "multiply" }}/>
-        <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 12, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>Booking</span>
+        <span style={{ width: 4, height: 28, background: "#b5212b", borderRadius: 2 }}/>
+        <div>
+          <div style={{ font: '700 13px/1.1 "Inter", sans-serif', color: "#1568be" }}>Tennessee Valley</div>
+          <div style={{ font: '700 13px/1.1 "Inter", sans-serif', color: "#262626" }}>Rentals</div>
+        </div>
+        <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 8, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>Booking</span>
       </div>
       {!isMobile && (
         <div style={{ display: "flex", alignItems: "center", gap: 24, font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
