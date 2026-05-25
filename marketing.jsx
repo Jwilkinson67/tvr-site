@@ -237,15 +237,13 @@ function FleetDetail({ trailerId, setRoute }) {
             <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", marginTop: 24, marginBottom: 32, maxWidth: 460 }}>{t.detailTagline || t.tagline}</p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <MkButton onClick={() => setRoute("booking")}>Reserve · ${t.daily}/day</MkButton>
-              <MkButton variant="secondary" onClick={() => setRoute("home")}> ›</MkButton>
+              <MkButton variant="secondary" onClick={() => setRoute("home")}>← Back</MkButton>
             </div>
           </div>
-          {!isMobile && (
-            <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
-            placeholder={`Drop a photo of the ${t.name}`}
-            plateStyle={{ background: "#fff", padding: 16 }}
-            style={{ width: "100%", height: 360 }} />
-          )}
+          <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
+          placeholder={`Drop a photo of the ${t.name}`}
+          plateStyle={{ background: "#fff", padding: isMobile ? 12 : 16 }}
+          style={{ width: "100%", height: isMobile ? 220 : 360 }} />
         </div>
       </section>
 
