@@ -14,7 +14,7 @@ function useWindowWidth() {
 }
 
 /* ----------- Primitives ----------- */
-function MkButton({ variant = "primary", children, onClick, ...rest }) {
+function MkButton({ variant = "primary", children, onClick, style, ...rest }) {
   const base = {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
     height: 48, padding: "0 32px", border: 0,
@@ -28,7 +28,7 @@ function MkButton({ variant = "primary", children, onClick, ...rest }) {
     secondary: { background: "#fff", color: "#262626", border: "1px solid #cccccc" },
     onDark: { background: "transparent", color: "#fff", border: "1px solid #fff" }
   };
-  return <button style={{ ...base, ...variants[variant] }} onClick={onClick} {...rest}>{children}</button>;
+  return <button style={{ ...base, ...variants[variant], ...style }} onClick={onClick} {...rest}>{children}</button>;
 }
 
 function UpperLink({ children, onClick }) {
@@ -98,7 +98,7 @@ function TopNav({ route, setRoute }) {
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
-        <MkButton onClick={() => setRoute("booking")}>{c.nav.reserveLabel}</MkButton>
+        <MkButton onClick={() => setRoute("booking")} style={isMobile ? { height: 36, padding: "0 18px", fontSize: 13 } : {}}>{c.nav.reserveLabel}</MkButton>
       </div>
     </header>);
 
@@ -129,7 +129,7 @@ function HeroDark({ setRoute }) {
           <p style={{ font: '300 15px/1.6 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, marginBottom: 28 }}>
             {h.body}
           </p>
-          <MkButton onClick={() => setRoute("booking")} style={{ width: "100%" }}>{h.primaryCta}</MkButton>
+          <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
         </div>
       </section>
     );
