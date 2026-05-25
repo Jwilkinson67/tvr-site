@@ -99,7 +99,7 @@ function TopNav({ route, setRoute }) {
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
-        <MkButton onClick={() => setRoute("booking")} style={isMobile ? { height: 36, padding: "0 18px", fontSize: "13px" } : { background: "#1568be", color: "#fff", border: 0 }}>{c.nav.reserveLabel}</MkButton>
+        <MkButton onClick={() => setRoute("booking")} style={isMobile ? { height: 36, padding: "0 18px", fontSize: "13px" } : { background: "#1568be", color: "#fff", border: 0, height: 44, padding: "0 28px", fontSize: "15px", fontWeight: 800, letterSpacing: "0.8px" }}>{c.nav.reserveLabel}</MkButton>
       </div>
     </header>);
 
