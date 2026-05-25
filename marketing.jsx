@@ -17,7 +17,8 @@ function useWindowWidth() {
 function MkButton({ variant = "primary", children, onClick, style, ...rest }) {
   const base = {
     display: "inline-flex", alignItems: "center", justifyContent: "center",
-    height: 48, padding: "0 32px", border: 0,
+    height: 48, padding: "0 32px", border: 0, borderRadius: 0,
+    WebkitAppearance: "none", appearance: "none",
     font: '700 14px/1 "Inter", system-ui, sans-serif',
     letterSpacing: "0.5px", cursor: "pointer",
     transition: "background-color 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out",
