@@ -365,12 +365,10 @@ function LocationBand() {
       }}>
         {/* Map */}
         <div style={{ borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
-          <iframe
-            title="TVR pickup area"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52118.4!2d-85.0500!3d35.0800!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f11!3m3!1m2!1s0x88606b5f76bbdee3%3A0x6c9a33c3d3c9a14e!2sOoltewah%2C%20TN%2037363!5e0!3m2!1sen!2sus!4v1700000000000"
-            width="100%" height={isMobile ? 260 : 360}
-            style={{ border: 0 }} allowFullScreen="" loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
+          <img
+            src="assets/assetsmap-pickup-area.png.png"
+            alt="TVR pickup area map"
+            style={{ width: "100%", height: isMobile ? 260 : 360, objectFit: "cover", objectPosition: "center" }}
           />
         </div>
         {/* Text */}
