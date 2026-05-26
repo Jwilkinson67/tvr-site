@@ -353,6 +353,47 @@ function CTABand({ setRoute }) {
 
 }
 
+/* ----------- Location Band ----------- */
+function LocationBand() {
+  const isMobile = useWindowWidth() < 768;
+  return (
+    <section style={{ background: "#fff", padding: isMobile ? "48px 24px" : "72px 80px" }}>
+      <div style={{
+        maxWidth: 1100, marginInline: "auto",
+        display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+        gap: isMobile ? 32 : 64, alignItems: "center"
+      }}>
+        {/* Map */}
+        <div style={{ borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
+          <iframe
+            title="TVR pickup area"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52118.4!2d-85.0500!3d35.0800!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f11!3m3!1m2!1s0x88606b5f76bbdee3%3A0x6c9a33c3d3c9a14e!2sOoltewah%2C%20TN%2037363!5e0!3m2!1sen!2sus!4v1700000000000"
+            width="100%" height={isMobile ? 260 : 360}
+            style={{ border: 0 }} allowFullScreen="" loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+        {/* Text */}
+        <div>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20, display: "inline-flex", alignItems: "center", gap: 12 }}>
+            <span style={{ width: 24, height: 1, background: "#b5212b" }} />
+            Pickup Location
+          </div>
+          <h2 style={{ font: `700 ${isMobile ? "26px" : "32px"}/1.15 "Inter", sans-serif`, margin: "0 0 16px", color: "#262626" }}>
+            Easy Access from the Chattanooga Area
+          </h2>
+          <p style={{ font: '400 16px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 16px" }}>
+            Tennessee Valley Rentals is located just 5 minutes from US Hwy 74 / Exit 178, making pickup easy from Chattanooga, Ooltewah, Cleveland, Hixson, Soddy Daisy, and surrounding areas.
+          </p>
+          <p style={{ font: '400 14px/1.6 "Inter", sans-serif', color: "#6b6b6b", margin: 0, padding: "12px 16px", borderLeft: "3px solid #b5212b", background: "#f9f9f9" }}>
+            For security and privacy, the exact pickup address will be provided after booking is confirmed.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ----------- Footer ----------- */
 function Footer() {
   const c = C();
@@ -383,4 +424,4 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, Footer, Button: MkButton };
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, LocationBand, Footer, Button: MkButton };
