@@ -670,8 +670,9 @@ function StepAgreement({ state, setState, onNext, onBack }) {
             ["§12. GPS Tracking", "For security, recovery, and fleet management, the trailer may have GPS or other tracking technology. You consent to tracking during the rental period and agree not to remove, tamper with, disable, or obscure any device."],
             ["§13. Insurance", "You represent that you have valid automobile liability insurance and any required coverage for towing and using the trailer. You are responsible for confirming coverage. Providing insurance information does not mean we verified coverage or accepted responsibility for any loss."],
             ["§14. Modifications / Entire Agreement", "No item can be waived or modified except in writing signed by both parties. This Agreement is the entire agreement between you and us regarding this rental, and all prior representations or agreements are merged into it."],
-            ["§15. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any claim or dispute related to this Agreement shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates, unless applicable law requires otherwise."],
-            ["§16. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
+            ["§15. Waiver and Severability", "Our waiver of any breach is not a waiver of any additional breach or future performance. Accepting payment or not exercising a right does not waive any provision. You release us from consequential, special, or punitive damages related to this rental or reservation. If any provision is void or unenforceable, the remaining provisions stay valid and enforceable."],
+            ["§16. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any claim or dispute related to this Agreement shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates, unless applicable law requires otherwise."],
+            ["§17. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
           ].map(([h, b], i) => (
             <div key={i} style={{ marginBottom: 20 }}>
               <div style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>{h}</div>
@@ -707,7 +708,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
       <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24, cursor: "pointer" }}>
         <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          I have read and agree to the TVR Rental Agreement above (§1–§16). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
+          I have read and agree to the TVR Rental Agreement above (§1–§17). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
         </span>
       </label>
 

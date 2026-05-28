@@ -80,8 +80,9 @@ function customerConfirmationEmail(booking, approvedAt) {
     ["§12. GPS Tracking", "The trailer may have GPS or other tracking technology. You consent to tracking during the rental period and agree not to remove, tamper with, disable, or obscure any device."],
     ["§13. Insurance", "You represent that you have valid automobile liability insurance and any required coverage for towing and using the trailer. Providing insurance information does not mean we verified coverage or accepted responsibility for any loss."],
     ["§14. Modifications / Entire Agreement", "No item can be waived or modified except in writing signed by both parties. This Agreement is the entire agreement between you and us regarding this rental."],
-    ["§15. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any dispute shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates."],
-    ["§16. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
+    ["§15. Waiver and Severability", "Our waiver of any breach is not a waiver of any additional breach or future performance. Accepting payment or not exercising a right does not waive any provision. You release us from consequential, special, or punitive damages related to this rental or reservation. If any provision is void or unenforceable, the remaining provisions stay valid and enforceable."],
+    ["§16. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any dispute shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates."],
+    ["§17. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
   ];
 
   return `<!DOCTYPE html>
