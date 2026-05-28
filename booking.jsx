@@ -452,7 +452,7 @@ function computeDays(p, d) {
 /* ---------- 2. Customer info ---------- */
 function StepCustomer({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
-  const valid = state.name && state.email && state.phone && state.tow && state.address && state.dlNumber && state.insuranceCompany;
+  const valid = state.name && state.email && state.phone && state.tow && state.address && state.dlNumber && state.insuranceCompany && state.hitch && state.brakeController;
   return (
     <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
@@ -483,9 +483,13 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Tow vehicle plate #">
           <Input value={state.towPlate || ""} onChange={v => setState({...state, towPlate: v})} placeholder="TN ABC-1234"/>
         </Field>
-        <Field label="Hitch class">
+        <Field label="Do you have a 2 5/16\" hitch ball?" hint="All TVR trailers require a 2 5/16\" coupler">
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
-            options={["Class III (2\" receiver)", "Class IV (2\" receiver)", "Class V (2.5\" receiver)", "Not sure — TVR will inspect"]}/>
+            options={["Yes — I have a 2 5/16\" hitch ball", "No — I don't have one"]}/>
+        </Field>
+        <Field label="Does your vehicle have a 7-way trailer plug and brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
+          <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
+            options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
         </Field>
         <Field label="Insurance company">
           <Input value={state.insuranceCompany || ""} onChange={v => setState({...state, insuranceCompany: v})} placeholder="State Farm"/>
@@ -880,6 +884,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             policyNumber: state.policyNumber,
             tow: state.tow,
             hitch: state.hitch,
+            brakeController: state.brakeController,
             purpose: state.purpose,
             pickupNote: state.pickupNote,
             signature: state.signature,

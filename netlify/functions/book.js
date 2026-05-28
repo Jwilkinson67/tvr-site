@@ -253,7 +253,7 @@ exports.handler = async (event) => {
       insurance_company: customer.insuranceCompany || "",
       policy_number: customer.policyNumber || "",
       tow_vehicle: customer.tow || "",
-      hitch_class: customer.hitch || "",
+      hitch_class: [customer.hitch, customer.brakeController ? `7-way/brake: ${customer.brakeController}` : ""].filter(Boolean).join(" | "),
       trip_purpose: customer.purpose || "",
       pickup_note: customer.pickupNote || "",
       renter_signature: customer.signature || "",
