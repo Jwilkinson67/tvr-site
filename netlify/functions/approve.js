@@ -255,14 +255,29 @@ function customerDeclineEmail(booking) {
 <div style="max-width:600px;margin:0 auto;background:#fff;">
   <div style="background:#1568be;padding:24px 32px;">
     <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Update</div>
   </div>
   <div style="padding:32px;">
-    <h2 style="margin:0 0 16px;">Hi ${firstName},</h2>
-    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Unfortunately we're unable to approve your booking request for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong>.</p>
-    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 24px;">Your card has <strong>not been charged</strong> — the authorization hold will be released automatically within 5–7 business days depending on your bank.</p>
-    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 24px;">If you have questions or would like to discuss an alternative arrangement, please reach out:</p>
+    <h2 style="margin:0 0 16px;font-size:24px;">Hi ${firstName},</h2>
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Thank you for your interest in renting with Tennessee Valley Rentals. After reviewing your booking request for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong>, we were unable to approve it at this time.</p>
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 8px;">Your card has <strong>not been charged</strong> — any authorization hold will be released automatically within 5–7 business days depending on your bank.</p>
+
+    <div style="border:1px solid #e6e6e6;margin:24px 0;">
+      <div style="background:#f4f6f9;padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Common reasons a booking may not be approved</div>
+      <ul style="margin:0;padding:16px 16px 16px 32px;color:#3c3c3c;line-height:2;font-size:14px;">
+        <li>Tow vehicle's tow rating doesn't meet the trailer's requirements</li>
+        <li>Driver's license is expired or could not be verified</li>
+        <li>Insurance policy doesn't cover trailer towing or appears inactive</li>
+        <li>Vehicle is not equipped with a 7-way trailer plug and brake controller</li>
+        <li>Submitted documents were unclear or could not be reviewed</li>
+        <li>Requested dates are no longer available</li>
+      </ul>
+    </div>
+
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">We'd love to help get you on the road — give us a call or text and we can work through any of the above together.</p>
+
     <div style="background:#f4f6f9;padding:20px;margin-bottom:24px;">
-      <div style="font-size:16px;font-weight:700;">(321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">(321) 765-3077</div>
       <div style="font-size:13px;color:#6b6b6b;">Call or text anytime</div>
     </div>
     <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals · Ooltewah, TN</p>
