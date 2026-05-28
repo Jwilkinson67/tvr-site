@@ -461,7 +461,7 @@ function computeDays(p, d) {
 /* ---------- 2. Customer info ---------- */
 function StepCustomer({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
-  const valid = state.name && state.email && state.phone && state.tow;
+  const valid = state.name && state.email && state.phone && state.tow && state.address && state.dlNumber && state.insuranceCompany;
   return (
     <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
@@ -474,12 +474,33 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Phone">
           <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100"/>
         </Field>
+        <Field label="Driver's license #">
+          <Input value={state.dlNumber || ""} onChange={v => setState({...state, dlNumber: v})} placeholder="TN-123456789"/>
+        </Field>
+        <Field label="Street address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
+          <Input value={state.address || ""} onChange={v => setState({...state, address: v})} placeholder="123 Main St"/>
+        </Field>
+        <Field label="City">
+          <Input value={state.city || ""} onChange={v => setState({...state, city: v})} placeholder="Chattanooga"/>
+        </Field>
+        <Field label="State / ZIP">
+          <Input value={state.stateZip || ""} onChange={v => setState({...state, stateZip: v})} placeholder="TN 37363"/>
+        </Field>
         <Field label="Tow vehicle" hint="Year, make, model — used to confirm hitch class">
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
+        </Field>
+        <Field label="Tow vehicle plate #">
+          <Input value={state.towPlate || ""} onChange={v => setState({...state, towPlate: v})} placeholder="TN ABC-1234"/>
         </Field>
         <Field label="Hitch class">
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
             options={["Class III (2\" receiver)", "Class IV (2\" receiver)", "Class V (2.5\" receiver)", "Not sure — TVR will inspect"]}/>
+        </Field>
+        <Field label="Insurance company">
+          <Input value={state.insuranceCompany || ""} onChange={v => setState({...state, insuranceCompany: v})} placeholder="State Farm"/>
+        </Field>
+        <Field label="Policy #">
+          <Input value={state.policyNumber || ""} onChange={v => setState({...state, policyNumber: v})} placeholder="POL-123456"/>
         </Field>
         <Field label="Trip purpose (optional)">
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
@@ -644,12 +665,22 @@ function StepAgreement({ state, setState, onNext, onBack }) {
         </div>
         <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }}>
           {[
-            ["§1. Term", "Each rental period starts when the customer signs this rental contract. The customer will be charged an additional fee at the daily rate for any extra time until the trailer is returned, with a four-hour grace period beyond the agreed return time."],
-            ["§2. Customer Liability", "The customer is responsible for the rental fee and all damage to the trailer. This contract details liability for any damage that occurs during the rental period. A $200 refundable deposit is held against minor damage and returned at the return inspection."],
-            ["§3. Towing Vehicle Requirements", "The towing vehicle must be in good working condition with the correct trailer light wiring to match the trailer being rented. The customer must not exceed the towing limits specified in the towing vehicle's owner's manual. TVR will inspect the hitch connection at pickup."],
-            ["§4. License & Insurance", "The customer must present a valid driver's license and proof of insurance coverage — including proof that the insurance covers whatever the vehicle is towing. The towing vehicle must have valid and up-to-date tags before renting."],
-            ["§5. Cancellation", "Cancel 24 hours before pickup for a full refund. Inside 24 hours, the deposit is forfeit."],
-            ["§6. Governing Law", "This agreement is governed by the laws of the State of Tennessee. Any dispute will be resolved in Hamilton County, TN."],
+            ["§1. Definitions", "Agreement means this form and all rental documents. You/your/renter means the customer, authorized renter, and anyone responsible for charges. All persons included as you/your are signing to agree jointly and separately to all obligations, terms, conditions, and amounts owed under this Agreement. We/us/our means Tennessee Valley Rentals LLC. Authorized Driver means only drivers approved on this Agreement. Trailer means the non-motorized trailer rented or any substitutes. Loss of Use means our lost rental time during repair or replacement, calculated at the daily rental rate. Diminished Value means any reduction in value after damage or loss."],
+            ["§2. Rental, Indemnity and Warranties", "This is a trailer rental contract. We may repossess the trailer at any time and without prior notice to the extent permitted by law, if it is abandoned, overdue, or used in violation of law or this Agreement. You agree to indemnify and hold us harmless from claims, liability, costs, and attorney fees arising from this rental or your use of the trailer. The trailer is rented as-is, with no express, implied, or apparent warranties, including merchantability or fitness for particular purpose."],
+            ["§3. Condition and Return", "You must return the trailer to the agreed location by the agreed date and time, in the same condition received except ordinary wear. It is your responsibility before departure to inspect the trailer for its safety and condition until you accept it or report issues. Replacement equipment may be at our prior approval."],
+            ["§4. Damage, Loss, Theft and Reporting", "You are responsible for all damage to, loss of, or theft of the trailer and equipment, whether or not you are at fault, including weather, road conditions, vandalism, recovery, storage, Loss of Use, Diminished Value, missing equipment, and reasonable administrative expenses. If the trailer is lost, stolen, not returned, not repaired, or we reasonably elect not to repair, you are responsible for the trailer actual cash value, replacement cost, or remaining financial loss. You must report accidents, theft, damage, or loss to us and police within 24 hours."],
+            ["§5. Equipment / Replacement Cost", "You acknowledge receiving the listed equipment and replacement costs. If any listed item is lost, stolen, damaged, or not returned, you agree to pay the listed replacement cost, or cost of actual repair or replacement, whichever is greater. You had an opportunity to inspect the trailer, tires, hitch, lights, and equipment before accepting it."],
+            ["§6. Tow Vehicle and Cargo Responsibility", "You are solely responsible for confirming that your tow vehicle is legally and mechanically capable of towing the trailer and load. You are solely responsible for safe loading, weight distribution, balancing, and securing all cargo."],
+            ["§7. Prohibited Uses", "Prohibited uses include: transporting hazardous, dangerous, or illegal materials; transporting people; driving under the influence; use by anyone not listed as an Authorized Driver; false or misleading info at reservation; use outside the continental United States; overloading; towing under/through insufficient clearance; continued use when damage is likely; damage from misuse; or intent to criminally conceal, confiscate, or modify the trailer without written permission."],
+            ["§8. Charges", "You agree to pay on demand all amounts due, including rental time, taxes, traffic/toll/parking/camera citations, towing, storage, recovery, collection costs, attorney fees, 5% late payment fee if applicable, and a cleaning fee up to $500 if returned substantially less clean than rented. If we pay a toll or citation for you, a $100 administrative fee may apply to each charge. Early returns do not create a refund unless agreed in writing."],
+            ["§9. Deposit and Payment Authorization", "We may apply your deposit to any amounts owed, including our reasonable estimate of damages, administrative costs, Loss of Use, storage, and any other applicable charges. You authorize us to charge your card or payment method on file for amounts owed under this Agreement, including charges discovered after return, subject to your right to dispute them through legal routes."],
+            ["§10. Late Return", "The trailer must be returned by the agreed check-in date and time. Late returns are charged at the daily rental rate for each additional day or partial day, plus documented loss, expense, or reservation impact. If the trailer is overdue and we cannot obtain prompt return, we may seek recovery at your expense."],
+            ["§11. Cancellation, Rescheduling, No-Show", "Cancellation, rescheduling, and no-show charges are governed by the booking terms provided at reservation. Unless different written terms apply, deposits or prepaid amounts may be applied to late cancellation or rescheduling fees rather than credited to another customer."],
+            ["§12. GPS Tracking", "For security, recovery, and fleet management, the trailer may have GPS or other tracking technology. You consent to tracking during the rental period and agree not to remove, tamper with, disable, or obscure any device."],
+            ["§13. Insurance", "You represent that you have valid automobile liability insurance and any required coverage for towing and using the trailer. You are responsible for confirming coverage. Providing insurance information does not mean we verified coverage or accepted responsibility for any loss."],
+            ["§14. Modifications / Entire Agreement", "No item can be waived or modified except in writing signed by both parties. This Agreement is the entire agreement between you and us regarding this rental, and all prior representations or agreements are merged into it."],
+            ["§15. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any claim or dispute related to this Agreement shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates, unless applicable law requires otherwise."],
+            ["§16. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
           ].map(([h, b], i) => (
             <div key={i} style={{ marginBottom: 20 }}>
               <div style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>{h}</div>
@@ -685,7 +716,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
       <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24, cursor: "pointer" }}>
         <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          I have read and agree to the TVR Rental Agreement above, and I authorize TVR to hold a $200 refundable deposit on my card. I understand my typed signature has the same legal effect as a handwritten one.
+          I have read and agree to the TVR Rental Agreement above (§1–§16). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
         </span>
       </label>
 
@@ -848,10 +879,18 @@ function StepPayment({ state, setState, onNext, onBack }) {
             name: state.name,
             email: state.email,
             phone: state.phone,
+            address: state.address,
+            city: state.city,
+            stateZip: state.stateZip,
+            dlNumber: state.dlNumber,
+            towPlate: state.towPlate,
+            insuranceCompany: state.insuranceCompany,
+            policyNumber: state.policyNumber,
             tow: state.tow,
             hitch: state.hitch,
             purpose: state.purpose,
             pickupNote: state.pickupNote,
+            signature: state.signature,
           },
         }),
       });
