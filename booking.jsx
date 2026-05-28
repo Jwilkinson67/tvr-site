@@ -334,7 +334,6 @@ function StepTrailerDates({ state, setState, onNext }) {
     : null;
   const valid = state.trailerId && state.pickup && state.dropoff &&
                 dateOrderOk && pickupPastOk && !conflict;
-  const bookedRanges = state.trailerId ? Bookings.forTrailer(state.trailerId) : [];
   return (
     <StepShell title="Pick a trailer and dates" kicker="STEP 1 · TRAILER & DATES">
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 32 }}>
@@ -414,14 +413,6 @@ function StepTrailerDates({ state, setState, onNext }) {
               Reserved {fmtDate(conflict.pickup)} – {fmtDate(conflict.dropoff)}. Pick a different range or choose the other trailer.
             </div>
           </div>
-        </div>
-      )}
-      {!conflict && bookedRanges.length > 0 && (
-        <div style={{ padding: "10px 14px", background: "#f4f6f9", marginBottom: 24, font: '300 12px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>
-          <span style={{ fontWeight: 700, color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase", marginRight: 8, fontSize: 11 }}>Already booked</span>
-          {bookedRanges.map((r, i) => (
-            <span key={i} style={{ marginRight: 16 }}>{fmtDate(r.pickup)} – {fmtDate(r.dropoff)}</span>
-          ))}
         </div>
       )}
 
