@@ -1042,16 +1042,16 @@ function StepDone({ state, onReset }) {
           <h1 style={{ font: '700 48px/1.1 "Inter", sans-serif', margin: 0, color: "#262626" }}>
             You're set, {state.name?.split(" ")[0] || "friend"}.
           </h1>
-          <p style={{ font: '300 17px/1.55 “Inter”, sans-serif', color: “#3c3c3c”, marginTop: 16, maxWidth: 520 }}>
-            We'll have the {trailer?.name} ready for pickup on <strong style={{ color: “#262626”, fontWeight: 700 }}>{state.pickup}</strong>. {state.pickupNote ? <>You wrote <em style={{ fontStyle: “normal”, color: “#262626” }}>”{state.pickupNote}”</em> for your preferred time — we'll text you to lock that in.</> : <>We'll text you shortly to confirm a pickup time and send the address.</>} A confirmation has been sent to {state.email}.
+          <p style={{ font: '300 17px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, maxWidth: 520 }}>
+            We'll have the {trailer?.name} ready for pickup on <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}</strong>. {state.pickupNote ? <>You wrote <em style={{ fontStyle: "normal", color: "#262626" }}>"{state.pickupNote}"</em> for your preferred time — we'll text you to lock that in.</> : <>We'll text you shortly to confirm a pickup time and send the address.</>} A confirmation has been sent to {state.email}.
           </p>
         </div>
       </div>
 
-      <div style={{ display: “flex”, gap: 12, alignItems: “flex-start”, padding: “14px 20px”, background: “#fff8e6”, borderLeft: “4px solid #b88017”, marginBottom: 24 }}>
-        <svg width=”18” height=”18” viewBox=”0 0 24 24” fill=”none” stroke=”#b88017” strokeWidth=”2” style={{ flexShrink: 0, marginTop: 2 }}><circle cx=”12” cy=”12” r=”10”/><line x1=”12” y1=”8” x2=”12” y2=”12”/><line x1=”12” y1=”16” x2=”12.01” y2=”16”/></svg>
-        <span style={{ font: '300 14px/1.55 “Inter”, sans-serif', color: “#3c3c3c” }}>
-          <strong style={{ fontWeight: 700, color: “#262626” }}>Your booking is pending review.</strong> You'll receive a confirmation email once TVR approves your reservation. This typically happens within a few hours during business hours.
+      <div style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "14px 20px", background: "#fff8e6", borderLeft: "4px solid #b88017", marginBottom: 24 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b88017" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+          <strong style={{ fontWeight: 700, color: "#262626" }}>Your booking is pending review.</strong> You'll receive a confirmation email once TVR approves your reservation. This typically happens within a few hours during business hours.
         </span>
       </div>
 
