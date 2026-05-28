@@ -913,6 +913,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
       bookedAt: new Date().toISOString(),
     });
     setProcessing(false);
+    setState(s => ({...s, bookingId}));
     onNext();
   }
 
@@ -1036,7 +1037,7 @@ function StepDone({ state, onReset }) {
             <span style={{ width: 32, height: 32, background: "#22c55e", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be" }}>RESERVATION #TVR-4218 · CONFIRMED</span>
+            <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be" }}>RESERVATION #{state.bookingId || "PENDING"} · SUBMITTED</span>
           </div>
           <h1 style={{ font: '700 48px/1.1 "Inter", sans-serif', margin: 0, color: "#262626" }}>
             You're set, {state.name?.split(" ")[0] || "friend"}.
