@@ -487,7 +487,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
             options={['Yes — I have a 2 5/16" hitch ball', "No — I don't have one"]}/>
         </Field>
-        <Field label="Does your vehicle have a 7-way trailer plug and brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
+        <Field label="7-way trailer plug & brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
             options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
         </Field>
