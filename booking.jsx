@@ -483,9 +483,9 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Tow vehicle plate #">
           <Input value={state.towPlate || ""} onChange={v => setState({...state, towPlate: v})} placeholder="TN ABC-1234"/>
         </Field>
-        <Field label={'Do you have a 2 5/16" hitch ball?'} hint={'All TVR trailers require a 2 5/16" coupler'}>
+        <Field label={"Do you have a 2 5/16″ hitch ball?"} hint={"All TVR trailers require a 2 5/16″ coupler"}>
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
-            options={['Yes — I have a 2 5/16" hitch ball', "No — I'll use TVR's"]}/>
+            options={["Yes — I have a 2 5/16″ hitch ball", "No — I'll use TVR's"]}/>
         </Field>
         <Field label="7-way trailer plug & brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
