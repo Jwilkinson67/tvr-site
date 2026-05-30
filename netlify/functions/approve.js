@@ -54,7 +54,7 @@ function lockboxCode(trailerId) {
 }
 
 /* ── Email templates ────────────────────────────────────────────────────── */
-function customerConfirmationEmail(booking, approvedAt) {
+function customerConfirmationEmail(booking, approvedAt, photoUrls) {
   const firstName = (booking.customer_name || "").split(" ")[0] || "there";
   const code = lockboxCode(booking.trailer_id);
   const lockboxLine = code
@@ -116,6 +116,14 @@ function customerConfirmationEmail(booking, approvedAt) {
       <p style="margin:0 0 8px;"><strong>Address:</strong> 4217 Shady Oak Dr, Ooltewah TN 37363</p>
       <p style="margin:0 0 12px;color:#3c3c3c;">Your trailer will be staged and ready on the street.</p>
       ${lockboxLine}
+    </div>
+
+    <div style="border-top:3px solid #1568be;padding-top:20px;margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">Photo Documentation</div>
+      <p style="margin:0 0 14px;color:#3c3c3c;line-height:1.6;font-size:14px;">Please photograph the trailer at pickup and again when you return it. This protects you and ensures a smooth deposit refund.</p>
+      <a href="${photoUrls ? photoUrls.pickup : "#"}" style="display:block;background:#1568be;color:#fff;padding:14px 20px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;margin-bottom:8px;">Upload Pickup Photos &rarr;</a>
+      <a href="${photoUrls ? photoUrls.return : "#"}" style="display:block;background:#6b7280;color:#fff;padding:14px 20px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Upload Return Photos (after drop-off) &rarr;</a>
+      <p style="font-size:11px;color:#9a9a9a;margin:8px 0 0;text-align:center;">6 photos required each time: Front, Back, Driver Side, Passenger Side, Hitch &amp; 7-Way, Inside/Deck</p>
     </div>
 
     <div style="border-top:3px solid #1568be;padding-top:20px;margin-bottom:28px;">
@@ -381,18 +389,23 @@ exports.handler = async (event) => {
 
     await supabase.from("bookings").update({ status: "approved" }).eq("id", id);
 
+    const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
+
     try {
       const approvedAt = new Date().toISOString();
+      const photoUrls = {
+        pickup: `${siteUrl}/.netlify/functions/photos?type=pickup&id=${id}&token=${makeToken("photos-pickup", id)}`,
+        return: `${siteUrl}/.netlify/functions/photos?type=return&id=${id}&token=${makeToken("photos-return", id)}`,
+      };
       await sendEmail({
         to: booking.customer_email,
         subject: `Your TVR rental is confirmed — ${booking.trailer_name || booking.trailer_id}, ${booking.pickup}`,
-        html: customerConfirmationEmail(booking, approvedAt),
+        html: customerConfirmationEmail(booking, approvedAt, photoUrls),
       });
     } catch (e) {
       console.error("Customer email failed:", e);
     }
 
-    const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
     const refundToken = makeToken("refund", id);
     const refundUrl = `${siteUrl}/.netlify/functions/refund?id=${id}&token=${refundToken}`;
 
