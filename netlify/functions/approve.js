@@ -255,6 +255,33 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
 </html>`;
 }
 
+function customerCancellationEmail(booking) {
+  const firstName = (booking.customer_name || "").split(" ")[0] || "there";
+  const total = booking.total_charged || booking.deposit_amount || 0;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
+<div style="max-width:600px;margin:0 auto;background:#fff;">
+  <div style="background:#1568be;padding:24px 32px;">
+    <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Cancellation</div>
+  </div>
+  <div style="padding:32px;">
+    <h2 style="margin:0 0 16px;font-size:24px;">Hi ${firstName},</h2>
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Your reservation for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong> has been cancelled.</p>
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 24px;">A full refund of <strong>$${total.toFixed ? total.toFixed(2) : total}</strong> has been issued to your card. Depending on your bank, funds typically appear within 5–10 business days.</p>
+    <div style="background:#f4f6f9;padding:20px;margin-bottom:24px;">
+      <div style="font-size:16px;font-weight:700;color:#262626;">Questions? Call or text (321) 765-3077</div>
+      <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">We'd love to get you rescheduled when the time is right.</div>
+    </div>
+    <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals &middot; Ooltewah, TN<br>Booking ID: ${booking.id}</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
 function customerDeclineEmail(booking) {
   const firstName = (booking.customer_name || "").split(" ")[0] || "there";
   return `<!DOCTYPE html>
@@ -371,10 +398,16 @@ exports.handler = async (event) => {
     <a href="${returnPhotoUrl}" style="display:block;background:#6b7280;color:#fff;padding:12px 20px;text-decoration:none;font-weight:700;font-size:13px;text-align:center;">Return Photo Link &rarr;</a>
   </div>
 
-  <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;">
+  <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;margin-bottom:16px;">
     <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">After the rental</div>
     <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Use this link to release the $${booking.deposit_amount} deposit once you've inspected the trailer.</p>
     <a href="${refundUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Release Deposit &rarr;</a>
+  </div>
+
+  <div style="background:#fff5f5;border:1px solid #f5c6cb;padding:24px;text-align:left;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#b5212b;margin-bottom:12px;">Cancel Booking</div>
+    <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">This will issue a full refund to ${booking.customer_name} and free up the dates on the calendar.</p>
+    <a href="${siteUrl}/.netlify/functions/approve?action=cancel&id=${id}&token=${makeToken("cancel", id)}" style="display:block;background:#b5212b;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Cancel This Booking</a>
   </div>
 </div>
 </body>
@@ -469,6 +502,71 @@ exports.handler = async (event) => {
     return htmlPage(
       "Booking declined",
       `${booking.customer_name}'s booking has been declined and the authorization released. They've been notified at ${booking.customer_email}.`,
+      false
+    );
+  }
+
+  // ── Cancel ───────────────────────────────────────────────────────────────
+  if (action === "cancel") {
+    const { confirm } = event.queryStringParameters;
+    const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
+
+    if (!confirm) {
+      const total = booking.total_charged || booking.deposit_amount || 0;
+      const cancelUrl = `${siteUrl}/.netlify/functions/approve?action=cancel&id=${id}&token=${token}&confirm=1`;
+      return {
+        statusCode: 200,
+        headers: { "Content-Type": "text/html" },
+        body: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cancel Booking · TVR</title></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;">
+<div style="max-width:480px;width:100%;background:#fff;padding:48px;text-align:center;">
+  <div style="width:56px;height:56px;background:#b5212b;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="square"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div>
+  <h1 style="font-size:26px;margin:0 0 12px;color:#262626;">Cancel this booking?</h1>
+  <p style="color:#3c3c3c;line-height:1.6;margin:0 0 8px;">${booking.customer_name} &mdash; ${booking.trailer_name || booking.trailer_id}</p>
+  <p style="color:#3c3c3c;margin:0 0 24px;">${booking.pickup} &rarr; ${booking.dropoff}</p>
+  <div style="background:#fff5f5;border:1px solid #f5c6cb;padding:16px;text-align:left;margin-bottom:32px;">
+    <p style="margin:0;font-size:14px;color:#3c3c3c;line-height:1.6;">This will <strong>refund $${typeof total === "number" ? total.toFixed(2) : total}</strong> to ${booking.customer_name}'s card and free up the dates on the calendar. This cannot be undone.</p>
+  </div>
+  <a href="${cancelUrl}" style="display:block;background:#b5212b;color:#fff;padding:16px 24px;text-decoration:none;font-weight:700;font-size:15px;margin-bottom:12px;">Yes, Cancel &amp; Refund</a>
+  <a href="javascript:history.back()" style="display:block;color:#6b6b6b;font-size:14px;padding:12px;">Go back</a>
+</div>
+</body>
+</html>`,
+      };
+    }
+
+    // Process cancellation
+    try {
+      await stripe.refunds.create({
+        payment_intent: booking.payment_intent_id,
+        reason: "requested_by_customer",
+        metadata: { booking_id: id, cancelled_by: "owner" },
+      });
+    } catch (e) {
+      console.error("Stripe refund failed on cancel:", e);
+      return htmlPage("Refund error", `Could not process refund: ${e.message}. Check Stripe dashboard.`, false);
+    }
+
+    await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id);
+
+    try {
+      await sendEmail({
+        to: booking.customer_email,
+        subject: `Your TVR reservation has been cancelled — ${booking.trailer_name || booking.trailer_id}, ${booking.pickup}`,
+        html: customerCancellationEmail(booking),
+      });
+    } catch (e) {
+      console.error("Customer cancellation email failed:", e);
+    }
+
+    return htmlPage(
+      "Booking cancelled",
+      `${booking.customer_name}'s booking has been cancelled and a full refund issued. They've been notified at ${booking.customer_email}.`,
       false
     );
   }

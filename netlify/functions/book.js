@@ -161,7 +161,8 @@ exports.handler = async (event) => {
       .from("bookings")
       .select("id, pickup, dropoff")
       .eq("trailer_id", trailerId)
-      .gte("dropoff", today);
+      .gte("dropoff", today)
+      .not("status", "in", '("cancelled","declined")');
     if (error) { console.error("Supabase availability error:", error); return err(500, "Could not load availability."); }
     return ok({ bookings: data || [] });
   }
@@ -194,7 +195,8 @@ exports.handler = async (event) => {
       .select("pickup, dropoff")
       .eq("trailer_id", trailerId)
       .lte("pickup", dropoff)
-      .gte("dropoff", pickup);
+      .gte("dropoff", pickup)
+      .not("status", "in", '("cancelled","declined")');
 
     if (conflictErr) { console.error("Conflict check error:", conflictErr); return err(500, "Could not verify availability."); }
     if (conflicts && conflicts.length > 0) {
