@@ -348,8 +348,9 @@ exports.handler = async (event) => {
   if (booking.status && booking.status !== "pending") {
     if (booking.status === "approved" || booking.status === "completed") {
       const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
-      const refundToken = makeToken("refund", id);
-      const refundUrl = `${siteUrl}/.netlify/functions/refund?id=${id}&token=${refundToken}`;
+      const refundUrl     = `${siteUrl}/.netlify/functions/refund?id=${id}&token=${makeToken("refund", id)}`;
+      const pickupPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=pickup&id=${id}&token=${makeToken("photos-pickup", id)}`;
+      const returnPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=return&id=${id}&token=${makeToken("photos-return", id)}`;
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/html" },
@@ -361,9 +362,17 @@ exports.handler = async (event) => {
 <div style="max-width:520px;width:100%;background:#fff;padding:48px;text-align:center;">
   <h1 style="font-size:28px;margin:0 0 12px;color:#262626;">Already approved</h1>
   <p style="color:#3c3c3c;line-height:1.6;margin:0 0 32px;">${booking.customer_name}'s booking (${booking.trailer_name || booking.trailer_id}, ${booking.pickup} &rarr; ${booking.dropoff}) was already approved. No changes made.</p>
+
+  <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;margin-bottom:16px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">Customer Photo Links</div>
+    <p style="font-size:14px;color:#3c3c3c;margin:0 0 12px;line-height:1.5;">Send these to the customer so they can upload photos before pickup and after return.</p>
+    <a href="${pickupPhotoUrl}" style="display:block;background:#1568be;color:#fff;padding:12px 20px;text-decoration:none;font-weight:700;font-size:13px;text-align:center;margin-bottom:8px;">Pickup Photo Link &rarr;</a>
+    <a href="${returnPhotoUrl}" style="display:block;background:#6b7280;color:#fff;padding:12px 20px;text-decoration:none;font-weight:700;font-size:13px;text-align:center;">Return Photo Link &rarr;</a>
+  </div>
+
   <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;">
     <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">After the rental</div>
-    <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Use this link to release the $${booking.deposit_amount} deposit once you've inspected the trailer. You can adjust the amount for any damages.</p>
+    <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Use this link to release the $${booking.deposit_amount} deposit once you've inspected the trailer.</p>
     <a href="${refundUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Release Deposit &rarr;</a>
   </div>
 </div>
