@@ -3,8 +3,8 @@
  * Lets customers upload before/after trailer photos via a signed link.
  *
  * GET  /.netlify/functions/photos?type=pickup|return&id=TVR-XXX&token=abc
- * POST { action:"upload",  id, token, type, slot, imageData }  → upload one photo
- * POST { action:"confirm", id, token, type, paths }             → mark complete
+ * POST { action:"upload",  id, token, type, slot, imageData }  -> upload one photo
+ * POST { action:"confirm", id, token, type, paths }             -> mark complete
  */
 
 const { createClient } = require("@supabase/supabase-js");
@@ -32,7 +32,6 @@ function makeToken(action, bookingId) {
 }
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
-
 function jsonOk(body)  { return { statusCode: 200, headers: JSON_HEADERS, body: JSON.stringify(body) }; }
 function jsonErr(s, m) { return { statusCode: s,   headers: JSON_HEADERS, body: JSON.stringify({ error: m }) }; }
 
@@ -51,7 +50,26 @@ function simplePage(title, body) {
 }
 
 function uploadPage({ booking, type, typeLabel, id, token }) {
-  const slotsJson = JSON.stringify(SLOTS);
+  const camIcon = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="square"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+  const chkIcon = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+  const slotCards = SLOTS.map(s => `
+    <div class="card" id="card-${s.key}" onclick="document.getElementById('input-${s.key}').click()">
+      <div class="card-row">
+        <div class="ph" id="ph-${s.key}">${camIcon}</div>
+        <img class="thumb" id="thumb-${s.key}">
+        <div>
+          <div class="lbl">${s.label}</div>
+          <div class="hint">Tap to open camera</div>
+        </div>
+      </div>
+      <div class="chk">${chkIcon}</div>
+      <input type="file" id="input-${s.key}" accept="image/*" capture="environment" style="display:none"
+        onchange="onFile('${s.key}', this)">
+    </div>`).join("");
+
+  const requiredKeys = JSON.stringify(SLOTS.map(s => s.key));
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,7 +91,7 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 .hint{font-size:12px;color:#9a9a9a;margin-top:2px}
 .chk{position:absolute;top:8px;right:8px;width:22px;height:22px;background:#1568be;border-radius:50%;display:none;align-items:center;justify-content:center}
 .card.done .chk{display:flex}
-.btn{width:100%;height:52px;background:#1568be;color:#fff;border:0;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px}
+.btn{width:100%;height:52px;background:#1568be;color:#fff;border:0;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;margin-top:8px}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 #status{text-align:center;font-size:13px;color:#6b6b6b;min-height:20px;margin-top:12px}
 </style>
@@ -90,18 +108,20 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
       <span style="display:block;font-size:11px;color:#9a9a9a;margin-top:2px;">${id}</span>
     </div>
     <p style="font-size:14px;color:#3c3c3c;margin:0 0 14px;line-height:1.6;">
-      Tap each card to take a photo. All 6 are required before submitting.
+      Tap each card to take a photo. All ${SLOTS.length} are required before submitting.
     </p>
-    <div id="slots"></div>
 
-    <div style="border:2px dashed #e6e6e6;padding:16px;margin-bottom:10px;cursor:pointer;" onclick="document.getElementById('extra-input').click()">
+    ${slotCards}
+
+    <div style="border:2px dashed #e6e6e6;padding:16px;margin-bottom:10px;cursor:pointer;-webkit-tap-highlight-color:transparent"
+      onclick="document.getElementById('extra-input').click()">
       <div style="display:flex;align-items:center;gap:14px;">
         <div style="width:68px;height:68px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;border-radius:3px;flex-shrink:0;">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="square"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </div>
         <div>
-          <div style="font-weight:700;font-size:15px;color:#262626;">Additional Photos</div>
-          <div style="font-size:12px;color:#9a9a9a;margin-top:2px;">Optional — select as many as you like</div>
+          <div class="lbl">Additional Photos</div>
+          <div class="hint">Optional &mdash; select as many as you like</div>
         </div>
       </div>
       <div id="extra-thumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
@@ -114,165 +134,145 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 </div>
 
 <script>
-(function(){
-  var SLOTS=${slotsJson};
-  var files={};
-  var extraFiles=[];
-  var id=${JSON.stringify(id)};
-  var token=${JSON.stringify(token)};
-  var type=${JSON.stringify(type)};
+var files = {};
+var extraFiles = [];
+var REQUIRED = ${requiredKeys};
+var ID = ${JSON.stringify(id)};
+var TOKEN = ${JSON.stringify(token)};
+var TYPE = ${JSON.stringify(type)};
 
-  function build(){
-    var h="";
-    SLOTS.forEach(function(s){
-      h+='<div class="card" id="card-'+s.key+'" onclick="pick(\''+s.key+'\')">';
-      h+='<div class="card-row">';
-      h+='<div class="ph" id="ph-'+s.key+'"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="square"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>';
-      h+='<img class="thumb" id="thumb-'+s.key+'">';
-      h+='<div><div class="lbl">'+s.label+'</div><div class="hint">Tap to open camera</div></div>';
-      h+='</div>';
-      h+='<div class="chk"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg></div>';
-      h+='<input type="file" id="input-'+s.key+'" accept="image/*" capture="environment" style="display:none" onchange="onFile(\''+s.key+'\',this)">';
-      h+='</div>';
-    });
-    document.getElementById("slots").innerHTML=h;
-  }
+function onFile(key, el) {
+  var f = el.files[0];
+  if (!f) return;
+  files[key] = f;
+  var r = new FileReader();
+  r.onload = function(e) {
+    var thumb = document.getElementById("thumb-" + key);
+    thumb.src = e.target.result;
+    thumb.style.display = "block";
+    document.getElementById("ph-" + key).style.display = "none";
+    document.getElementById("card-" + key).classList.add("done");
+  };
+  r.readAsDataURL(f);
+  var allDone = REQUIRED.every(function(k) { return !!files[k]; });
+  document.getElementById("submit-btn").disabled = !allDone;
+}
 
-  window.pick=function(k){ document.getElementById("input-"+k).click(); };
-
-  window.onFile=function(k,el){
-    var f=el.files[0]; if(!f) return;
-    files[k]=f;
-    var r=new FileReader();
-    r.onload=function(e){
-      var t=document.getElementById("thumb-"+k);
-      t.src=e.target.result; t.style.display="block";
-      document.getElementById("ph-"+k).style.display="none";
-      document.getElementById("card-"+k).classList.add("done");
+function onExtra(el) {
+  var newFiles = Array.from(el.files);
+  if (!newFiles.length) return;
+  extraFiles = extraFiles.concat(newFiles);
+  var container = document.getElementById("extra-thumbs");
+  newFiles.forEach(function(f) {
+    var r = new FileReader();
+    r.onload = function(e) {
+      var img = document.createElement("img");
+      img.src = e.target.result;
+      img.style.cssText = "width:60px;height:60px;object-fit:cover;border-radius:3px;border:2px solid #1568be;";
+      container.appendChild(img);
     };
     r.readAsDataURL(f);
-    var all=SLOTS.every(function(s){return!!files[s.key];});
-    document.getElementById("submit-btn").disabled=!all;
-  };
+  });
+  el.value = "";
+}
 
-  function resize(file){
-    return new Promise(function(res){
-      var r=new FileReader();
-      r.onload=function(e){
-        var img=new Image();
-        img.onload=function(){
-          var MAX=1920,w=img.width,h=img.height;
-          if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
-          else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
-          var c=document.createElement("canvas");
-          c.width=w;c.height=h;
-          c.getContext("2d").drawImage(img,0,0,w,h);
-          c.toBlob(res,"image/jpeg",0.85);
-        };
-        img.src=e.target.result;
+function resize(file) {
+  return new Promise(function(res) {
+    var r = new FileReader();
+    r.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var MAX = 1920, w = img.width, h = img.height;
+        if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+        else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        c.toBlob(res, "image/jpeg", 0.85);
       };
-      r.readAsDataURL(file);
-    });
+      img.src = e.target.result;
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function toB64(blob) {
+  return new Promise(function(res) {
+    var r = new FileReader();
+    r.onload = function(e) { res(e.target.result.split(",")[1]); };
+    r.readAsDataURL(blob);
+  });
+}
+
+function setStatus(msg, color) {
+  var el = document.getElementById("status");
+  el.textContent = msg;
+  el.style.color = color || "#6b6b6b";
+}
+
+async function handleSubmit() {
+  var btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  var paths = {};
+
+  for (var i = 0; i < REQUIRED.length; i++) {
+    var key = REQUIRED[i];
+    setStatus("Uploading photo " + (i + 1) + " of " + REQUIRED.length + "...");
+    try {
+      var blob = await resize(files[key]);
+      var b64 = await toB64(blob);
+      var res = await fetch("/.netlify/functions/photos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "upload", id: ID, token: TOKEN, type: TYPE, slot: key, imageData: b64 })
+      });
+      if (!res.ok) throw new Error("failed");
+      paths[key] = (await res.json()).path;
+    } catch(e) {
+      setStatus("Upload failed — check your connection and try again.", "#b5212b");
+      btn.disabled = false;
+      return;
+    }
   }
 
-  function toB64(blob){
-    return new Promise(function(res){
-      var r=new FileReader();
-      r.onload=function(e){res(e.target.result.split(",")[1]);};
-      r.readAsDataURL(blob);
-    });
+  for (var j = 0; j < extraFiles.length; j++) {
+    setStatus("Uploading extra photo " + (j + 1) + " of " + extraFiles.length + "...");
+    try {
+      var eblob = await resize(extraFiles[j]);
+      var eb64 = await toB64(eblob);
+      var eres = await fetch("/.netlify/functions/photos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "upload", id: ID, token: TOKEN, type: TYPE, slot: "extra_" + j, imageData: eb64 })
+      });
+      if (!eres.ok) throw new Error("failed");
+      paths["extra_" + j] = (await eres.json()).path;
+    } catch(e) {
+      setStatus("Extra photo upload failed — try again.", "#b5212b");
+      btn.disabled = false;
+      return;
+    }
   }
 
-  window.onExtra=function(el){
-    var newFiles=Array.from(el.files);
-    if(!newFiles.length) return;
-    extraFiles=extraFiles.concat(newFiles);
-    var container=document.getElementById("extra-thumbs");
-    newFiles.forEach(function(f){
-      var r=new FileReader();
-      r.onload=function(e){
-        var img=document.createElement("img");
-        img.src=e.target.result;
-        img.style.cssText="width:60px;height:60px;object-fit:cover;border-radius:3px;border:2px solid #1568be;";
-        container.appendChild(img);
-      };
-      r.readAsDataURL(f);
-    });
-    el.value="";
-  };
-
-  function setStatus(msg,color){
-    var el=document.getElementById("status");
-    el.textContent=msg;
-    el.style.color=color||"#6b6b6b";
+  setStatus("Finalizing...");
+  var cr = await fetch("/.netlify/functions/photos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "confirm", id: ID, token: TOKEN, type: TYPE, paths: paths })
+  });
+  if (cr.ok) {
+    document.querySelector(".wrap").innerHTML =
+      '<div style="text-align:center;padding:60px 24px;">' +
+      '<div style="width:56px;height:56px;background:#22c55e;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">' +
+      '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+      '<h2 style="color:#262626;margin:0 0 12px;font-size:24px;">Photos submitted!</h2>' +
+      '<p style="color:#3c3c3c;line-height:1.6;">Your ' + TYPE + ' photos have been received.<br>' +
+      '<span style="font-size:12px;color:#9a9a9a;">' + ID + '</span></p></div>';
+  } else {
+    setStatus("Could not finalize. Please try again.", "#b5212b");
+    btn.disabled = false;
   }
-
-  window.handleSubmit=async function(){
-    var btn=document.getElementById("submit-btn");
-    btn.disabled=true;
-    var paths={};
-    for(var i=0;i<SLOTS.length;i++){
-      var s=SLOTS[i];
-      setStatus("Uploading "+s.label+"... ("+(i+1)+"/"+SLOTS.length+")");
-      try{
-        var blob=await resize(files[s.key]);
-        var b64=await toB64(blob);
-        var res=await fetch("/.netlify/functions/photos",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({action:"upload",id:id,token:token,type:type,slot:s.key,imageData:b64})
-        });
-        if(!res.ok) throw new Error("failed");
-        var d=await res.json();
-        paths[s.key]=d.path;
-      }catch(e){
-        setStatus("Upload failed — check your connection and try again.","#b5212b");
-        btn.disabled=false;
-        return;
-      }
-    }
-    // Upload extra photos
-    for(var j=0;j<extraFiles.length;j++){
-      setStatus("Uploading extra photo "+(j+1)+" of "+extraFiles.length+"...");
-      try{
-        var eblob=await resize(extraFiles[j]);
-        var eb64=await toB64(eblob);
-        var eres=await fetch("/.netlify/functions/photos",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({action:"upload",id:id,token:token,type:type,slot:"extra_"+j,imageData:eb64})
-        });
-        if(!eres.ok) throw new Error("failed");
-        var ed=await eres.json();
-        paths["extra_"+j]=ed.path;
-      }catch(e){
-        setStatus("Extra photo upload failed — try again.","#b5212b");
-        btn.disabled=false;
-        return;
-      }
-    }
-
-    setStatus("Finalizing...");
-    var cr=await fetch("/.netlify/functions/photos",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"confirm",id:id,token:token,type:type,paths:paths})
-    });
-    if(cr.ok){
-      document.querySelector(".wrap").innerHTML=
-        '<div style="text-align:center;padding:60px 24px;">'+
-        '<div style="width:56px;height:56px;background:#22c55e;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">'+
-        '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg></div>'+
-        '<h2 style="color:#262626;margin:0 0 12px;font-size:24px;">Photos submitted!</h2>'+
-        '<p style="color:#3c3c3c;line-height:1.6;">Your '+type+' photos have been received.<br><span style="font-size:12px;color:#9a9a9a;">'+id+'</span></p></div>';
-    }else{
-      setStatus("Could not finalize. Please try again.","#b5212b");
-      btn.disabled=false;
-    }
-  };
-
-  build();
-})();
+}
 </script>
 </body>
 </html>`;
@@ -327,13 +327,10 @@ exports.handler = async (event) => {
     if (!type || !["pickup", "return"].includes(type)) return jsonErr(400, "Invalid type");
     if (!id || !token || token !== makeToken("photos-" + type, id)) return jsonErr(403, "Invalid token");
 
-    // ── upload one photo ───────────────────────────────────────────────────
     if (action === "upload") {
       const { slot, imageData } = body;
       const validSlot = SLOTS.find(s => s.key === slot) || /^extra_\d+$/.test(slot);
-      if (!slot || !validSlot || !imageData) {
-        return jsonErr(400, "Missing slot or imageData");
-      }
+      if (!slot || !validSlot || !imageData) return jsonErr(400, "Missing slot or imageData");
 
       const buffer = Buffer.from(imageData, "base64");
       const path = `${id}/${type}/${slot}.jpg`;
@@ -350,18 +347,16 @@ exports.handler = async (event) => {
       return jsonOk({ ok: true, path });
     }
 
-    // ── confirm all uploaded ───────────────────────────────────────────────
     if (action === "confirm") {
       const { paths } = body;
-      const tsField   = type === "pickup" ? "pickup_photos_at"    : "return_photos_at";
-      const pathField = type === "pickup" ? "pickup_photo_paths"  : "return_photo_paths";
+      const tsField   = type === "pickup" ? "pickup_photos_at"   : "return_photos_at";
+      const pathField = type === "pickup" ? "pickup_photo_paths" : "return_photo_paths";
 
       await supabase.from("bookings").update({
         [tsField]:   new Date().toISOString(),
         [pathField]: paths,
       }).eq("id", id);
 
-      // Notify owner with view links
       try {
         const { data: booking } = await supabase
           .from("bookings")
