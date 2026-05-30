@@ -93,6 +93,21 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
       Tap each card to take a photo. All 6 are required before submitting.
     </p>
     <div id="slots"></div>
+
+    <div style="border:2px dashed #e6e6e6;padding:16px;margin-bottom:10px;cursor:pointer;" onclick="document.getElementById('extra-input').click()">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:68px;height:68px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;border-radius:3px;flex-shrink:0;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="2" stroke-linecap="square"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:15px;color:#262626;">Additional Photos</div>
+          <div style="font-size:12px;color:#9a9a9a;margin-top:2px;">Optional — select as many as you like</div>
+        </div>
+      </div>
+      <div id="extra-thumbs" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;"></div>
+      <input type="file" id="extra-input" accept="image/*" multiple style="display:none" onchange="onExtra(this)">
+    </div>
+
     <button id="submit-btn" class="btn" disabled onclick="handleSubmit()">Submit All Photos</button>
     <div id="status"></div>
   </div>
@@ -102,6 +117,7 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 (function(){
   var SLOTS=${slotsJson};
   var files={};
+  var extraFiles=[];
   var id=${JSON.stringify(id)};
   var token=${JSON.stringify(token)};
   var type=${JSON.stringify(type)};
@@ -167,6 +183,24 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
     });
   }
 
+  window.onExtra=function(el){
+    var newFiles=Array.from(el.files);
+    if(!newFiles.length) return;
+    extraFiles=extraFiles.concat(newFiles);
+    var container=document.getElementById("extra-thumbs");
+    newFiles.forEach(function(f){
+      var r=new FileReader();
+      r.onload=function(e){
+        var img=document.createElement("img");
+        img.src=e.target.result;
+        img.style.cssText="width:60px;height:60px;object-fit:cover;border-radius:3px;border:2px solid #1568be;";
+        container.appendChild(img);
+      };
+      r.readAsDataURL(f);
+    });
+    el.value="";
+  };
+
   function setStatus(msg,color){
     var el=document.getElementById("status");
     el.textContent=msg;
@@ -197,6 +231,27 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
         return;
       }
     }
+    // Upload extra photos
+    for(var j=0;j<extraFiles.length;j++){
+      setStatus("Uploading extra photo "+(j+1)+" of "+extraFiles.length+"...");
+      try{
+        var eblob=await resize(extraFiles[j]);
+        var eb64=await toB64(eblob);
+        var eres=await fetch("/.netlify/functions/photos",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({action:"upload",id:id,token:token,type:type,slot:"extra_"+j,imageData:eb64})
+        });
+        if(!eres.ok) throw new Error("failed");
+        var ed=await eres.json();
+        paths["extra_"+j]=ed.path;
+      }catch(e){
+        setStatus("Extra photo upload failed — try again.","#b5212b");
+        btn.disabled=false;
+        return;
+      }
+    }
+
     setStatus("Finalizing...");
     var cr=await fetch("/.netlify/functions/photos",{
       method:"POST",
@@ -275,7 +330,8 @@ exports.handler = async (event) => {
     // ── upload one photo ───────────────────────────────────────────────────
     if (action === "upload") {
       const { slot, imageData } = body;
-      if (!slot || !SLOTS.find(s => s.key === slot) || !imageData) {
+      const validSlot = SLOTS.find(s => s.key === slot) || /^extra_\d+$/.test(slot);
+      if (!slot || !validSlot || !imageData) {
         return jsonErr(400, "Missing slot or imageData");
       }
 
