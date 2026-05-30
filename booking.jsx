@@ -782,11 +782,15 @@ function StepPayment({ state, setState, onNext, onBack }) {
     };
   }, []);
 
-  // Deposit amount for this trailer (cargo: $200, hauler: $150).
+  // Full charge breakdown: rental + tax + deposit
   const trailer = TRAILERS[state.trailerId];
   const fleet   = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
   const fleetT  = fleet.find(x => x.id === state.trailerId);
-  const baseDeposit = fleetT?.deposit || 200;
+  const days         = state.days || 1;
+  const rentalAmount = trailer ? calcRental(trailer, days) : 0;
+  const taxAmount    = Math.round(rentalAmount * 0.0925);
+  const depositAmount = fleetT?.deposit || 200;
+  const totalAmount  = rentalAmount + taxAmount + depositAmount;
 
   const [couponCode,    setCouponCode]    = React.useState("");
   const [couponOpen,    setCouponOpen]    = React.useState(false);
@@ -794,7 +798,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const [couponError,   setCouponError]   = React.useState(null);
   const [couponLoading, setCouponLoading] = React.useState(false);
 
-  const deposit = couponApplied ? 1 : baseDeposit;
+  const chargeTotal = couponApplied ? 1 : totalAmount;
 
   async function applyCoupon() {
     if (!couponCode.trim()) return;
@@ -867,7 +871,10 @@ function StepPayment({ state, setState, onNext, onBack }) {
           dropoff: state.dropoff,
           days: state.days,
           paymentMethodId: paymentMethod.id,
-          depositAmount: deposit,
+          rentalAmount,
+          taxAmount,
+          depositAmount,
+          totalAmount: chargeTotal,
           couponCode: couponCode.trim() || undefined,
           sessionId: state.sessionId,
           docPaths: state.docPaths || {},
@@ -1009,7 +1016,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           Card data goes directly to Stripe — TVR never sees the full number.{" "}
           {couponApplied
             ? <strong style={{ fontWeight: 700, color: "#262626" }}>Coupon applied — $1 charge only.</strong>
-            : <>A <strong style={{ fontWeight: 700, color: "#262626" }}>${deposit} refundable deposit</strong> will be authorized on this card.</>
+            : <>Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.</>
           }
         </span>
       </div>
@@ -1017,7 +1024,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
       <StepFooter
         onBack={processing ? null : onBack}
         onNext={handlePay}
-        nextLabel={processing ? "Processing…" : `Pay $${deposit} & confirm`}
+        nextLabel={processing ? "Processing…" : `Pay $${chargeTotal} & confirm`}
         disabled={!valid}
       />
     </StepShell>

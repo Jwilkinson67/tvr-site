@@ -170,7 +170,7 @@ exports.handler = async (event) => {
   if (body.action === "book") {
     const {
       trailerId, trailerName, pickup, dropoff, days,
-      paymentMethodId, depositAmount, couponCode,
+      paymentMethodId, rentalAmount, taxAmount, depositAmount, totalAmount, couponCode,
       sessionId, docPaths,
       customer,
     } = body;
@@ -178,7 +178,7 @@ exports.handler = async (event) => {
     // Admin coupon overrides charge to $1
     const adminCode = process.env.ADMIN_COUPON_CODE;
     const couponValid = adminCode && couponCode === adminCode;
-    const chargeAmount = couponValid ? 1 : depositAmount;
+    const chargeAmount = couponValid ? 1 : (totalAmount || depositAmount);
 
     if (!trailerId || !pickup || !dropoff || !paymentMethodId || !chargeAmount) {
       return err(400, "Missing required booking fields.");
@@ -259,7 +259,10 @@ exports.handler = async (event) => {
       renter_signature: customer.signature || "",
       signed_at: new Date().toISOString(),
       payment_intent_id: paymentIntent.id,
-      deposit_amount: chargeAmount,
+      rental_amount: couponValid ? 0 : (rentalAmount || 0),
+      tax_amount: couponValid ? 0 : (taxAmount || 0),
+      deposit_amount: couponValid ? 1 : (depositAmount || chargeAmount),
+      total_charged: chargeAmount,
     };
 
     const { error: insertErr } = await supabase.from("bookings").insert(bookingRow);

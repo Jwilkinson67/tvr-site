@@ -367,11 +367,34 @@ exports.handler = async (event) => {
       console.error("Customer email failed:", e);
     }
 
-    return htmlPage(
-      "Booking approved!",
-      `${booking.customer_name}'s booking (${booking.trailer_name || booking.trailer_id}, ${booking.pickup} → ${booking.dropoff}) has been approved and $${booking.deposit_amount} captured. A confirmation email has been sent to ${booking.customer_email}.`,
-      true
-    );
+    const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
+    const refundToken = makeToken("refund", id);
+    const refundUrl = `${siteUrl}/.netlify/functions/refund?id=${id}&token=${refundToken}`;
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "text/html" },
+      body: `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Booking Approved · TVR</title></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;">
+<div style="max-width:520px;width:100%;background:#fff;padding:48px;text-align:center;">
+  <div style="width:56px;height:56px;background:#1568be;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <h1 style="font-size:28px;margin:0 0 12px;color:#262626;">Booking approved!</h1>
+  <p style="color:#3c3c3c;line-height:1.6;margin:0 0 32px;">${booking.customer_name}'s booking (${booking.trailer_name || booking.trailer_id}, ${booking.pickup} &rarr; ${booking.dropoff}) has been approved and $${booking.total_charged || booking.deposit_amount} captured. A confirmation email has been sent to ${booking.customer_email}.</p>
+  <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">After the rental</div>
+    <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Use this link to release the $${booking.deposit_amount} deposit once you've inspected the trailer. You can adjust the amount for any damages.</p>
+    <a href="${refundUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Release Deposit &rarr;</a>
+    <p style="font-size:11px;color:#9a9a9a;margin:12px 0 0;text-align:center;">Bookmark this page or save the link — you'll need it after return.</p>
+  </div>
+</div>
+</body>
+</html>`,
+    };
   }
 
   // ── Decline ──────────────────────────────────────────────────────────────
