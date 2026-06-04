@@ -203,15 +203,32 @@ exports.handler = async (event) => {
       return err(409, `That trailer is already booked for those dates (${conflicts[0].pickup} – ${conflicts[0].dropoff}).`);
     }
 
+    // Create Stripe Customer and save card for future charges
+    let stripeCustomerId = null;
+    let stripePaymentMethodId = paymentMethodId;
+    try {
+      const stripeCustomer = await stripe.customers.create({
+        email: customer.email,
+        name: customer.name,
+        phone: customer.phone || undefined,
+        metadata: { trailer_id: trailerId, pickup, dropoff },
+      });
+      await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomer.id });
+      stripeCustomerId = stripeCustomer.id;
+    } catch (custErr) {
+      console.error("Stripe customer creation failed (non-fatal):", custErr);
+    }
+
     // Authorize card — manual capture so charge only happens on owner approval
     let paymentIntent;
     try {
       paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(chargeAmount * 100),
         currency: "usd",
+        customer: stripeCustomerId || undefined,
         payment_method: paymentMethodId,
         payment_method_types: ["card"],
-        capture_method: "manual",    // <-- authorize only, not captured yet
+        capture_method: "manual",
         confirm: true,
         description: `TVR deposit — ${trailerId} ${pickup} → ${dropoff}`,
         receipt_email: customer.email,
@@ -261,6 +278,8 @@ exports.handler = async (event) => {
       renter_signature: customer.signature || "",
       signed_at: new Date().toISOString(),
       payment_intent_id: paymentIntent.id,
+      stripe_customer_id: stripeCustomerId,
+      stripe_payment_method_id: stripePaymentMethodId,
       rental_amount: couponValid ? 0 : (rentalAmount || 0),
       tax_amount: couponValid ? 0 : (taxAmount || 0),
       deposit_amount: couponValid ? 1 : (depositAmount || chargeAmount),

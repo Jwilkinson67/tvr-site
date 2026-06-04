@@ -401,7 +401,8 @@ exports.handler = async (event) => {
   <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:24px;text-align:left;margin-bottom:16px;">
     <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">After the rental</div>
     <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Use this link to release the $${booking.deposit_amount} deposit once you've inspected the trailer.</p>
-    <a href="${refundUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Release Deposit &rarr;</a>
+    <a href="${refundUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;margin-bottom:8px;">Release Deposit &rarr;</a>
+    <a href="${siteUrl}/.netlify/functions/charge?id=${id}&token=${makeToken("charge", id)}" style="display:block;background:#262626;color:#fff;padding:14px 24px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Charge Card on File &rarr;</a>
   </div>
 
   <div style="background:#fff5f5;border:1px solid #f5c6cb;padding:24px;text-align:left;">
