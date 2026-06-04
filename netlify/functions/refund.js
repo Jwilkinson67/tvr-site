@@ -16,6 +16,60 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+async function sendReviewEmail(booking) {
+  const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
+<div style="max-width:600px;margin:0 auto;background:#fff;">
+
+  <div style="background:#1568be;padding:24px 32px;">
+    <div style="color:#fff;font-size:22px;font-weight:700;">Thank You for Renting with TVR!</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals</div>
+  </div>
+
+  <div style="padding:32px;">
+    <p style="font-size:16px;line-height:1.6;margin:0 0 16px;">Hi ${booking.customer_name},</p>
+    <p style="font-size:15px;line-height:1.6;color:#3c3c3c;margin:0 0 24px;">
+      Thanks for renting the ${booking.trailer_name || booking.trailer_id}! We hope everything went smoothly and that the trailer served you well.
+    </p>
+    <p style="font-size:15px;line-height:1.6;color:#3c3c3c;margin:0 0 32px;">
+      If you had a great experience, we'd really appreciate a quick Google review — it helps other customers find us and only takes a minute!
+    </p>
+
+    <div style="text-align:center;margin:32px 0;">
+      <a href="https://g.page/r/CWniJIMNhoVzEAI/review"
+        style="background:#1568be;color:#fff;padding:16px 36px;text-decoration:none;font-weight:700;font-size:15px;display:inline-block;">
+        ⭐ Leave Us a Google Review
+      </a>
+    </div>
+
+    <p style="font-size:13px;color:#6b6b6b;line-height:1.6;margin:32px 0 0;padding-top:24px;border-top:1px solid #e6e6e6;">
+      Have feedback or questions? Reply to this email or call us anytime.<br>
+      — Tennessee Valley Rentals
+    </p>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: `Tennessee Valley Rentals <${from}>`,
+      to: booking.customer_email,
+      subject: "Thanks for renting with TVR — leave us a review!",
+      html,
+    }),
+  });
+}
+
 function makeToken(action, bookingId) {
   return crypto
     .createHmac("sha256", process.env.BOOKING_SECRET || "dev-secret")
@@ -180,6 +234,9 @@ exports.handler = async (event) => {
       refunded_at: new Date().toISOString(),
       status: "completed",
     }).eq("id", id);
+
+    // Send review request email (non-fatal)
+    try { await sendReviewEmail(booking); } catch (e) { console.error("Review email failed:", e); }
 
     const deducted = maxRefund - amount;
 
