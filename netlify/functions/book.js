@@ -176,12 +176,12 @@ exports.handler = async (event) => {
       customer,
     } = body;
 
-    // Admin coupon overrides charge to $1
+    // Admin coupon overrides charge to $0 and skips Stripe entirely
     const adminCode = process.env.ADMIN_COUPON_CODE;
     const couponValid = adminCode && couponCode === adminCode;
-    const chargeAmount = couponValid ? 1 : (totalAmount || depositAmount);
+    const chargeAmount = couponValid ? 0 : (totalAmount || depositAmount);
 
-    if (!trailerId || !pickup || !dropoff || !paymentMethodId || !chargeAmount) {
+    if (!trailerId || !pickup || !dropoff || (!couponValid && !chargeAmount)) {
       return err(400, "Missing required booking fields.");
     }
     if (!customer?.name || !customer?.email) {
@@ -203,50 +203,58 @@ exports.handler = async (event) => {
       return err(409, `That trailer is already booked for those dates (${conflicts[0].pickup} – ${conflicts[0].dropoff}).`);
     }
 
-    // Create Stripe Customer and save card for future charges
+    // Skip Stripe entirely for $0 coupon bookings
     let stripeCustomerId = null;
-    let stripePaymentMethodId = paymentMethodId;
-    try {
-      const stripeCustomer = await stripe.customers.create({
-        email: customer.email,
-        name: customer.name,
-        phone: customer.phone || undefined,
-        metadata: { trailer_id: trailerId, pickup, dropoff },
-      });
-      await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomer.id });
-      stripeCustomerId = stripeCustomer.id;
-    } catch (custErr) {
-      console.error("Stripe customer creation failed (non-fatal):", custErr);
-    }
+    let stripePaymentMethodId = null;
+    let paymentIntentId = "COUPON-FREE";
 
-    // Authorize card — manual capture so charge only happens on owner approval
-    let paymentIntent;
-    try {
-      paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(chargeAmount * 100),
-        currency: "usd",
-        customer: stripeCustomerId || undefined,
-        payment_method: paymentMethodId,
-        payment_method_types: ["card"],
-        capture_method: "manual",
-        confirm: true,
-        description: `TVR deposit — ${trailerId} ${pickup} → ${dropoff}`,
-        receipt_email: customer.email,
-        metadata: {
-          trailer_id: trailerId,
-          pickup,
-          dropoff,
-          customer_name: customer.name,
-          customer_phone: customer.phone || "",
-        },
-      });
-    } catch (stripeErr) {
-      console.error("Stripe error:", stripeErr);
-      return err(402, stripeErr.message || "Card was declined.");
-    }
+    if (!couponValid) {
+      // Create Stripe Customer and save card for future charges
+      try {
+        const stripeCustomer = await stripe.customers.create({
+          email: customer.email,
+          name: customer.name,
+          phone: customer.phone || undefined,
+          metadata: { trailer_id: trailerId, pickup, dropoff },
+        });
+        await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomer.id });
+        stripeCustomerId = stripeCustomer.id;
+        stripePaymentMethodId = paymentMethodId;
+      } catch (custErr) {
+        console.error("Stripe customer creation failed (non-fatal):", custErr);
+      }
 
-    if (!["requires_capture", "succeeded"].includes(paymentIntent.status)) {
-      return err(402, `Payment status: ${paymentIntent.status}. Please try again.`);
+      // Authorize card — manual capture so charge only happens on owner approval
+      let paymentIntent;
+      try {
+        paymentIntent = await stripe.paymentIntents.create({
+          amount: Math.round(chargeAmount * 100),
+          currency: "usd",
+          customer: stripeCustomerId || undefined,
+          payment_method: paymentMethodId,
+          payment_method_types: ["card"],
+          capture_method: "manual",
+          confirm: true,
+          description: `TVR deposit — ${trailerId} ${pickup} → ${dropoff}`,
+          receipt_email: customer.email,
+          metadata: {
+            trailer_id: trailerId,
+            pickup,
+            dropoff,
+            customer_name: customer.name,
+            customer_phone: customer.phone || "",
+          },
+        });
+      } catch (stripeErr) {
+        console.error("Stripe error:", stripeErr);
+        return err(402, stripeErr.message || "Card was declined.");
+      }
+
+      if (!["requires_capture", "succeeded"].includes(paymentIntent.status)) {
+        return err(402, `Payment status: ${paymentIntent.status}. Please try again.`);
+      }
+
+      paymentIntentId = paymentIntent.id;
     }
 
     // Save booking to Supabase
@@ -277,12 +285,12 @@ exports.handler = async (event) => {
       pickup_note: customer.pickupNote || "",
       renter_signature: customer.signature || "",
       signed_at: new Date().toISOString(),
-      payment_intent_id: paymentIntent.id,
+      payment_intent_id: paymentIntentId,
       stripe_customer_id: stripeCustomerId,
       stripe_payment_method_id: stripePaymentMethodId,
       rental_amount: couponValid ? 0 : (rentalAmount || 0),
       tax_amount: couponValid ? 0 : (taxAmount || 0),
-      deposit_amount: couponValid ? 1 : (depositAmount || chargeAmount),
+      deposit_amount: couponValid ? 0 : (depositAmount || chargeAmount),
       total_charged: chargeAmount,
     };
 

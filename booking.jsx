@@ -799,7 +799,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const [couponError,   setCouponError]   = React.useState(null);
   const [couponLoading, setCouponLoading] = React.useState(false);
 
-  const chargeTotal = couponApplied ? 1 : totalAmount;
+  const chargeTotal = couponApplied ? 0 : totalAmount;
 
   async function applyCoupon() {
     if (!couponCode.trim()) return;
@@ -825,7 +825,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
     }
   }
 
-  const valid = stripeReady && cardComplete && !processing;
+  const valid = couponApplied ? !processing : (stripeReady && cardComplete && !processing);
 
   async function handlePay() {
     const stripe = stripeRef.current;
@@ -925,6 +925,71 @@ function StepPayment({ state, setState, onNext, onBack }) {
     onNext();
   }
 
+  async function handleFreeBook() {
+    setProcessing(true);
+    setCardError(null);
+    let bookingId;
+    try {
+      const res = await fetch("/.netlify/functions/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "book",
+          trailerId: state.trailerId,
+          trailerName: (window.TVR_CONTENT?.fleet || []).find(x => x.id === state.trailerId)?.name,
+          pickup: state.pickup,
+          dropoff: state.dropoff,
+          days: state.days,
+          paymentMethodId: "COUPON-FREE",
+          rentalAmount,
+          taxAmount,
+          depositAmount,
+          totalAmount: 0,
+          couponCode: couponCode.trim(),
+          sessionId: state.sessionId,
+          docPaths: state.docPaths || {},
+          customer: {
+            name: state.name,
+            email: state.email,
+            phone: state.phone,
+            address: state.address,
+            city: state.city,
+            stateZip: state.stateZip,
+            dlNumber: state.dlNumber,
+            towPlate: state.towPlate,
+            insuranceCompany: state.insuranceCompany,
+            policyNumber: state.policyNumber,
+            tow: state.tow,
+            hitch: state.hitch,
+            brakeController: state.brakeController,
+            purpose: state.purpose,
+            pickupNote: state.pickupNote,
+            signature: state.signature,
+          },
+        }),
+      });
+      const result = await res.json();
+      if (!result.success) {
+        setCardError(result.error || "Booking failed. Please try again.");
+        setProcessing(false);
+        return;
+      }
+      bookingId = result.bookingId;
+    } catch (fetchErr) {
+      bookingId = "TVR-" + Date.now().toString(36).toUpperCase();
+    }
+    Bookings.add(state.trailerId, {
+      id: bookingId,
+      pickup: state.pickup,
+      dropoff: state.dropoff,
+      name: state.name || "",
+      bookedAt: new Date().toISOString(),
+    });
+    setProcessing(false);
+    setState(s => ({...s, bookingId}));
+    onNext();
+  }
+
   return (
     <StepShell title="Payment" kicker="STEP 6 · PAYMENT">
       {/* TEST-MODE banner — visible whenever a pk_test_ key is in use. */}
@@ -940,35 +1005,45 @@ function StepPayment({ state, setState, onNext, onBack }) {
         </div>
       )}
 
-      <div style={{ marginBottom: 20 }}>
-        <Field label="Cardholder name">
-          <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || "Name on card"}/>
-        </Field>
-      </div>
-
-      <div style={{ marginBottom: 8 }}>
-        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>Card details</div>
-        <div style={{
-          minHeight: 48, padding: "0 16px",
-          background: "#fff",
-          border: cardError ? "1px solid #dc2626" : "1px solid #cccccc",
-          display: "flex", alignItems: "center",
-        }}>
-          {/* Stripe mounts the card iframe here */}
-          <div ref={cardMountRef} style={{ width: "100%" }} />
-          {!stripeReady && (
-            <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>Loading secure card field…</span>
-          )}
-        </div>
-        {cardError && (
-          <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626", marginTop: 6, letterSpacing: "0.3px" }}>{cardError}</div>
-        )}
-        {!cardError && (
-          <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>
-            Card number, expiry, CVC, and ZIP. Powered by Stripe.
+      {!couponApplied && (
+        <>
+          <div style={{ marginBottom: 20 }}>
+            <Field label="Cardholder name">
+              <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || "Name on card"}/>
+            </Field>
           </div>
-        )}
-      </div>
+
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>Card details</div>
+            <div style={{
+              minHeight: 48, padding: "0 16px",
+              background: "#fff",
+              border: cardError ? "1px solid #dc2626" : "1px solid #cccccc",
+              display: "flex", alignItems: "center",
+            }}>
+              <div ref={cardMountRef} style={{ width: "100%" }} />
+              {!stripeReady && (
+                <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>Loading secure card field…</span>
+              )}
+            </div>
+            {cardError && (
+              <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626", marginTop: 6, letterSpacing: "0.3px" }}>{cardError}</div>
+            )}
+            {!cardError && (
+              <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>
+                Card number, expiry, CVC, and ZIP. Powered by Stripe.
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {couponApplied && (
+        <div style={{ padding: "20px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+          <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>Coupon applied — no payment required. No card will be charged.</span>
+        </div>
+      )}
 
       {/* Coupon code */}
       <div style={{ marginTop: 20 }}>
@@ -1003,7 +1078,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
         )}
         {couponApplied && (
           <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>
-            Code applied — total reduced to <strong style={{ fontWeight: 700 }}>$1</strong>.
+            Code applied — <strong style={{ fontWeight: 700 }}>no charge</strong>.
           </div>
         )}
         {couponError && (
@@ -1011,21 +1086,20 @@ function StepPayment({ state, setState, onNext, onBack }) {
         )}
       </div>
 
-      <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 32 }}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          Card data goes directly to Stripe — TVR never sees the full number.{" "}
-          {couponApplied
-            ? <strong style={{ fontWeight: 700, color: "#262626" }}>Coupon applied — $1 charge only.</strong>
-            : <>Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.</>
-          }
-        </span>
-      </div>
+      {!couponApplied && (
+        <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 32 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+            Card data goes directly to Stripe — TVR never sees the full number.{" "}
+            Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
+          </span>
+        </div>
+      )}
 
       <StepFooter
         onBack={processing ? null : onBack}
-        onNext={handlePay}
-        nextLabel={processing ? "Processing…" : `Pay $${chargeTotal} & confirm`}
+        onNext={couponApplied ? handleFreeBook : handlePay}
+        nextLabel={processing ? "Processing…" : couponApplied ? "Complete Booking (Free)" : `Pay $${chargeTotal} & confirm`}
         disabled={!valid}
       />
     </StepShell>

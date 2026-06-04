@@ -424,11 +424,13 @@ exports.handler = async (event) => {
 
   // ── Approve ──────────────────────────────────────────────────────────────
   if (action === "approve") {
-    try {
-      await stripe.paymentIntents.capture(booking.payment_intent_id);
-    } catch (e) {
-      console.error("Stripe capture failed:", e);
-      return htmlPage("Payment error", `Could not capture payment: ${e.message}. Check Stripe dashboard.`, false);
+    if (!booking.payment_intent_id?.startsWith("COUPON-")) {
+      try {
+        await stripe.paymentIntents.capture(booking.payment_intent_id);
+      } catch (e) {
+        console.error("Stripe capture failed:", e);
+        return htmlPage("Payment error", `Could not capture payment: ${e.message}. Check Stripe dashboard.`, false);
+      }
     }
 
     await supabase.from("bookings").update({ status: "approved" }).eq("id", id);
@@ -481,11 +483,13 @@ exports.handler = async (event) => {
 
   // ── Decline ──────────────────────────────────────────────────────────────
   if (action === "decline") {
-    try {
-      await stripe.paymentIntents.cancel(booking.payment_intent_id);
-    } catch (e) {
-      console.error("Stripe cancel failed:", e);
-      return htmlPage("Payment error", `Could not cancel authorization: ${e.message}. Check Stripe dashboard.`, false);
+    if (!booking.payment_intent_id?.startsWith("COUPON-")) {
+      try {
+        await stripe.paymentIntents.cancel(booking.payment_intent_id);
+      } catch (e) {
+        console.error("Stripe cancel failed:", e);
+        return htmlPage("Payment error", `Could not cancel authorization: ${e.message}. Check Stripe dashboard.`, false);
+      }
     }
 
     await supabase.from("bookings").update({ status: "declined" }).eq("id", id);
@@ -542,15 +546,17 @@ exports.handler = async (event) => {
     }
 
     // Process cancellation
-    try {
-      await stripe.refunds.create({
-        payment_intent: booking.payment_intent_id,
-        reason: "requested_by_customer",
-        metadata: { booking_id: id, cancelled_by: "owner" },
-      });
-    } catch (e) {
-      console.error("Stripe refund failed on cancel:", e);
-      return htmlPage("Refund error", `Could not process refund: ${e.message}. Check Stripe dashboard.`, false);
+    if (!booking.payment_intent_id?.startsWith("COUPON-")) {
+      try {
+        await stripe.refunds.create({
+          payment_intent: booking.payment_intent_id,
+          reason: "requested_by_customer",
+          metadata: { booking_id: id, cancelled_by: "owner" },
+        });
+      } catch (e) {
+        console.error("Stripe refund failed on cancel:", e);
+        return htmlPage("Refund error", `Could not process refund: ${e.message}. Check Stripe dashboard.`, false);
+      }
     }
 
     await supabase.from("bookings").update({ status: "cancelled" }).eq("id", id);
