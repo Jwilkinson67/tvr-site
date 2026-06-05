@@ -312,15 +312,10 @@ function StepTrailerDates({ state, setState, onNext }) {
       .then(r => r.ok ? r.json() : null)
       .then(d => {
         if (!d || !d.bookings) return;
-        // Merge server bookings into localStorage so conflict checks use real data.
+        // Replace stored bookings with server's authoritative list so removals (cancellations, completions) are reflected.
         const all = Bookings.load();
-        const existing = all[state.trailerId] || [];
-        const existingIds = new Set(existing.map(b => b.id));
-        const newOnes = d.bookings.filter(b => !existingIds.has(b.id));
-        if (newOnes.length > 0) {
-          all[state.trailerId] = [...existing, ...newOnes];
-          Bookings.save(all);
-        }
+        all[state.trailerId] = d.bookings;
+        Bookings.save(all);
       })
       .catch(() => {}) // Silently fail if no backend (prototype mode)
       .finally(() => setLoadingAvail(false));
