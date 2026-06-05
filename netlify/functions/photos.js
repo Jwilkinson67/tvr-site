@@ -366,6 +366,7 @@ exports.handler = async (event) => {
 
         if (booking && process.env.RESEND_API_KEY && process.env.OWNER_EMAIL) {
           const typeLabel = type === "pickup" ? "Pickup" : "Return";
+          const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
           const linkRows = [];
           for (const [slot, path] of Object.entries(paths || {})) {
             const { data } = await supabase.storage
@@ -378,6 +379,15 @@ exports.handler = async (event) => {
               );
             }
           }
+
+          const refundSection = type === "return" ? `
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:16px 20px;margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#166534;margin-bottom:12px;">Trailer Returned — Next Step</div>
+      <a href="${siteUrl}/.netlify/functions/refund?id=${id}&token=${makeToken("refund", id)}"
+        style="display:inline-block;background:#1568be;color:#fff;padding:12px 24px;text-decoration:none;font-weight:700;font-size:14px;">
+        Release Deposit &rarr;
+      </a>
+    </div>` : "";
 
           const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
           await fetch("https://api.resend.com/emails", {
@@ -402,6 +412,7 @@ exports.handler = async (event) => {
       for <strong>${booking.trailer_name || booking.trailer_id}</strong>
       (${booking.pickup} &rarr; ${booking.dropoff}).
     </p>
+    ${refundSection}
     <div style="background:#f4f6f9;padding:16px 20px;margin-bottom:20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">View Photos</div>
       ${linkRows.join("")}
