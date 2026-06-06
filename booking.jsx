@@ -917,7 +917,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
     });
     setProcessing(false);
     setState(s => ({...s, bookingId}));
-    onNext();
+    window.location.href = "/booking-confirmed";
   }
 
   async function handleFreeBook() {
@@ -982,7 +982,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
     });
     setProcessing(false);
     setState(s => ({...s, bookingId}));
-    onNext();
+    window.location.href = "/booking-confirmed";
   }
 
   return (
