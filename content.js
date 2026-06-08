@@ -61,7 +61,7 @@ window.TVR_CONTENT = {
       photo:     "assets/fleet/cargo-8x16.png",
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
-      weekly:    550,
+      weekly:    600,
       deposit:   100,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
@@ -83,7 +83,7 @@ window.TVR_CONTENT = {
       photo:     "assets/fleet/hauler-8x20.png",
       photoScale: 1,
       daily:     100,
-      weekly:    500,
+      weekly:    550,
       deposit:   100,
       kickerLong:"Liberty",
       kickerBooking: "Liberty · 9,000 lb GVWR",
