@@ -61,7 +61,7 @@ window.TVR_CONTENT = {
       photo:     "assets/fleet/cargo-8x16.png",
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
-      weekly:    600,
+      weekly:    550,
       deposit:   100,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
