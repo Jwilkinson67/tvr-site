@@ -62,7 +62,7 @@ window.TVR_CONTENT = {
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     120,
       weekly:    600,
-      deposit:   200,
+      deposit:   100,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
       specs: [
@@ -84,7 +84,7 @@ window.TVR_CONTENT = {
       photoScale: 1,
       daily:     100,
       weekly:    500,
-      deposit:   200,
+      deposit:   100,
       kickerLong:"Liberty",
       kickerBooking: "Liberty · 9,000 lb GVWR",
       specs: [
