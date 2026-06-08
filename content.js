@@ -60,7 +60,7 @@ window.TVR_CONTENT = {
       detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather.",
       photo:     "assets/fleet/cargo-8x16.png",
       photoScale: 1,        // visual zoom inside the card / summary plate
-      daily:     120,
+      daily:     110,
       weekly:    600,
       deposit:   100,
       kickerLong:"Spartan",
