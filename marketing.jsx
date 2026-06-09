@@ -242,7 +242,7 @@ function FleetDetail({ trailerId, setRoute }) {
   }
   return (
     <article>
-      <section style={{ position: "relative", background: "#ebebeb", overflow: "hidden" }}>
+      <section style={{ position: "relative", background: "#fff", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
         <div style={{
           padding: isMobile ? "48px 24px 48px 32px" : "80px 80px 80px 96px",
@@ -269,7 +269,7 @@ function FleetDetail({ trailerId, setRoute }) {
           </div>
           <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
           placeholder={`Drop a photo of the ${t.name}`}
-          plateStyle={{ background: "#ebebeb" }}
+          plateStyle={{ background: "transparent" }}
           style={{ width: "100%", height: isMobile ? 220 : 360 }} />
         </div>
       </section>
