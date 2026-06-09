@@ -58,7 +58,7 @@ window.TVR_CONTENT = {
       subheading:"7ft x 14ft, 6000lbs",
       tagline:   "Secure, weather-protected enclosed trailer perfect for moving, storage, and keeping your items protected. Includes straps, a dolly, and an adjustable hitch for an easy pickup-and-go rental.",
       detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather.",
-      photo:     "assets/fleet/cargo-8x16.png",
+      photo:     "assets/fleet/Spartan-enclosed-14ft.jpg.png",
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
       weekly:    600,
