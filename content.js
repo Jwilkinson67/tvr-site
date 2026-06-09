@@ -35,7 +35,7 @@ window.TVR_CONTENT = {
     body:          "Reserve online and pick up today. Support local with simple trailer rentals, no upsells or hassle.",
     primaryCta:    "Book Today",
     secondaryCta:  "View fleet",
-    photo:         "assets/fleet/yard-tractor-hauler.png", // fallback if no drop
+    photo:         "assets/fleet/hero-hauler.jpg", // fallback if no drop
   },
 
   /* ---------- Marketing · fleet section heading ---------- */
