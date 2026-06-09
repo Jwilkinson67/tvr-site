@@ -274,6 +274,16 @@ function FleetDetail({ trailerId, setRoute }) {
         </div>
       </section>
 
+      {t.photoExtra && (
+        <section style={{ background: "#f4f6f9", padding: isMobile ? "32px 24px" : "48px 80px 48px 96px" }}>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 16 }}>INTERIOR</div>
+          <PhotoSlot id={`detail-${t.id}-extra`} src={t.photoExtra}
+            placeholder="Interior photo"
+            plateStyle={{ background: "transparent" }}
+            style={{ width: "100%", height: isMobile ? 240 : 420 }} />
+        </section>
+      )}
+
       <section style={{ padding: isMobile ? "40px 16px" : "80px 80px", background: "#fff" }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 24 }}>SPECIFICATIONS</div>
         <SpecGrid specs={t.specs} />
