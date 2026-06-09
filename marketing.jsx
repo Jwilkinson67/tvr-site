@@ -174,7 +174,7 @@ function FleetCard({ trailer, onSpecs }) {
     <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column" }}>
       <PhotoSlot id={`detail-${trailer.id}`} src={trailer.photo} scale={trailer.photoScale || 1}
       placeholder={`Drop a photo of the ${trailer.name}`}
-      plateStyle={{ background: "#ebebeb", aspectRatio: "16 / 10", overflow: "hidden" }}
+      plateStyle={{ background: "#f0f0f0", aspectRatio: "16 / 10", overflow: "hidden" }}
       style={{ width: "100%", height: "100%" }} />
       <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8 }}>
         <h3 style={{ font: '700 24px/1.25 "Inter", sans-serif', margin: 0, color: "#262626" }}>{trailer.name}</h3>
