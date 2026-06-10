@@ -236,10 +236,18 @@ function SpecGrid({ specs }) {
 function FleetDetail({ trailerId, setRoute }) {
   const c = C();
   const isMobile = useWindowWidth() < 768;
+  const [activeIdx, setActiveIdx] = React.useState(0);
   const t = c.fleet.find((x) => x.id === trailerId);
   if (!t) {
     return <section style={{ padding: 80 }}><p>Trailer not found. <a onClick={() => setRoute("home")}>Back</a></p></section>;
   }
+
+  const photos = [
+    { src: t.photo,      id: `detail-${t.id}`,       label: "Exterior", scale: t.photoScale || 1 },
+    ...(t.photoExtra ? [{ src: t.photoExtra, id: `detail-${t.id}-extra`, label: "Interior", scale: 1 }] : []),
+  ];
+  const active = photos[activeIdx] || photos[0];
+
   return (
     <article>
       <section style={{ position: "relative", background: "#fff", overflow: "hidden" }}>
@@ -267,22 +275,31 @@ function FleetDetail({ trailerId, setRoute }) {
               <MkButton variant="secondary" onClick={() => setRoute("home")}>← Back</MkButton>
             </div>
           </div>
-          <PhotoSlot id={`detail-${t.id}`} src={t.photo} scale={t.photoScale || 1}
-          placeholder={`Drop a photo of the ${t.name}`}
-          plateStyle={{ background: "transparent" }}
-          style={{ width: "100%", height: isMobile ? 220 : 360 }} />
+
+          {/* Photo gallery */}
+          <div>
+            <PhotoSlot id={active.id} src={active.src} scale={active.scale}
+              placeholder={`Drop a photo of the ${t.name}`}
+              plateStyle={{ background: "transparent" }}
+              style={{ width: "100%", height: isMobile ? 220 : 360 }} />
+            {photos.length > 1 && (
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                {photos.map((p, i) => (
+                  <button key={i} onClick={() => setActiveIdx(i)} style={{
+                    width: 72, height: 56, padding: 0, cursor: "pointer",
+                    border: `2px solid ${activeIdx === i ? "#1568be" : "#e0e0e0"}`,
+                    borderRadius: 2, overflow: "hidden", background: "#f4f6f9", flexShrink: 0,
+                    transition: "border-color 120ms",
+                  }}>
+                    <img src={p.src} alt={p.label}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
-
-      {t.photoExtra && (
-        <section style={{ background: "#f4f6f9", padding: isMobile ? "32px 24px" : "48px 80px 48px 96px" }}>
-          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 16 }}>INTERIOR</div>
-          <PhotoSlot id={`detail-${t.id}-extra`} src={t.photoExtra}
-            placeholder="Interior photo"
-            plateStyle={{ background: "transparent" }}
-            style={{ width: "100%", height: isMobile ? 240 : 420 }} />
-        </section>
-      )}
 
       <section style={{ padding: isMobile ? "40px 16px" : "80px 80px", background: "#fff" }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 24 }}>SPECIFICATIONS</div>
