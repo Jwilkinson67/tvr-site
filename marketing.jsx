@@ -242,9 +242,12 @@ function FleetDetail({ trailerId, setRoute }) {
     return <section style={{ padding: 80 }}><p>Trailer not found. <a onClick={() => setRoute("home")}>Back</a></p></section>;
   }
 
+  const extras = t.photoExtra
+    ? (Array.isArray(t.photoExtra) ? t.photoExtra : [t.photoExtra])
+    : [];
   const photos = [
-    { src: t.photo,      id: `detail-${t.id}`,       label: "Exterior", scale: t.photoScale || 1 },
-    ...(t.photoExtra ? [{ src: t.photoExtra, id: `detail-${t.id}-extra`, label: "Interior", scale: 1 }] : []),
+    { src: t.photo, id: `detail-${t.id}`, label: "Main", scale: t.photoScale || 1 },
+    ...extras.map((src, i) => ({ src, id: `detail-${t.id}-extra-${i}`, label: `Photo ${i + 2}`, scale: 1 })),
   ];
   const active = photos[activeIdx] || photos[0];
 
