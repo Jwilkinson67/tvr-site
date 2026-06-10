@@ -423,6 +423,156 @@ function LocationBand() {
   );
 }
 
+/* ----------- Reviews Band ----------- */
+function GoogleLogo({ size }) {
+  size = size || 16;
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+  );
+}
+
+function ReviewStars({ count }) {
+  count = count || 5;
+  return (
+    <div style={{ display: "flex", gap: 2 }}>
+      {[0,1,2,3,4].map(function(i) {
+        return <span key={i} style={{ color: i < count ? "#f5a623" : "#ddd", fontSize: 14 }}>&#9733;</span>;
+      })}
+    </div>
+  );
+}
+
+function ReviewCard({ review }) {
+  const initials = review.name.split(" ").map(function(w) { return w[0]; }).join("").slice(0, 2).toUpperCase();
+  const colors = ["#1568be", "#b5212b", "#3c7a3c", "#7c3c7a", "#b87014"];
+  const colorIdx = review.name.charCodeAt(0) % colors.length;
+
+  return (
+    <div style={{ background: "#f4f6f9", border: "1px solid #e6e6e6", display: "flex", flexDirection: "column" }}>
+      {review.photo && (
+        <img
+          src={review.photo}
+          alt={review.name + "'s rental photo"}
+          style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover", display: "block" }}
+          onError={function(e) { e.target.style.display = "none"; }}
+        />
+      )}
+      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            width: 38, height: 38, borderRadius: "50%", flexShrink: 0,
+            background: colors[colorIdx],
+            display: "flex", alignItems: "center", justifyContent: "center",
+            font: '700 14px/1 "Inter", sans-serif', color: "#fff",
+          }}>{initials}</div>
+          <div>
+            <div style={{ font: '700 14px/1.2 "Inter", sans-serif', color: "#262626" }}>{review.name}</div>
+            <div style={{ font: '400 11px/1 "Inter", sans-serif', color: "#9a9a9a", marginTop: 3 }}>{review.date}</div>
+          </div>
+        </div>
+        <ReviewStars count={review.stars} />
+        <p style={{ font: '300 14px/1.7 "Inter", sans-serif', color: "#3c3c3c", margin: 0, flex: 1 }}>"{review.text}"</p>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, font: '400 11px/1 "Inter", sans-serif', color: "#9a9a9a" }}>
+          <GoogleLogo size={13} />
+          Posted on Google
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReviewsBand() {
+  const c = C();
+  const isMobile = useWindowWidth() < 768;
+
+  const reviews = c.reviews || [];
+  const gUrl = c.googleReviewUrl || "#";
+  const cols = Math.min(reviews.length, 3) || 1;
+
+  return (
+    <section style={{ background: "#fff", padding: isMobile ? "56px 24px" : "80px 80px" }}>
+
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: isMobile ? "flex-start" : "flex-end",
+        justifyContent: "space-between", flexDirection: isMobile ? "column" : "row",
+        gap: 24, marginBottom: isMobile ? 32 : 48,
+      }}>
+        <div>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#b5212b", marginBottom: 12, display: "inline-flex", alignItems: "center", gap: 10 }}>
+            <span style={{ width: 28, height: 2, background: "#b5212b", display: "inline-block" }} />
+            CUSTOMER REVIEWS
+          </div>
+          <h2 style={{ font: `700 ${isMobile ? "28px" : "38px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#181818" }}>
+            What renters are saying
+          </h2>
+          <p style={{ font: '400 15px/1.6 "Inter", sans-serif', color: "#6b6b6b", margin: "10px 0 0" }}>
+            Verified Google reviews from real TVR customers.
+          </p>
+        </div>
+
+        {/* Overall rating chip */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, background: "#f4f6f9", border: "1px solid #e6e6e6", padding: "16px 24px", flexShrink: 0 }}>
+          <div style={{ font: '800 42px/1 "Inter", sans-serif', color: "#262626" }}>5.0</div>
+          <div>
+            <div style={{ display: "flex", gap: 3, marginBottom: 4 }}>
+              {[1,2,3,4,5].map(function(i) { return <span key={i} style={{ color: "#f5a623", fontSize: 18 }}>&#9733;</span>; })}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
+              <GoogleLogo size={16} />
+              Google &middot; {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cards */}
+      {reviews.length > 0 && (
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : `repeat(${cols}, 1fr)`,
+          gap: isMobile ? 16 : 20,
+          marginBottom: isMobile ? 32 : 40,
+        }}>
+          {reviews.map(function(r, i) { return <ReviewCard key={i} review={r} />; })}
+        </div>
+      )}
+
+      {/* Leave a review CTA */}
+      <div style={{
+        background: "#1568be",
+        padding: isMobile ? "32px 24px" : "40px 48px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        gap: 24, flexWrap: "wrap",
+      }}>
+        <div>
+          <div style={{ font: `700 ${isMobile ? "18px" : "22px"}/1.2 "Inter", sans-serif`, color: "#fff", marginBottom: 6 }}>
+            Had a great experience? Let us know.
+          </div>
+          <div style={{ font: '400 14px/1.5 "Inter", sans-serif', color: "#a8c8f0" }}>
+            Reviews help local customers find TVR. It only takes 30 seconds on Google.
+          </div>
+        </div>
+        <a href={gUrl} target="_blank" rel="noopener noreferrer" style={{
+          display: "inline-flex", alignItems: "center", gap: 10,
+          background: "#fff", color: "#262626",
+          font: '700 14px/1 "Inter", sans-serif', letterSpacing: "0.5px",
+          padding: "16px 28px", textDecoration: "none", flexShrink: 0,
+        }}>
+          <GoogleLogo size={20} />
+          Leave a Google Review
+        </a>
+      </div>
+
+    </section>
+  );
+}
+
 /* ----------- Footer ----------- */
 function Footer() {
   const c = C();
@@ -500,4 +650,4 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, LocationBand, Footer, Button: MkButton };
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };

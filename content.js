@@ -149,4 +149,17 @@ window.TVR_CONTENT = {
     helpPrefix:   "Need help?",
     taxRate:      0.0925,
   },
+
+  /* ---------- Reviews ---------- */
+  reviews: [
+    {
+      name: "Aaron N.",
+      date: "June 5, 2026",
+      stars: 5,
+      text: "Professional good communication very nice trailer all the right equipment. Would rent many times from this company.",
+      photo: "assets/fleet/aaron-n.jpg",
+    },
+  ],
+  googleReviewUrl: "https://g.page/r/CWniJIMNhoVzEAI/review",
+
 };

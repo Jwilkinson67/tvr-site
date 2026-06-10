@@ -112,6 +112,14 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
       <tr><td style="padding:10px 14px;font-weight:700;">Booking ID</td><td style="padding:10px 14px;font-family:monospace;color:#1568be;">${booking.id}</td></tr>
     </table>
 
+    ${booking.total_charged > 0 ? `
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Invoice</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:200px;">Rental (${booking.days || "?"} day${booking.days !== 1 ? "s" : ""})</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">$${(+(booking.rental_amount || 0)).toFixed(2)}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">TN Sales Tax (9.25%)</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">$${(+(booking.tax_amount || 0)).toFixed(2)}</td></tr>
+      <tr style="background:#f4f6f9;"><td style="padding:12px 14px;font-weight:700;font-size:15px;">Total Charged</td><td style="padding:12px 14px;font-weight:700;font-size:15px;color:#1568be;">$${(+(booking.total_charged || 0)).toFixed(2)}</td></tr>
+    </table>` : ""}
+
     <div style="border-top:3px solid #1568be;padding-top:20px;margin-bottom:28px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">Pickup Details</div>
       <p style="margin:0 0 8px;"><strong>Address:</strong> 4217 Shady Oak Dr, Ooltewah TN 37363</p>

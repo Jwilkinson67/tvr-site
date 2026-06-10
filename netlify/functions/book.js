@@ -69,6 +69,80 @@ async function sendEmail({ to, subject, html }) {
   if (!res.ok) throw new Error(await res.text());
 }
 
+/* ── Customer "request received" email ──────────────────────────────────── */
+function customerRequestEmail(booking) {
+  const firstName = (booking.customer_name || "").split(" ")[0] || "there";
+  const rentalAmt  = booking.rental_amount  || 0;
+  const taxAmt     = booking.tax_amount     || 0;
+  const totalAmt   = booking.total_charged  || 0;
+  const isCoupon   = booking.payment_intent_id === "COUPON-FREE";
+
+  const pricingRows = isCoupon ? `
+    <tr><td colspan="2" style="padding:14px;text-align:center;color:#1568be;font-weight:700;font-size:15px;">Complimentary rental — $0 charged</td></tr>` : `
+    <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:180px;">Rental (${booking.days || "?"} day${booking.days !== 1 ? "s" : ""})</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">$${(+rentalAmt).toFixed(2)}</td></tr>
+    <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">TN Sales Tax (9.25%)</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">$${(+taxAmt).toFixed(2)}</td></tr>
+    <tr style="background:#f4f6f9;"><td style="padding:12px 14px;font-weight:700;font-size:15px;">Total Charged</td><td style="padding:12px 14px;font-weight:700;font-size:15px;color:#1568be;">$${(+totalAmt).toFixed(2)}</td></tr>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
+<div style="max-width:620px;margin:0 auto;background:#fff;">
+
+  <div style="background:#1568be;padding:24px 32px;">
+    <div style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">Tennessee Valley Rentals LLC</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Request Received</div>
+  </div>
+
+  <div style="background:#f4f6f9;border-left:6px solid #1568be;padding:28px 32px;">
+    <div style="font-size:26px;font-weight:700;color:#262626;line-height:1.2;">Got it, ${firstName}!</div>
+    <div style="font-size:15px;color:#3c3c3c;margin-top:8px;">We've received your booking request and will review it within <strong>1–2 hours</strong>. You'll get a confirmation email once it's approved.</div>
+  </div>
+
+  <div style="padding:32px;">
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Your Booking Details</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:140px;">Trailer</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.trailer_name || booking.trailer_id}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Pickup date</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.pickup}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Return date</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.dropoff}</td></tr>
+      <tr><td style="padding:10px 14px;font-weight:700;">Booking ID</td><td style="padding:10px 14px;font-family:monospace;color:#1568be;">${booking.id}</td></tr>
+    </table>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Payment Summary</td></tr>
+      ${pricingRows}
+    </table>
+
+    <div style="border:1px solid #e6e6e6;padding:20px;margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">What happens next?</div>
+      <ol style="margin:0;padding-left:20px;color:#3c3c3c;line-height:2.2;font-size:14px;">
+        <li>We'll review your driver's license and insurance documents</li>
+        <li>You'll receive a confirmation email with pickup details</li>
+        <li>Pick up the trailer at <strong>4217 Shady Oak Dr, Ooltewah TN 37363</strong></li>
+      </ol>
+    </div>
+
+    <div style="background:#f4f6f9;padding:20px;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions?</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (321) 765-3077</div>
+      <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">info@rentwithtvr.com</div>
+    </div>
+
+  </div>
+
+  <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
+    <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">
+      Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077<br>
+      Booking ID: ${booking.id} · Your card has been authorized but <strong>not yet charged</strong> — that happens only when we approve.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>`;
+}
+
 /* ── Owner notification email ───────────────────────────────────────────── */
 function ownerEmail({ booking, docUrls, approveUrl, declineUrl }) {
   const docRows = [
@@ -310,14 +384,21 @@ exports.handler = async (event) => {
       const declineUrl = `${fnBase}?action=decline&id=${bookingId}&token=${makeToken("decline", bookingId)}`;
       const docUrls = await signedDocUrls(docPaths);
 
-      await sendEmail({
-        to: process.env.OWNER_EMAIL,
-        subject: `New booking — ${trailerName || trailerId} — ${pickup}`,
-        html: ownerEmail({ booking: bookingRow, docUrls, approveUrl, declineUrl }),
-      });
+      await Promise.all([
+        sendEmail({
+          to: process.env.OWNER_EMAIL,
+          subject: `New booking — ${trailerName || trailerId} — ${pickup}`,
+          html: ownerEmail({ booking: bookingRow, docUrls, approveUrl, declineUrl }),
+        }),
+        sendEmail({
+          to: customer.email,
+          subject: `Booking request received — ${trailerName || trailerId}, ${pickup}`,
+          html: customerRequestEmail(bookingRow),
+        }),
+      ]);
     } catch (emailErr) {
       // Don't fail the booking if email fails — just log it
-      console.error("Owner notification email failed:", emailErr);
+      console.error("Notification email failed:", emailErr);
     }
 
     return ok({ success: true, bookingId });
