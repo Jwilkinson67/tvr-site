@@ -59,7 +59,7 @@ window.TVR_CONTENT = {
       tagline:   "Secure, weather-protected enclosed trailer perfect for moving, storage, and keeping your items protected. Includes straps, a dolly, and an adjustable hitch for an easy pickup-and-go rental.",
       detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather.",
       photo:     "assets/fleet/Spartan-enclosed-14ft.jpg.png",
-      photoExtra: "assets/fleet/spartan-enclosed-back.jpg",
+      photoExtra: "assets/fleet/Spartan-enclosed-back-14ft.jpg",
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
       weekly:    600,
