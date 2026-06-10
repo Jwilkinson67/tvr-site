@@ -427,15 +427,34 @@ function Footer() {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   const colHead = { font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 };
-  const btn = { display: "inline-flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
+  const btn = { display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
   return (
     <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
         <div>
           <img src="assets/tvr-logo-primary-transparent.png" alt="Tennessee Valley Rentals LLC"
-            style={{ height: 80, width: "auto", mixBlendMode: "multiply", display: "block" }} />
+            style={{ height: 110, width: "auto", display: "block" }} />
+        </div>
+
+        {/* Contact — first column */}
+        <div>
+          <div style={colHead}>Contact</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <a href={`tel:${c.brand.phone}`} style={btn}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              {c.brand.phone}
+            </a>
+            <a href={`mailto:${c.brand.email}`} style={btn}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+              {c.brand.email}
+            </a>
+          </div>
         </div>
 
         {/* Connect With Us */}
@@ -460,16 +479,7 @@ function Footer() {
           </div>
         </div>
 
-        {/* Contact */}
-        <div>
-          <div style={colHead}>Contact</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <a href={`tel:${c.brand.phone}`} style={{ font: '300 14px/1 "Inter", sans-serif', color: "#3c3c3c", textDecoration: "none" }}>{c.brand.phone}</a>
-            <a href={`mailto:${c.brand.email}`} style={{ font: '300 14px/1 "Inter", sans-serif', color: "#3c3c3c", textDecoration: "none" }}>{c.brand.email}</a>
-          </div>
-        </div>
-
-        {/* Rental Agreement */}
+        {/* Documents */}
         <div>
           <div style={colHead}>Documents</div>
           <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={btn}>
