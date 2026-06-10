@@ -157,7 +157,7 @@ window.TVR_CONTENT = {
       date: "June 5, 2026",
       stars: 5,
       text: "Professional good communication very nice trailer all the right equipment. Would rent many times from this company.",
-      photo: "assets/fleet/aaron-n.jpg",
+      photo: "assets/aaron-n.jpg",
     },
   ],
   googleReviewUrl: "https://g.page/r/CWniJIMNhoVzEAI/review",
