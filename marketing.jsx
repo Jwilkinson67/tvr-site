@@ -455,11 +455,11 @@ function ReviewCard({ review }) {
   return (
     <div style={{ background: "#fff", border: "1px solid #e6e6e6", display: "flex", flexDirection: "column" }}>
       {review.photo && (
-        <div style={{ width: "100%", background: "#fff", textAlign: "center", flexShrink: 0, borderBottom: "1px solid #e6e6e6" }}>
+        <div style={{ width: "100%", flexShrink: 0, borderBottom: "1px solid #e6e6e6", overflow: "hidden" }}>
           <img
             src={review.photo}
             alt={review.name + "'s rental photo"}
-            style={{ maxWidth: "100%", maxHeight: 260, width: "auto", height: "auto", display: "inline-block" }}
+            style={{ width: "100%", height: "auto", display: "block" }}
             onError={function(e) { e.target.parentNode.style.display = "none"; }}
           />
         </div>
@@ -538,8 +538,8 @@ function ReviewsBand() {
       {reviews.length > 0 && (
         <div style={{
           display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : `repeat(${cols}, 1fr)`,
-          gap: isMobile ? 16 : 20,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(360px, 1fr))",
+          gap: isMobile ? 16 : 24,
           marginBottom: isMobile ? 32 : 40,
         }}>
           {reviews.map(function(r, i) { return <ReviewCard key={i} review={r} />; })}
