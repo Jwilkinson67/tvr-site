@@ -642,7 +642,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, maxWidth: 480 }}>
           Read the full agreement below. Sign by typing your full name — this counts as a legal e-signature. We'll email you a signed copy.
         </p>
-        <a href="#" onClick={e => e.preventDefault()} style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           Download PDF ›
         </a>
