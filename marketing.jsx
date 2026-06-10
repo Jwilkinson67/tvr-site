@@ -189,7 +189,7 @@ function FleetCard({ trailer, onSpecs }) {
           <div>
             <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${trailer.daily}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / day</span></div>
           </div>
-          <UpperLink onClick={onSpecs}>View specs</UpperLink>
+          <UpperLink onClick={onSpecs}>More details</UpperLink>
         </div>
       </div>
     </article>);
