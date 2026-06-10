@@ -43,9 +43,7 @@ function UpperLink({ children, onClick }) {
 }
 
 /* ----------- Image slot wrapper (drag-and-drop persistent photos) ----------- */
-function PhotoSlot({ id, src, scale = 1, placeholder = "Drop a photo", style, plateStyle, fit = "contain" }) {
-  // Renders an <image-slot> with a fallback src; user can drop a new image onto it
-  // and it persists in localStorage under `id`.
+function PhotoSlot({ id, src, scale = 1, placeholder = "Drop a photo", style, plateStyle, fit = "contain", position }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", ...plateStyle }}>
       <image-slot
@@ -54,6 +52,7 @@ function PhotoSlot({ id, src, scale = 1, placeholder = "Drop a photo", style, pl
         fit={fit}
         shape="rounded"
         radius="0"
+        position={position}
         placeholder={placeholder}
         style={{ display: "block", transform: `scale(${scale})`, transformOrigin: "center center", ...style }} />
       
@@ -118,7 +117,8 @@ function HeroDark({ setRoute }) {
         <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
           plateStyle={{ background: "#f4f6f9" }}
-          style={{ width: "100%", height: 260 }} />
+          position="center 65%"
+          style={{ width: "100%", height: 200 }} />
         <div style={{ padding: "32px 24px 40px 32px" }}>
           <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 10 }}>
             <span style={{ width: 20, height: 1, background: "#b5212b" }} />
