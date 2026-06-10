@@ -260,7 +260,7 @@ function FleetDetail({ trailerId, setRoute }) {
           display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
           gap: 48, alignItems: "center"
         }}>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 12 }}>
               <span style={{ width: 24, height: 1, background: "#b5212b" }} />
               {t.kickerLong}
@@ -272,7 +272,7 @@ function FleetDetail({ trailerId, setRoute }) {
                 {t.subheading}
               </div>
             }
-            <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", marginTop: 24, marginBottom: 32, maxWidth: 460 }}>{t.detailTagline || t.tagline}</p>
+            <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", marginTop: 24, marginBottom: 32 }}>{t.detailTagline || t.tagline}</p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <MkButton onClick={() => setRoute("booking")}>Reserve · ${t.daily}/day</MkButton>
               <MkButton variant="secondary" onClick={() => setRoute("home")}>← Back</MkButton>
@@ -280,18 +280,19 @@ function FleetDetail({ trailerId, setRoute }) {
           </div>
 
           {/* Photo gallery */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             <PhotoSlot id={active.id} src={active.src} scale={active.scale}
               placeholder={`Drop a photo of the ${t.name}`}
               plateStyle={{ background: "transparent" }}
               style={{ width: "100%", height: isMobile ? 220 : 360 }} />
             {photos.length > 1 && (
-              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <div style={{ display: "flex", gap: 8, marginTop: 10, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 4 }}>
                 {photos.map((p, i) => (
                   <button key={i} onClick={() => setActiveIdx(i)} style={{
-                    width: 72, height: 56, padding: 0, cursor: "pointer",
+                    width: isMobile ? 60 : 72, height: isMobile ? 48 : 56,
+                    padding: 0, cursor: "pointer", flexShrink: 0,
                     border: `2px solid ${activeIdx === i ? "#1568be" : "#e0e0e0"}`,
-                    borderRadius: 2, overflow: "hidden", background: "#f4f6f9", flexShrink: 0,
+                    borderRadius: 2, overflow: "hidden", background: "#f4f6f9",
                     transition: "border-color 120ms",
                   }}>
                     <img src={p.src} alt={p.label}
