@@ -99,7 +99,7 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 <body>
 <div class="wrap">
   <div class="hdr">
-    <div style="color:#fff;font-size:18px;font-weight:700;">Tennessee Valley Rentals</div>
+    <div style="color:#fff;font-size:18px;font-weight:700;">Tennessee Valley Rentals LLC</div>
     <div style="color:#a8c8f0;font-size:12px;margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Upload ${typeLabel} Photos</div>
   </div>
   <div class="inner">
@@ -397,14 +397,14 @@ exports.handler = async (event) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              from: `Tennessee Valley Rentals <${from}>`,
+              from: `Tennessee Valley Rentals LLC <${from}>`,
               to: process.env.OWNER_EMAIL,
               subject: `${typeLabel} photos uploaded — ${booking.trailer_name || booking.trailer_id} — ${id}`,
               html: `
 <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;">
   <div style="background:#1568be;padding:20px 28px;">
     <div style="color:#fff;font-size:18px;font-weight:700;">${typeLabel} Photos Uploaded</div>
-    <div style="color:#a8c8f0;font-size:12px;margin-top:4px;">Tennessee Valley Rentals</div>
+    <div style="color:#a8c8f0;font-size:12px;margin-top:4px;">Tennessee Valley Rentals LLC</div>
   </div>
   <div style="padding:28px;">
     <p style="margin:0 0 20px;font-size:15px;color:#262626;">

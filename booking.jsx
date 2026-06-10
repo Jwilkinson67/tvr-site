@@ -155,7 +155,7 @@ function TopBar() {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ width: 28, height: 2.5, background: "#b5212b" }}/>
-        <span style={{ font: '800 16px/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif', fontStyle: "italic", color: "#1568be", textTransform: "uppercase", letterSpacing: "0.5px" }}>Tennessee Valley Rentals</span>
+        <span style={{ font: '800 16px/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif', fontStyle: "italic", color: "#1568be", textTransform: "uppercase", letterSpacing: "0.5px" }}>Tennessee Valley Rentals LLC</span>
         <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 4, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>Booking</span>
       </div>
       {!isMobile && (

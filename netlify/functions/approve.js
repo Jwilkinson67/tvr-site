@@ -34,7 +34,7 @@ async function sendEmail({ to, subject, html }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Tennessee Valley Rentals <${from}>`,
+      from: `Tennessee Valley Rentals LLC <${from}>`,
       to,
       subject,
       html,
@@ -93,7 +93,7 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
 <div style="max-width:620px;margin:0 auto;background:#fff;">
 
   <div style="background:#1568be;padding:24px 32px;">
-    <div style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">Tennessee Valley Rentals</div>
+    <div style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">Tennessee Valley Rentals LLC</div>
     <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Confirmed</div>
   </div>
 
@@ -245,7 +245,7 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
 
   <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
     <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">
-      Tennessee Valley Rentals · Ooltewah, TN · (321) 765-3077<br>
+      Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077<br>
       Booking ID: ${booking.id}
     </div>
   </div>
@@ -264,7 +264,7 @@ function customerCancellationEmail(booking) {
 <body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
 <div style="max-width:600px;margin:0 auto;background:#fff;">
   <div style="background:#1568be;padding:24px 32px;">
-    <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals</div>
+    <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals LLC</div>
     <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Cancellation</div>
   </div>
   <div style="padding:32px;">
@@ -275,7 +275,7 @@ function customerCancellationEmail(booking) {
       <div style="font-size:16px;font-weight:700;color:#262626;">Questions? Call or text (321) 765-3077</div>
       <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">We'd love to get you rescheduled when the time is right.</div>
     </div>
-    <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals &middot; Ooltewah, TN<br>Booking ID: ${booking.id}</p>
+    <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals LLC &middot; Ooltewah, TN<br>Booking ID: ${booking.id}</p>
   </div>
 </div>
 </body>
@@ -290,12 +290,12 @@ function customerDeclineEmail(booking) {
 <body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
 <div style="max-width:600px;margin:0 auto;background:#fff;">
   <div style="background:#1568be;padding:24px 32px;">
-    <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals</div>
+    <div style="color:#fff;font-size:22px;font-weight:700;">Tennessee Valley Rentals LLC</div>
     <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Update</div>
   </div>
   <div style="padding:32px;">
     <h2 style="margin:0 0 16px;font-size:24px;">Hi ${firstName},</h2>
-    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Thank you for your interest in renting with Tennessee Valley Rentals. After reviewing your booking request for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong>, we were unable to approve it at this time.</p>
+    <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Thank you for your interest in renting with Tennessee Valley Rentals LLC. After reviewing your booking request for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong>, we were unable to approve it at this time.</p>
     <p style="color:#3c3c3c;line-height:1.6;margin:0 0 8px;">Your card has <strong>not been charged</strong> — any authorization hold will be released automatically within 5–7 business days depending on your bank.</p>
 
     <div style="border:1px solid #e6e6e6;margin:24px 0;">
@@ -316,7 +316,7 @@ function customerDeclineEmail(booking) {
       <div style="font-size:16px;font-weight:700;color:#262626;">(321) 765-3077</div>
       <div style="font-size:13px;color:#6b6b6b;">Call or text anytime</div>
     </div>
-    <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals · Ooltewah, TN</p>
+    <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals LLC · Ooltewah, TN</p>
   </div>
 </div>
 </body>

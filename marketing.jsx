@@ -81,7 +81,7 @@ function TopNav({ route, setRoute }) {
           <span style={{
             font: `800 ${isMobile ? "15px" : "19px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
             fontStyle: "italic", color: "#1568be", letterSpacing: "0.5px", textTransform: "uppercase",
-          }}>Tennessee Valley Rentals</span>
+          }}>Tennessee Valley Rentals LLC</span>
         </a>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 32 }}>
@@ -411,7 +411,7 @@ function LocationBand() {
             Easy Access from the Chattanooga Area
           </h2>
           <p style={{ font: '400 16px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 16px" }}>
-            Tennessee Valley Rentals is located just 5 minutes from US Hwy 74 / Exit 178, making pickup easy from Chattanooga, Ooltewah, Cleveland, Hixson, Soddy Daisy, and surrounding areas.
+            Tennessee Valley Rentals LLC is located just 5 minutes from US Hwy 74 / Exit 178, making pickup easy from Chattanooga, Ooltewah, Cleveland, Hixson, Soddy Daisy, and surrounding areas.
           </p>
           <p style={{ font: '400 14px/1.6 "Inter", sans-serif', color: "#6b6b6b", margin: 0, padding: "12px 16px", borderLeft: "3px solid #b5212b", background: "#f9f9f9" }}>
             For security and privacy, the exact pickup address will be provided after booking is confirmed.

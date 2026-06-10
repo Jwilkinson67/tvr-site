@@ -26,7 +26,7 @@ async function sendReviewEmail(booking) {
 
   <div style="background:#1568be;padding:24px 32px;">
     <div style="color:#fff;font-size:22px;font-weight:700;">Thank You for Renting with TVR!</div>
-    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals LLC</div>
   </div>
 
   <div style="padding:32px;">
@@ -47,7 +47,7 @@ async function sendReviewEmail(booking) {
 
     <p style="font-size:13px;color:#6b6b6b;line-height:1.6;margin:32px 0 0;padding-top:24px;border-top:1px solid #e6e6e6;">
       Have feedback or questions? Reply to this email or call us anytime.<br>
-      — Tennessee Valley Rentals
+      — Tennessee Valley Rentals LLC
     </p>
   </div>
 
@@ -62,7 +62,7 @@ async function sendReviewEmail(booking) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Tennessee Valley Rentals <${from}>`,
+      from: `Tennessee Valley Rentals LLC <${from}>`,
       to: booking.customer_email,
       subject: "Thanks for renting with TVR — leave us a review!",
       html,

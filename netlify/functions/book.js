@@ -60,7 +60,7 @@ async function sendEmail({ to, subject, html }) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Tennessee Valley Rentals <${from}>`,
+      from: `Tennessee Valley Rentals LLC <${from}>`,
       to,
       subject,
       html,
@@ -84,7 +84,7 @@ function ownerEmail({ booking, docUrls, approveUrl, declineUrl }) {
 
   <div style="background:#1568be;padding:24px 32px;">
     <div style="color:#fff;font-size:22px;font-weight:700;">New Booking Request</div>
-    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Tennessee Valley Rentals LLC</div>
   </div>
 
   <div style="background:#f4f6f9;border-left:6px solid #b5212b;padding:20px 32px;">
