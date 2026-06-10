@@ -453,9 +453,9 @@ function ReviewCard({ review }) {
   const colorIdx = review.name.charCodeAt(0) % colors.length;
 
   return (
-    <div style={{ background: "#f4f6f9", border: "1px solid #e6e6e6", display: "flex", flexDirection: "column" }}>
+    <div style={{ background: "#fff", border: "1px solid #e6e6e6", display: "flex", flexDirection: "column" }}>
       {review.photo && (
-        <div style={{ width: "100%", background: "#f4f6f9", textAlign: "center", flexShrink: 0, borderBottom: "1px solid #e6e6e6" }}>
+        <div style={{ width: "100%", background: "#fff", textAlign: "center", flexShrink: 0, borderBottom: "1px solid #e6e6e6" }}>
           <img
             src={review.photo}
             alt={review.name + "'s rental photo"}
@@ -497,7 +497,8 @@ function ReviewsBand() {
   const cols = Math.min(reviews.length, 3) || 1;
 
   return (
-    <section style={{ background: "#fff", padding: isMobile ? "56px 24px" : "80px 80px" }}>
+    <section style={{ position: "relative", background: "#f4f6f9", padding: isMobile ? "56px 24px 56px 32px" : "80px 80px 80px 96px" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
 
       {/* Header */}
       <div style={{
@@ -582,7 +583,7 @@ function Footer() {
   const colHead = { font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 };
   const btn = { display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
   return (
-    <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
+    <footer style={{ background: "#fff", padding: isMobile ? "48px 24px" : "64px 80px" }}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
