@@ -455,12 +455,14 @@ function ReviewCard({ review }) {
   return (
     <div style={{ background: "#f4f6f9", border: "1px solid #e6e6e6", display: "flex", flexDirection: "column" }}>
       {review.photo && (
-        <img
-          src={review.photo}
-          alt={review.name + "'s rental photo"}
-          style={{ width: "100%", aspectRatio: "4/3", objectFit: "cover", display: "block" }}
-          onError={function(e) { e.target.style.display = "none"; }}
-        />
+        <div style={{ width: "100%", height: 220, overflow: "hidden", flexShrink: 0 }}>
+          <img
+            src={review.photo}
+            alt={review.name + "'s rental photo"}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            onError={function(e) { e.target.parentNode.style.display = "none"; }}
+          />
+        </div>
       )}
       <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
