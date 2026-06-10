@@ -427,9 +427,9 @@ function Footer() {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   const colHead = { font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 };
-  const btn = { display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
+  const btn = { display: "flex", alignItems: "center", gap: 8, background: "#f4f6f9", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
   return (
-    <footer style={{ background: "#f6f7f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
+    <footer style={{ background: "#fff", padding: isMobile ? "48px 24px" : "64px 80px" }}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
@@ -491,7 +491,7 @@ function Footer() {
         </div>
 
       </div>
-      <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid #e6e6e6", display: "flex", justifyContent: "space-between", font: '300 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
+      <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid #e6e6e6", display: "flex", justifyContent: "space-between", font: '300 12px/1 "Inter", sans-serif', color: "#9a9a9a" }}>
         <span>{c.brand.yearFooter}</span>
         <span>{c.brand.city}</span>
       </div>
