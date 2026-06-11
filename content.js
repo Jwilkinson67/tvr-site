@@ -165,6 +165,13 @@ window.TVR_CONTENT = {
       text: "Professional good communication very nice trailer all the right equipment. Would rent many times from this company.",
       photo: "assets/aaron-n.jpg",
     },
+    {
+      name: "Markie Dilbeck",
+      date: "June 11, 2026",
+      stars: 5,
+      text: "I rented the cargo trailer for a move. They delivered the trailer to me and picked it back up when I was done. Having the straps and dolly included was a huge help. The trailer was clean. I'd definitely rent from them again!",
+      photo: "assets/Markie.jpg.jpg",
+    },
   ],
   googleReviewUrl: "https://g.page/r/CWniJIMNhoVzEAI/review",
 
