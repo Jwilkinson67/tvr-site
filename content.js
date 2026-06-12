@@ -166,6 +166,13 @@ window.TVR_CONTENT = {
       photo: "assets/aaron-n.jpg",
     },
     {
+      name: "Ben and Tara Wolfe",
+      date: "June 11, 2026",
+      stars: 5,
+      text: "Great communication and easy booking system. I prefer to support small businesses. I had a great experience and will definitely rent from them again.",
+      photo: null,
+    },
+    {
       name: "Markie Dilbeck",
       date: "June 11, 2026",
       stars: 5,
