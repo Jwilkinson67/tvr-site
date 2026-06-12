@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TVR · Extra Charge</title>
+  <link rel="icon" href="assets/tvr-logo-mark.png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: "Inter", Arial, sans-serif;
+      background: #f6f7f9;
+      color: #262626;
+      font-size: 14px;
+    }
+    .topbar {
+      background: #1568be;
+      color: #fff;
+      padding: 14px 32px;
+      font-weight: 700;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .topbar span { opacity: 0.65; font-weight: 400; font-size: 13px; }
+    .shell {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      padding: 32px;
+    }
+    .card-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #6b6b6b;
+      margin-bottom: 20px;
+    }
+    label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: #444; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d0d0d0;
+      font-size: 14px;
+      font-family: inherit;
+      color: #262626;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: #1568be; }
+    .field { margin-bottom: 18px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    button {
+      padding: 12px 28px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary { background: #1568be; color: #fff; }
+    .btn-primary:hover { background: #1055a0; }
+    .btn-primary:disabled { background: #9ab8d8; cursor: not-allowed; }
+    .btn-sm { padding: 7px 16px; font-size: 12px; font-weight: 600; background: #f4f6f9; border: 1px solid #d0d0d0; color: #444; }
+    .btn-sm:hover { background: #e8ecf2; }
+    .alert { padding: 14px 18px; border-left: 4px solid; margin-bottom: 0; font-size: 14px; }
+    .alert-success { background: #edfaf1; border-color: #22a355; color: #155a30; }
+    .alert-error   { background: #fdf0f0; border-color: #b5212b; color: #7a1018; }
+    .alert-info    { background: #eef5ff; border-color: #1568be; color: #0b3d7a; }
+    table.bookings { width: 100%; border-collapse: collapse; font-size: 13px; }
+    table.bookings th { text-align: left; padding: 8px 12px; background: #f4f6f9; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b6b6b; border-bottom: 2px solid #e0e0e0; }
+    table.bookings td { padding: 10px 12px; border-bottom: 1px solid #efefef; vertical-align: top; }
+    table.bookings tr:hover td { background: #f9fafb; }
+    .select-btn { background: #1568be; color: #fff; border: none; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; }
+    .select-btn:hover { background: #1055a0; }
+    .tag { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tag-approved  { background: #edfaf1; color: #22a355; }
+    .tag-pending   { background: #fff8e0; color: #b88017; }
+    .tag-completed { background: #f0f0f0; color: #888; }
+    .tag-declined  { background: #fdf0f0; color: #b5212b; }
+    #lock-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .lock-box { background: #fff; border: 1px solid #e0e0e0; padding: 48px 40px; max-width: 380px; width: 100%; }
+    .lock-logo { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .lock-sub  { font-size: 12px; color: #9a9a9a; margin-bottom: 28px; letter-spacing: 1px; text-transform: uppercase; }
+    #app { display: none; }
+    .hint { font-size: 12px; color: #9a9a9a; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- Lock screen -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-logo">Tennessee Valley Rentals</div>
+    <div class="lock-sub">Admin · Extra Charge</div>
+    <div class="field">
+      <label for="secret-input">Admin password</label>
+      <input type="password" id="secret-input" placeholder="Enter your admin secret" autocomplete="current-password">
+      <div class="hint">Same as your BOOKING_SECRET in Netlify env vars.</div>
+    </div>
+    <div id="lock-error" style="display:none;" class="alert alert-error" style="margin-bottom:16px;"></div>
+    <button class="btn-primary" id="unlock-btn" style="width:100%;margin-top:8px;">Unlock</button>
+  </div>
+</div>
+
+<!-- App (shown after auth) -->
+<div id="app">
+  <div class="topbar">
+    Tennessee Valley Rentals LLC
+    <span>Admin · Extra Charge Tool</span>
+    <span style="margin-left:auto;cursor:pointer;opacity:0.7;" onclick="logout()">Log out</span>
+  </div>
+
+  <div class="shell">
+
+    <!-- Charge form -->
+    <div class="card">
+      <div class="card-title">Charge Customer</div>
+      <div id="charge-alert" style="display:none;margin-bottom:20px;"></div>
+
+      <div class="field">
+        <label for="booking-id">Booking ID</label>
+        <input type="text" id="booking-id" placeholder="TVR-XXXXXXXX" style="font-family:monospace;text-transform:uppercase;">
+        <div class="hint">Select a booking from the table below, or type it in.</div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="amount">Amount ($)</label>
+          <input type="number" id="amount" placeholder="0.00" min="0.01" max="10000" step="0.01">
+        </div>
+        <div class="field">
+          <label for="reason">Reason</label>
+          <select id="reason">
+            <option value="">— select reason —</option>
+            <option value="Extra day — trailer returned late">Extra day — trailer returned late</option>
+            <option value="Two extra days — trailer returned late">Two extra days — trailer returned late</option>
+            <option value="Three extra days — trailer returned late">Three extra days — trailer returned late</option>
+            <option value="Damage — repair cost">Damage — repair cost</option>
+            <option value="Missing equipment — straps">Missing equipment — straps</option>
+            <option value="Missing equipment — dolly">Missing equipment — dolly</option>
+            <option value="Missing equipment — straps and dolly">Missing equipment — straps and dolly</option>
+            <option value="Cleaning fee">Cleaning fee</option>
+            <option value="Other">Other (see notes below)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="notes-field" style="display:none;">
+        <label for="notes">Notes (included in reason)</label>
+        <input type="text" id="notes" placeholder="Describe the charge...">
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-top:4px;">
+        <button class="btn-primary" id="charge-btn" onclick="submitCharge()">Charge Card on File</button>
+        <span id="charge-spinner" style="display:none;color:#6b6b6b;font-size:13px;">Processing…</span>
+      </div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="card-title" style="margin-bottom:0;">Recent Bookings</div>
+        <button class="btn-sm" onclick="loadBookings()">Refresh</button>
+      </div>
+      <div id="bookings-status" class="alert alert-info" style="display:none;"></div>
+      <div id="bookings-table" style="overflow-x:auto;"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const API = "/.netlify/functions/charge-extra";
+  let adminSecret = "";
+
+  // ── Auth ────────────────────────────────────────────────────────────────
+  function getSecret() {
+    return sessionStorage.getItem("tvr_admin_secret") || "";
+  }
+  function setSecret(s) {
+    sessionStorage.setItem("tvr_admin_secret", s);
+    adminSecret = s;
+  }
+  function logout() {
+    sessionStorage.removeItem("tvr_admin_secret");
+    location.reload();
+  }
+
+  async function callApi(body) {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-secret": adminSecret,
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Unknown error");
+    return data;
+  }
+
+  // ── Lock screen ──────────────────────────────────────────────────────────
+  document.getElementById("unlock-btn").addEventListener("click", async function() {
+    const s = document.getElementById("secret-input").value.trim();
+    if (!s) return;
+    adminSecret = s;
+    try {
+      await callApi({ action: "list" });
+      setSecret(s);
+      showApp();
+    } catch (e) {
+      const el = document.getElementById("lock-error");
+      el.textContent = e.message.includes("401") || e.message.includes("Unauthorized") ? "Incorrect password." : e.message;
+      el.style.display = "block";
+    }
+  });
+
+  document.getElementById("secret-input").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") document.getElementById("unlock-btn").click();
+  });
+
+  function showApp() {
+    document.getElementById("lock-screen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadBookings();
+  }
+
+  // Auto-unlock if secret in session
+  const saved = getSecret();
+  if (saved) { adminSecret = saved; showApp(); }
+
+  // ── Notes field toggle ───────────────────────────────────────────────────
+  document.getElementById("reason").addEventListener("change", function() {
+    document.getElementById("notes-field").style.display = this.value === "Other" ? "block" : "none";
+  });
+
+  // ── Load bookings ────────────────────────────────────────────────────────
+  async function loadBookings() {
+    const statusEl = document.getElementById("bookings-status");
+    const tableEl  = document.getElementById("bookings-table");
+    statusEl.textContent = "Loading bookings…";
+    statusEl.style.display = "block";
+    tableEl.innerHTML = "";
+    try {
+      const { bookings } = await callApi({ action: "list" });
+      statusEl.style.display = "none";
+      if (!bookings || !bookings.length) {
+        statusEl.textContent = "No bookings found.";
+        statusEl.style.display = "block";
+        return;
+      }
+      const rows = bookings.map(function(b) {
+        const hasCard = !!(b.stripe_customer_id && b.stripe_payment_method_id);
+        const tagClass = { approved:"tag-approved", pending:"tag-pending", completed:"tag-completed", declined:"tag-declined" }[b.status] || "tag-pending";
+        return "<tr>" +
+          "<td><button class='select-btn'" + (hasCard ? "" : " disabled title='No saved card'") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button></td>" +
+          "<td style='font-family:monospace;font-size:12px;'>" + b.id + "</td>" +
+          "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:12px;'>" + (b.customer_email || "") + "</span></td>" +
+          "<td>" + (b.trailer_name || b.trailer_id || "—") + "</td>" +
+          "<td style='font-size:12px;'>" + (b.pickup || "—") + "<br>" + (b.dropoff || "—") + "</td>" +
+          "<td>$" + parseFloat(b.total_charged || 0).toFixed(2) + "</td>" +
+          "<td><span class='tag " + tagClass + "'>" + (b.status || "?") + "</span></td>" +
+          "</tr>";
+      }).join("");
+      tableEl.innerHTML = "<table class='bookings'><thead><tr><th></th><th>Booking ID</th><th>Customer</th><th>Trailer</th><th>Dates</th><th>Charged</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
+    } catch (e) {
+      statusEl.className = "alert alert-error";
+      statusEl.textContent = "Error loading bookings: " + e.message;
+      statusEl.style.display = "block";
+    }
+  }
+
+  function selectBooking(id) {
+    document.getElementById("booking-id").value = id;
+    document.getElementById("booking-id").scrollIntoView({ behavior: "smooth", block: "center" });
+    document.getElementById("amount").focus();
+  }
+
+  // ── Submit charge ────────────────────────────────────────────────────────
+  async function submitCharge() {
+    const bookingId = document.getElementById("booking-id").value.trim().toUpperCase();
+    const amount    = parseFloat(document.getElementById("amount").value);
+    let reason      = document.getElementById("reason").value;
+    const notes     = document.getElementById("notes").value.trim();
+
+    if (reason === "Other" && notes) reason = notes;
+
+    const alertEl   = document.getElementById("charge-alert");
+    const btn       = document.getElementById("charge-btn");
+    const spinner   = document.getElementById("charge-spinner");
+
+    alertEl.style.display = "none";
+
+    if (!bookingId) { showAlert("error", "Please enter a booking ID."); return; }
+    if (!reason)    { showAlert("error", "Please select a reason."); return; }
+    if (!amount || amount <= 0) { showAlert("error", "Please enter a valid amount."); return; }
+
+    const confirmed = confirm(
+      "Charge $" + amount.toFixed(2) + " to the card on file for booking " + bookingId + "?\n\nReason: " + reason
+    );
+    if (!confirmed) return;
+
+    btn.disabled = true;
+    spinner.style.display = "inline";
+
+    try {
+      const result = await callApi({ action: "charge", bookingId, amountDollars: amount, reason });
+      showAlert("success",
+        "✓ $" + result.amount.toFixed(2) + " charged to " + result.customer + " (" + result.email + ")." +
+        " A receipt was emailed to the customer. Stripe ref: " + result.paymentIntentId
+      );
+      document.getElementById("booking-id").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("reason").value = "";
+      loadBookings();
+    } catch (e) {
+      showAlert("error", "Charge failed: " + e.message);
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = "none";
+    }
+  }
+
+  function showAlert(type, msg) {
+    const el = document.getElementById("charge-alert");
+    el.className = "alert alert-" + type;
+    el.textContent = msg;
+    el.style.display = "block";
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+</script>
+</body>
+</html>
