@@ -140,7 +140,7 @@ exports.handler = async (event) => {
     const { data, error } = await supabase
       .from("bookings")
       .select("id, trailer_name, customer_name, customer_email, customer_phone, pickup, dropoff, total_charged, status, stripe_customer_id, stripe_payment_method_id")
-      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
       .limit(30);
     if (error) { console.error("Supabase list error:", error); return err(500, "Could not load bookings."); }
     return ok({ bookings: data || [] });
