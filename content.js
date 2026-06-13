@@ -142,7 +142,7 @@ window.TVR_CONTENT = {
       { q: "Where do I pick up the trailer?",
         a:  "Pickup is in Ooltewah, TN. The exact address is sent with your confirmation email once your booking is approved." },
       { q: "How far in advance do I need to book?",
-        a:  "Same-day bookings are available — we typically approve requests within 1–2 hours. Reserve online anytime." },
+        a:  "Same-day bookings are available — we typically approve requests within minutes. Reserve online anytime." },
       { q: "What if I need the trailer longer than planned?",
         a:  "Call or text us at (321) 765-3077. Additional days are charged at the daily rate." },
       { q: "Do you deliver?",
