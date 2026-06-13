@@ -168,6 +168,33 @@
       </div>
     </div>
 
+    <!-- Upload document -->
+    <div class="card">
+      <div class="card-title">Upload Document for a Booking</div>
+      <div class="hint" style="margin-bottom:20px;">Use this if a customer sent their license or insurance card outside the booking flow.</div>
+      <div id="upload-alert" style="display:none;margin-bottom:20px;"></div>
+      <div class="row">
+        <div class="field">
+          <label for="upload-booking-id">Booking ID</label>
+          <input type="text" id="upload-booking-id" placeholder="TVR-XXXXXXXX" style="font-family:monospace;text-transform:uppercase;">
+        </div>
+        <div class="field">
+          <label for="upload-doc-type">Document type</label>
+          <select id="upload-doc-type">
+            <option value="insurance">Insurance certificate</option>
+            <option value="license">Driver's license</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>File</label>
+        <input type="file" id="upload-file" accept=".jpg,.jpeg,.png,.pdf" style="padding:8px 12px;">
+        <div class="hint">JPG, PNG, or PDF — max 10 MB</div>
+      </div>
+      <button class="btn-primary" onclick="submitUpload()">Save Document to Booking</button>
+      <span id="upload-spinner" style="display:none;color:#6b6b6b;font-size:13px;margin-left:12px;">Uploading…</span>
+    </div>
+
     <!-- Recent bookings -->
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
@@ -336,6 +363,54 @@
 
   function showAlert(type, msg) {
     const el = document.getElementById("charge-alert");
+    el.className = "alert alert-" + type;
+    el.textContent = msg;
+    el.style.display = "block";
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // ── Upload document ──────────────────────────────────────────────────────
+  async function submitUpload() {
+    const bookingId = document.getElementById("upload-booking-id").value.trim().toUpperCase();
+    const docId     = document.getElementById("upload-doc-type").value;
+    const fileInput = document.getElementById("upload-file");
+    const file      = fileInput.files && fileInput.files[0];
+    const alertEl   = document.getElementById("upload-alert");
+    const spinner   = document.getElementById("upload-spinner");
+
+    alertEl.style.display = "none";
+
+    if (!bookingId) { showUploadAlert("error", "Please enter a booking ID."); return; }
+    if (!file)      { showUploadAlert("error", "Please choose a file."); return; }
+    if (file.size > 10 * 1024 * 1024) { showUploadAlert("error", "File is too large (max 10 MB)."); return; }
+
+    spinner.style.display = "inline";
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const base64 = e.target.result.split(",")[1];
+      try {
+        await callApi({
+          action: "upload-doc",
+          bookingId,
+          docId,
+          filename: file.name,
+          mimeType: file.type || "application/octet-stream",
+          file: base64,
+        });
+        showUploadAlert("success", "✓ " + (docId === "insurance" ? "Insurance certificate" : "Driver's license") + " saved to booking " + bookingId + ".");
+        fileInput.value = "";
+      } catch (e) {
+        showUploadAlert("error", "Upload failed: " + e.message);
+      } finally {
+        spinner.style.display = "none";
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function showUploadAlert(type, msg) {
+    const el = document.getElementById("upload-alert");
     el.className = "alert alert-" + type;
     el.textContent = msg;
     el.style.display = "block";

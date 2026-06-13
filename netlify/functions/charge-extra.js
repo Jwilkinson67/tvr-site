@@ -216,5 +216,40 @@ exports.handler = async (event) => {
     });
   }
 
+  // ── upload doc (admin) ────────────────────────────────────────────────────
+  if (body.action === "upload-doc") {
+    const { bookingId, docId, filename, mimeType, file } = body;
+    if (!bookingId || !docId || !filename || !mimeType || !file) {
+      return err(400, "bookingId, docId, filename, mimeType, and file are required.");
+    }
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings")
+      .select("id, session_id, doc_paths")
+      .eq("id", bookingId)
+      .single();
+
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    const sessionId = booking.session_id || bookingId;
+    const safeName  = filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
+    const path      = `docs/${sessionId}/${docId}-${safeName}`;
+    const buffer    = Buffer.from(file, "base64");
+
+    const { error: uploadErr } = await supabase.storage
+      .from("rental-docs")
+      .upload(path, buffer, { contentType: mimeType, upsert: true });
+
+    if (uploadErr) {
+      console.error("Storage upload error:", uploadErr);
+      return err(500, uploadErr.message || "Upload failed.");
+    }
+
+    const newDocPaths = { ...(booking.doc_paths || {}), [docId]: path };
+    await supabase.from("bookings").update({ doc_paths: newDocPaths }).eq("id", bookingId);
+
+    return ok({ success: true, path });
+  }
+
   return err(400, `Unknown action: ${body.action}`);
 };
