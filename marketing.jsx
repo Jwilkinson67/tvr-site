@@ -644,7 +644,7 @@ function Footer() {
   const colHead = { font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 };
   const btn = { display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
   return (
-    <footer style={{ background: "#fff", padding: isMobile ? "48px 24px" : "64px 80px" }}>
+    <footer style={{ background: "#f4f6f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
