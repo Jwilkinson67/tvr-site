@@ -48,50 +48,9 @@
     .step-count { font-size: 12px; color: #9a9a9a; text-align: center; margin-bottom: 22px; }
     .preview-bar { background: #b5212b; color: #fff; text-align: center; padding: 9px; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
 
-    /* Animations */
-    @keyframes checkPop {
-      0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
-      70%  { transform: scale(1.15) rotate(3deg); }
-      100% { opacity: 1; transform: scale(1) rotate(0); }
-    }
-    @keyframes slideRight {
-      0%   { transform: translateX(-60px); opacity: 0; }
-      100% { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes sway {
-      0%,100% { transform: rotate(0deg); }
-      20%      { transform: rotate(-6deg); }
-      40%      { transform: rotate(8deg); }
-      60%      { transform: rotate(-5deg); }
-      80%      { transform: rotate(4deg); }
-    }
-    @keyframes pulse55 {
-      0%,100% { opacity: 1; }
-      50%     { opacity: 0.5; }
-    }
-    @keyframes arrowBounce {
-      0%,100% { transform: translateX(0); }
-      50%     { transform: translateX(8px); }
-    }
-    @keyframes weightDrop {
-      0%   { transform: translateY(-20px); opacity: 0; }
-      60%  { transform: translateY(4px); }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes chainDraw {
-      from { stroke-dashoffset: 200; }
-      to   { stroke-dashoffset: 0; }
-    }
-    @keyframes hitchDrop {
-      0%   { transform: translateY(-18px); }
-      60%  { transform: translateY(3px); }
-      80%  { transform: translateY(-1px); }
-      100% { transform: translateY(0); }
-    }
-    @keyframes glow {
-      0%,100% { filter: drop-shadow(0 0 0px #22a355); }
-      50%     { filter: drop-shadow(0 0 6px #22a355); }
-    }
+    .diagram { background: #f4f6f9; border: 1px solid #e0e0e0; padding: 20px 16px 14px; margin: 18px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .diagram svg { display: block; }
+    .diagram-caption { font-size: 12px; font-weight: 700; color: #6b6b6b; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -140,184 +99,203 @@ function pick(qi, oi) { if (submitted) return; ans[qi] = oi; render(); }
 function submitQ() { submitted = true; render(); }
 function retry() { ans = {}; submitted = false; render(); }
 
-/* ── Hitch coupling SVG animation ── */
+/* ── Hitch diagram ── */
 function hitchAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="220" height="130" viewBox="0 0 220 130">' +
-      /* vehicle back */
-      '<rect x="10" y="30" width="80" height="50" rx="6" fill="#1568be"/>' +
-      '<rect x="10" y="55" width="80" height="4" fill="#0e4f96"/>' +
-      /* ball mount */
-      '<rect x="82" y="52" width="28" height="8" rx="2" fill="#444"/>' +
-      /* ball */
-      '<circle cx="116" cy="54" r="8" fill="#888"/>' +
-      /* coupler — animated dropping */
-      '<g style="animation: hitchDrop 1.2s ease 0.3s both infinite">' +
-        '<rect x="106" y="20" width="20" height="22" rx="3" fill="#444"/>' +
-        '<rect x="103" y="38" width="26" height="8" rx="2" fill="#333"/>' +
-      '</g>' +
-      /* tongue */
-      '<line x1="116" y1="42" x2="180" y2="42" stroke="#444" stroke-width="6" stroke-linecap="round"/>' +
-      /* trailer box */
-      '<rect x="140" y="22" width="70" height="52" rx="4" fill="#262626"/>' +
-      '<rect x="148" y="30" width="54" height="36" rx="2" fill="#1568be" opacity="0.15"/>' +
-      /* wheels */
-      '<circle cx="155" cy="82" r="10" fill="#333"/><circle cx="155" cy="82" r="5" fill="#666"/>' +
-      '<circle cx="185" cy="82" r="10" fill="#333"/><circle cx="185" cy="82" r="5" fill="#666"/>' +
-      /* lock icon animating green */
-      '<g style="animation: glow 1.6s ease 1.5s infinite">' +
-        '<circle cx="116" cy="54" r="10" fill="none" stroke="#22a355" stroke-width="2.5" opacity="0"/>' +
-        '<text x="116" y="115" text-anchor="middle" font-size="11" fill="#22a355" font-weight="700">LOCKED ✓</text>' +
-      '</g>' +
+  return '<div class="diagram">' +
+    '<svg width="300" height="150" viewBox="0 0 300 150">' +
+      /* Vehicle */
+      '<rect x="8" y="30" width="90" height="64" rx="6" fill="#1568be"/>' +
+      '<rect x="16" y="40" width="74" height="30" rx="3" fill="#a8c8f0" opacity="0.6"/>' +
+      '<text x="53" y="106" text-anchor="middle" font-size="9" fill="#1568be" font-weight="700">TOW VEHICLE</text>' +
+      /* Ball mount */
+      '<rect x="90" y="57" width="32" height="8" rx="2" fill="#555"/>' +
+      /* Ball */
+      '<circle cx="130" cy="58" r="10" fill="#888"/>' +
+      '<circle cx="130" cy="58" r="4" fill="#bbb"/>' +
+      '<text x="130" y="80" text-anchor="middle" font-size="8" fill="#555" font-weight="700">2 5/16" BALL</text>' +
+      /* Coupler locked */
+      '<rect x="119" y="30" width="22" height="20" rx="3" fill="#444"/>' +
+      '<rect x="116" y="46" width="28" height="10" rx="2" fill="#333"/>' +
+      /* Lock pin */
+      '<line x1="140" y1="36" x2="148" y2="36" stroke="#22a355" stroke-width="3" stroke-linecap="round"/>' +
+      '<text x="152" y="25" font-size="9" fill="#22a355" font-weight="700">LOCKED ✓</text>' +
+      /* Tongue */
+      '<line x1="130" y1="50" x2="210" y2="50" stroke="#444" stroke-width="7" stroke-linecap="round"/>' +
+      /* Trailer */
+      '<rect x="172" y="20" width="110" height="72" rx="4" fill="#262626"/>' +
+      '<rect x="180" y="28" width="94" height="56" rx="2" fill="#3a3a3a"/>' +
+      '<circle cx="190" cy="100" r="11" fill="#333"/><circle cx="190" cy="100" r="5" fill="#666"/>' +
+      '<circle cx="265" cy="100" r="11" fill="#333"/><circle cx="265" cy="100" r="5" fill="#666"/>' +
+      '<text x="227" y="106" text-anchor="middle" font-size="9" fill="#555" font-weight="700">TRAILER</text>' +
+      /* Safety pin arrow */
+      '<line x1="140" y1="45" x2="155" y2="45" stroke="#b5212b" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+      '<text x="156" y="48" font-size="8" fill="#b5212b" font-weight="700">← SAFETY PIN</text>' +
     '</svg>' +
-    '<div class="anim-label">Coupler drops onto ball — tug up to confirm locked</div>' +
+    '<div class="diagram-caption">Seat the coupler fully — lock the latch and insert the safety pin</div>' +
   '</div>';
 }
 
-/* ── Safety chains X animation ── */
+/* ── Safety chains diagram ── */
 function chainsAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="240" height="120" viewBox="0 0 240 120">' +
-      /* tongue */
-      '<rect x="60" y="55" width="80" height="10" rx="2" fill="#444"/>' +
-      /* coupler */
-      '<rect x="54" y="48" width="24" height="24" rx="4" fill="#333"/>' +
-      /* vehicle */
-      '<rect x="10" y="38" width="50" height="44" rx="5" fill="#1568be"/>' +
-      /* trailer */
-      '<rect x="145" y="30" width="85" height="60" rx="4" fill="#262626"/>' +
-      /* Left hook (right side of vehicle) */
-      '<circle cx="62" cy="95" r="4" fill="#b5212b"/>' +
-      /* Right hook */
-      '<circle cx="62" cy="25" r="4" fill="#b5212b"/>' +
-      /* Chain 1 — left hook crossing to right */
-      '<path d="M62,91 Q100,72 140,95" fill="none" stroke="#b5212b" stroke-width="3" stroke-dasharray="200" stroke-dashoffset="200" stroke-linecap="round" style="animation: chainDraw 1s ease 0.2s forwards"/>' +
-      /* Chain 2 — right hook crossing to left */
-      '<path d="M62,29 Q100,48 140,25" fill="none" stroke="#b5212b" stroke-width="3" stroke-dasharray="200" stroke-dashoffset="200" stroke-linecap="round" style="animation: chainDraw 1s ease 0.7s forwards"/>' +
-      /* X label */
-      '<text x="101" y="65" text-anchor="middle" font-size="18" font-weight="900" fill="#b5212b" opacity="0" style="animation: checkPop 0.4s ease 1.6s forwards">✕</text>' +
-      /* Attach points on trailer */
-      '<circle cx="140" cy="95" r="4" fill="#b5212b"/>' +
-      '<circle cx="140" cy="25" r="4" fill="#b5212b"/>' +
-    '</svg>' +
-    '<div class="anim-label">Left chain crosses to right hook — right chain crosses to left hook</div>' +
-  '</div>';
-}
-
-/* ── Load distribution animation ── */
-function loadAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="300" height="110" viewBox="0 0 300 110">' +
-      /* trailer outline */
-      '<rect x="30" y="20" width="240" height="60" rx="4" fill="#f4f6f9" stroke="#d0d0d0" stroke-width="2"/>' +
-      /* front zone (60%) */
-      '<rect x="30" y="20" width="144" height="60" rx="4" fill="#1568be" opacity="0.15"/>' +
-      /* rear zone (40%) */
-      '<rect x="174" y="20" width="96" height="60" fill="#e0e0e0" opacity="0.5"/>' +
-      /* axle */
-      '<rect x="172" y="14" width="4" height="72" fill="#b5212b"/>' +
-      /* weight block 1 */
-      '<rect x="50" y="32" width="36" height="36" rx="3" fill="#1568be" style="animation: weightDrop 0.7s ease 0.2s both"/>' +
-      '<text x="68" y="54" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" style="animation: weightDrop 0.7s ease 0.2s both">HEAVY</text>' +
-      /* weight block 2 */
-      '<rect x="100" y="32" width="36" height="36" rx="3" fill="#1568be" style="animation: weightDrop 0.7s ease 0.5s both"/>' +
-      '<text x="118" y="54" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" style="animation: weightDrop 0.7s ease 0.5s both">HEAVY</text>' +
-      /* light block rear */
-      '<rect x="195" y="38" width="36" height="24" rx="3" fill="#9a9a9a" style="animation: weightDrop 0.7s ease 0.8s both"/>' +
-      '<text x="213" y="53" text-anchor="middle" font-size="9" fill="#fff" style="animation: weightDrop 0.7s ease 0.8s both">light</text>' +
-      /* labels */
-      '<text x="102" y="100" text-anchor="middle" font-size="11" fill="#1568be" font-weight="700">60% — FRONT</text>' +
-      '<text x="222" y="100" text-anchor="middle" font-size="11" fill="#9a9a9a" font-weight="700">40% — REAR</text>' +
-      /* axle label */
-      '<text x="174" y="12" text-anchor="middle" font-size="9" fill="#b5212b" font-weight="700">AXLE</text>' +
-      /* wheels */
-      '<circle cx="174" cy="90" r="9" fill="#333"/><circle cx="174" cy="90" r="4" fill="#666"/>' +
-    '</svg>' +
-    '<div class="anim-label">Heavy items drop into the front zone — lighter items in the rear</div>' +
-  '</div>';
-}
-
-/* ── Sway animation ── */
-function swayAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="260" height="110" viewBox="0 0 260 110">' +
-      /* Road */
-      '<rect x="0" y="65" width="260" height="45" fill="#ddd"/>' +
-      '<line x1="0" y1="87" x2="260" y2="87" stroke="#fff" stroke-width="2" stroke-dasharray="16,12"/>' +
-      /* Tow vehicle — steady */
-      '<g transform="translate(10,30)">' +
-        '<rect x="0" y="0" width="60" height="36" rx="5" fill="#1568be"/>' +
-        '<rect x="8" y="6" width="44" height="18" rx="2" fill="#a8c8f0"/>' +
-        '<circle cx="12" cy="36" r="9" fill="#333"/><circle cx="12" cy="36" r="4" fill="#666"/>' +
-        '<circle cx="48" cy="36" r="9" fill="#333"/><circle cx="48" cy="36" r="4" fill="#666"/>' +
-      '</g>' +
-      /* Trailer — swaying */
-      '<g transform="translate(80,48)" style="transform-origin:80px 48px; animation: sway 2s ease-in-out 0.5s infinite">' +
-        '<line x1="-10" y1="-0" x2="20" y2="0" stroke="#444" stroke-width="5"/>' +
-        '<rect x="20" y="-28" width="90" height="52" rx="4" fill="#262626"/>' +
-        '<rect x="28" y="-22" width="74" height="38" rx="2" fill="#444"/>' +
-        '<circle cx="50" cy="26" r="9" fill="#333"/><circle cx="50" cy="26" r="4" fill="#666"/>' +
-        '<circle cx="90" cy="26" r="9" fill="#333"/><circle cx="90" cy="26" r="4" fill="#666"/>' +
-      '</g>' +
-      /* Warning text */
-      '<text x="130" y="14" text-anchor="middle" font-size="11" fill="#b5212b" font-weight="700" style="animation: pulse55 1s ease infinite">⚠ TRAILER SWAY — ease off gas, hold steady</text>' +
-    '</svg>' +
-    '<div class="anim-label">Too much rear weight causes dangerous fishtailing at speed</div>' +
-  '</div>';
-}
-
-/* ── Speed animation ── */
-function speedAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="200" height="110" viewBox="0 0 200 110">' +
-      /* Speedometer arc */
-      '<path d="M20,90 A80,80 0 0,1 180,90" fill="none" stroke="#e0e0e0" stroke-width="14" stroke-linecap="round"/>' +
-      '<path d="M20,90 A80,80 0 0,1 108,13" fill="none" stroke="#22a355" stroke-width="14" stroke-linecap="round"/>' +
-      /* Needle */
-      '<line x1="100" y1="90" x2="100" y2="28" stroke="#b5212b" stroke-width="3" stroke-linecap="round" transform="rotate(-15 100 90)" style="animation: none"/>' +
-      '<circle cx="100" cy="90" r="7" fill="#333"/>' +
+  return '<div class="diagram">' +
+    '<svg width="300" height="130" viewBox="0 0 300 130">' +
+      /* Labels top */
+      '<text x="150" y="14" text-anchor="middle" font-size="10" fill="#555" font-weight="700">TOP-DOWN VIEW</text>' +
+      /* Vehicle */
+      '<rect x="10" y="25" width="70" height="80" rx="5" fill="#1568be"/>' +
+      '<text x="45" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">VEHICLE</text>' +
+      /* Tongue */
+      '<rect x="78" y="58" width="60" height="9" rx="2" fill="#555"/>' +
+      /* Coupler */
+      '<rect x="80" y="52" width="20" height="22" rx="3" fill="#333"/>' +
+      /* Trailer */
+      '<rect x="140" y="30" width="140" height="70" rx="4" fill="#262626"/>' +
+      '<text x="210" y="70" text-anchor="middle" font-size="8" fill="#fff" font-weight="700">TRAILER</text>' +
+      /* Hook points on vehicle frame */
+      '<circle cx="78" cy="30" r="5" fill="#b5212b"/>' +
+      '<circle cx="78" cy="100" r="5" fill="#b5212b"/>' +
+      /* Hook points on trailer tongue */
+      '<circle cx="140" cy="38" r="5" fill="#b5212b"/>' +
+      '<circle cx="140" cy="92" r="5" fill="#b5212b"/>' +
+      /* Chain 1: top-left to bottom-right (crosses) */
+      '<path d="M78,34 Q108,65 140,88" fill="none" stroke="#b5212b" stroke-width="3" stroke-linecap="round"/>' +
+      /* Chain 2: bottom-left to top-right (crosses) */
+      '<path d="M78,96 Q108,65 140,42" fill="none" stroke="#b5212b" stroke-width="3" stroke-linecap="round"/>' +
+      /* X marker in center */
+      '<text x="108" y="70" text-anchor="middle" font-size="20" fill="#b5212b" font-weight="900" opacity="0.35">✕</text>' +
       /* Labels */
-      '<text x="16" y="108" font-size="10" fill="#6b6b6b">0</text>' +
-      '<text x="84" y="108" font-size="14" fill="#1568be" font-weight="900" style="animation: pulse55 1.4s ease infinite">55</text>' +
-      '<text x="172" y="108" font-size="10" fill="#6b6b6b">80</text>' +
-      '<text x="100" y="75" text-anchor="middle" font-size="10" fill="#6b6b6b">MPH</text>' +
-      /* Max line */
-      '<path d="M116,18 A80,80 0 0,1 180,90" fill="none" stroke="#b5212b" stroke-width="14" stroke-linecap="round" opacity="0.3"/>' +
-      '<text x="100" y="50" text-anchor="middle" font-size="11" fill="#b5212b" font-weight="700">MAX</text>' +
+      '<text x="60" y="20" text-anchor="middle" font-size="8" fill="#b5212b" font-weight="700">Hook A</text>' +
+      '<text x="60" y="118" text-anchor="middle" font-size="8" fill="#b5212b" font-weight="700">Hook B</text>' +
+      '<text x="152" y="22" font-size="8" fill="#b5212b" font-weight="700">Hook C</text>' +
+      '<text x="152" y="104" font-size="8" fill="#b5212b" font-weight="700">Hook D</text>' +
+      '<text x="108" y="118" text-anchor="middle" font-size="8" fill="#555">A → D  ·  B → C  (cross under tongue)</text>' +
     '</svg>' +
-    '<div class="anim-label">Stay at or below 55 MPH when towing</div>' +
+    '<div class="diagram-caption">Chains cross in an X under the tongue — hooks face down</div>' +
   '</div>';
 }
 
-/* ── Backing up animation ── */
-function backupAnim() {
-  return '<div class="anim-box">' +
-    '<svg width="280" height="130" viewBox="0 0 280 130">' +
-      /* road */
-      '<rect x="0" y="70" width="280" height="60" fill="#ddd"/>' +
-      /* Vehicle going backward */
-      '<g transform="translate(30,30)">' +
-        '<rect x="0" y="0" width="65" height="42" rx="5" fill="#1568be"/>' +
-        '<rect x="8" y="6" width="49" height="22" rx="2" fill="#a8c8f0"/>' +
-        '<circle cx="15" cy="42" r="10" fill="#333"/><circle cx="15" cy="42" r="4" fill="#666"/>' +
-        '<circle cx="50" cy="42" r="10" fill="#333"/><circle cx="50" cy="42" r="4" fill="#666"/>' +
-        /* reverse arrow on vehicle */
-        '<text x="32" y="28" text-anchor="middle" font-size="14" fill="#fff" font-weight="900">◀</text>' +
-      '</g>' +
-      /* Trailer angled right */
-      '<g transform="translate(110,20) rotate(12 50 55)">' +
-        '<line x1="0" y1="55" x2="30" y2="55" stroke="#444" stroke-width="5"/>' +
-        '<rect x="30" y="30" width="90" height="52" rx="4" fill="#262626"/>' +
-        '<circle cx="55" cy="85" r="9" fill="#333"/><circle cx="55" cy="85" r="4" fill="#666"/>' +
-        '<circle cx="95" cy="85" r="9" fill="#333"/><circle cx="95" cy="85" r="4" fill="#666"/>' +
-      '</g>' +
-      /* Arrows */
-      '<text x="36" y="110" font-size="11" fill="#b5212b" font-weight="700" style="animation: arrowBounce 0.8s ease infinite">Wheel LEFT</text>' +
-      '<text x="155" y="18" font-size="11" fill="#22a355" font-weight="700">Trailer goes RIGHT →</text>' +
-      '<line x1="215" y1="22" x2="230" y2="35" stroke="#22a355" stroke-width="2" marker-end="url(#arr)"/>' +
-      '<defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22a355"/></marker></defs>' +
+/* ── Load distribution diagram ── */
+function loadAnim() {
+  return '<div class="diagram">' +
+    '<svg width="300" height="120" viewBox="0 0 300 120">' +
+      /* Trailer outline */
+      '<rect x="20" y="20" width="260" height="65" rx="4" fill="#fff" stroke="#d0d0d0" stroke-width="2"/>' +
+      /* Front zone 60% */
+      '<rect x="20" y="20" width="156" height="65" rx="4" fill="#1568be" opacity="0.12"/>' +
+      /* Rear zone 40% */
+      '<rect x="176" y="20" width="104" height="65" rx="4" fill="#e8e8e8" opacity="0.7"/>' +
+      /* Axle line */
+      '<rect x="174" y="12" width="4" height="80" fill="#b5212b"/>' +
+      '<text x="176" y="10" text-anchor="middle" font-size="8" fill="#b5212b" font-weight="700">AXLE</text>' +
+      /* HEAVY boxes in front */
+      '<rect x="32" y="28" width="50" height="42" rx="3" fill="#1568be"/>' +
+      '<text x="57" y="48" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">HEAVY</text>' +
+      '<text x="57" y="60" text-anchor="middle" font-size="8" fill="#e0ecff">items</text>' +
+      '<rect x="92" y="32" width="44" height="34" rx="3" fill="#1568be" opacity="0.8"/>' +
+      '<text x="114" y="52" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">HEAVY</text>' +
+      /* LIGHT box in rear */
+      '<rect x="192" y="36" width="56" height="26" rx="3" fill="#9a9a9a"/>' +
+      '<text x="220" y="52" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">light</text>' +
+      /* Zone labels */
+      '<text x="98" y="100" text-anchor="middle" font-size="11" fill="#1568be" font-weight="700">← 60%  FRONT</text>' +
+      '<text x="228" y="100" text-anchor="middle" font-size="11" fill="#9a9a9a" font-weight="700">REAR  40% →</text>' +
+      /* Wheels */
+      '<circle cx="176" cy="99" r="10" fill="#333"/><circle cx="176" cy="99" r="4" fill="#666"/>' +
     '</svg>' +
-    '<div class="anim-label">Turn wheel LEFT → trailer goes RIGHT. Opposite always.</div>' +
+    '<div class="diagram-caption">60% of total load goes in front of the axle — heavy items toward the front</div>' +
+  '</div>';
+}
+
+/* ── Sway warning diagram ── */
+function swayAnim() {
+  return '<div class="diagram">' +
+    '<svg width="300" height="120" viewBox="0 0 300 120">' +
+      /* Road */
+      '<rect x="0" y="70" width="300" height="50" fill="#ddd"/>' +
+      '<line x1="0" y1="95" x2="300" y2="95" stroke="#fff" stroke-width="2" stroke-dasharray="18,12"/>' +
+      /* Vehicle — centered, straight */
+      '<rect x="20" y="35" width="68" height="40" rx="5" fill="#1568be"/>' +
+      '<rect x="28" y="43" width="52" height="20" rx="2" fill="#a8c8f0" opacity="0.6"/>' +
+      '<circle cx="32" cy="75" r="9" fill="#333"/><circle cx="32" cy="75" r="4" fill="#666"/>' +
+      '<circle cx="76" cy="75" r="9" fill="#333"/><circle cx="76" cy="75" r="4" fill="#666"/>' +
+      /* Hitch bar */
+      '<line x1="88" y1="55" x2="118" y2="55" stroke="#444" stroke-width="5"/>' +
+      /* Trailer swaying right — angled */
+      '<g transform="translate(116,32) rotate(10,10,22)">' +
+        '<rect x="0" y="0" width="100" height="55" rx="4" fill="#262626"/>' +
+        '<rect x="6" y="6" width="88" height="42" rx="2" fill="#3a3a3a"/>' +
+        '<circle cx="25" cy="60" r="9" fill="#333"/><circle cx="25" cy="60" r="4" fill="#666"/>' +
+        '<circle cx="75" cy="60" r="9" fill="#333"/><circle cx="75" cy="60" r="4" fill="#666"/>' +
+      '</g>' +
+      /* Warning badge */
+      '<rect x="0" y="0" width="300" height="28" fill="#b5212b" opacity="0.08"/>' +
+      '<text x="150" y="18" text-anchor="middle" font-size="11" fill="#b5212b" font-weight="700">⚠  TOO MUCH REAR WEIGHT CAUSES SWAY</text>' +
+    '</svg>' +
+    '<div class="diagram-caption">If sway starts — ease off the gas, hold steady, do NOT brake hard</div>' +
+  '</div>';
+}
+
+/* ── Speed limit diagram ── */
+function speedAnim() {
+  return '<div class="diagram">' +
+    '<svg width="300" height="110" viewBox="0 0 300 110">' +
+      /* Speedometer */
+      '<path d="M55,95 A60,60 0 0,1 175,95" fill="none" stroke="#e0e0e0" stroke-width="16" stroke-linecap="round"/>' +
+      '<path d="M55,95 A60,60 0 0,1 131,37" fill="none" stroke="#22a355" stroke-width="16" stroke-linecap="round"/>' +
+      '<path d="M131,37 A60,60 0 0,1 175,95" fill="none" stroke="#b5212b" stroke-width="16" stroke-linecap="round" opacity="0.3"/>' +
+      /* Needle at 55 */
+      '<line x1="115" y1="95" x2="115" y2="45" stroke="#1568be" stroke-width="3" stroke-linecap="round" transform="rotate(-8 115 95)"/>' +
+      '<circle cx="115" cy="95" r="7" fill="#333"/>' +
+      /* Speed labels */
+      '<text x="48" y="110" font-size="9" fill="#6b6b6b">0</text>' +
+      '<text x="109" y="110" font-size="10" fill="#333" font-weight="700">55</text>' +
+      '<text x="168" y="110" font-size="9" fill="#6b6b6b">80</text>' +
+      '<text x="115" y="80" text-anchor="middle" font-size="8" fill="#6b6b6b">MPH</text>' +
+      /* MAX label */
+      '<text x="148" y="58" font-size="9" fill="#b5212b" font-weight="700">MAX →</text>' +
+      /* Right panel — rule */
+      '<rect x="196" y="15" width="96" height="80" rx="6" fill="#b5212b"/>' +
+      '<text x="244" y="44" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">MAX</text>' +
+      '<text x="244" y="62" text-anchor="middle" font-size="26" fill="#fff" font-weight="900">55</text>' +
+      '<text x="244" y="80" text-anchor="middle" font-size="11" fill="#ffcdd0">MPH</text>' +
+      '<text x="244" y="103" text-anchor="middle" font-size="8" fill="#555" font-weight="700">WHEN TOWING</text>' +
+    '</svg>' +
+    '<div class="diagram-caption">Stay at or below 55 MPH — trailers need more distance to stop</div>' +
+  '</div>';
+}
+
+/* ── Backing up diagram ── */
+function backupAnim() {
+  return '<div class="diagram">' +
+    '<svg width="300" height="140" viewBox="0 0 300 140">' +
+      /* Label */
+      '<text x="150" y="14" text-anchor="middle" font-size="10" fill="#555" font-weight="700">OVERHEAD VIEW</text>' +
+      /* Road */
+      '<rect x="0" y="20" width="300" height="120" fill="#ddd"/>' +
+      '<line x1="150" y1="20" x2="150" y2="140" stroke="#fff" stroke-width="2" stroke-dasharray="12,10"/>' +
+      /* Trailer (in front, going to right) */
+      '<rect x="160" y="32" width="120" height="50" rx="4" fill="#262626"/>' +
+      '<rect x="166" y="37" width="108" height="40" rx="2" fill="#3a3a3a"/>' +
+      '<circle cx="175" cy="85" r="8" fill="#444"/>' +
+      '<circle cx="272" cy="85" r="8" fill="#444"/>' +
+      /* Tongue angled */
+      '<line x1="160" y1="57" x2="120" y2="68" stroke="#444" stroke-width="6" stroke-linecap="round"/>' +
+      /* Vehicle (behind, reversed) */
+      '<rect x="22" y="55" width="100" height="52" rx="5" fill="#1568be"/>' +
+      '<rect x="30" y="62" width="84" height="30" rx="2" fill="#a8c8f0" opacity="0.6"/>' +
+      '<circle cx="35" cy="110" r="9" fill="#333"/><circle cx="35" cy="110" r="4" fill="#666"/>' +
+      '<circle cx="112" cy="110" r="9" fill="#333"/><circle cx="112" cy="110" r="4" fill="#666"/>' +
+      /* Reverse arrow */
+      '<text x="72" y="130" text-anchor="middle" font-size="20" fill="#fff" font-weight="900">▲</text>' +
+      /* Steering wheel direction */
+      '<rect x="24" y="24" width="96" height="24" rx="3" fill="#fff" stroke="#1568be" stroke-width="1.5"/>' +
+      '<text x="72" y="40" text-anchor="middle" font-size="10" fill="#1568be" font-weight="700">← Turn wheel LEFT</text>' +
+      /* Result arrow */
+      '<path d="M222,30 Q240,20 255,32" fill="none" stroke="#22a355" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<polygon points="252,28 258,35 261,27" fill="#22a355"/>' +
+      '<text x="222" y="24" font-size="9" fill="#22a355" font-weight="700">Trailer goes RIGHT</text>' +
+    '</svg>' +
+    '<div class="diagram-caption">Wheel LEFT = trailer goes RIGHT. Opposite always — go slow and use both mirrors</div>' +
   '</div>';
 }
 
