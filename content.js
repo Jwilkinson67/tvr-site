@@ -84,9 +84,9 @@ window.TVR_CONTENT = {
       kicker:    "Liberty",
       name:      "Car Hauler / Equipment 7 × 20",
       navLabel:  "Car Hauler / Equipment 20ft",
-      subheading:"7ft x 20ft, 9000lbs",
-      tagline:   "Heavy-duty open-deck car hauler with loading ramps, perfect for vehicles, ATVs, equipment, and project hauls. Includes a toolbox with various straps, a 12K winch, and a roadside kit for a smoother, more prepared rental.",
-      detailTagline: "Oversized Winch, Loading ramp, Car Straps Included. Vehicles, ATVs, equipment up to 9,000 lb.",
+      subheading:"7ft x 20ft, holds up to 7,000lbs",
+      tagline:   "Heavy-duty open-deck car hauler with loading ramps, perfect for vehicles, ATVs, equipment, and project hauls. Holds loads up to 7,000 lbs. Includes a toolbox with various straps, a 12K winch, and a roadside kit for a smoother, more prepared rental.",
+      detailTagline: "Oversized Winch, Loading ramp, Car Straps Included. Vehicles, ATVs, equipment — loads up to 7,000 lb.",
       photo:     "assets/fleet/Liberty-car-hauler-20ft.jpg",
       photoExtra: [
         "assets/fleet/Liberty-car-hauler-front-20ft.jpg",
