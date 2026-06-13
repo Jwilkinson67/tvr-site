@@ -374,7 +374,8 @@ function HowItWorksBand() {
   const h = c.howItWorks;
   if (!h) return null;
   return (
-    <section style={{ background: "#fff", padding: isMobile ? "56px 24px" : "80px 80px" }}>
+    <section style={{ position: "relative", background: "#f4f6f9", padding: isMobile ? "56px 24px 56px 32px" : "80px 80px 80px 96px" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <header style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>
           {h.kicker}
