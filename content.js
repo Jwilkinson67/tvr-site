@@ -118,6 +118,26 @@ window.TVR_CONTENT = {
        onto the placeholder in the running page. ------------------ */
   ],
 
+  /* ---------- Marketing · FAQ ---------- */
+  faq: {
+    kicker:  "FAQ",
+    heading: "Common questions.",
+    items: [
+      { q: "What do I need to rent a trailer?",
+        a:  "A valid driver's license, proof of insurance covering your tow vehicle, and a vehicle capable of towing. We verify everything before approving your booking." },
+      { q: "What size hitch ball do I need?",
+        a:  "Both trailers require a 2 5/16\" hitch ball. You'll also need a 7-way trailer plug and a brake controller on your tow vehicle." },
+      { q: "Where do I pick up the trailer?",
+        a:  "Pickup is in Ooltewah, TN. The exact address is sent with your confirmation email once your booking is approved." },
+      { q: "How far in advance do I need to book?",
+        a:  "Same-day bookings are available — we typically approve requests within 1–2 hours. Reserve online anytime." },
+      { q: "What if I need the trailer longer than planned?",
+        a:  "Call or text us at (321) 765-3077. Additional days are charged at the daily rate." },
+      { q: "Do you deliver?",
+        a:  "Yes, delivery is available in the Chattanooga area for an additional fee. Contact us to arrange." },
+    ],
+  },
+
   /* ---------- Marketing · rental terms band ---------- */
   termsBand: {
     kicker:  "RENTAL TERMS",

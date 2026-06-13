@@ -367,6 +367,35 @@ function PickupBand() {
 
 }
 
+/* ----------- FAQ ----------- */
+function FAQBand() {
+  const c = C();
+  const isMobile = useWindowWidth() < 768;
+  const faq = c.faq;
+  if (!faq) return null;
+  return (
+    <section style={{ background: "#fff", padding: isMobile ? "56px 24px 56px 32px" : "80px 80px 80px 96px" }}>
+      <header style={{ marginBottom: isMobile ? 32 : 56 }}>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 12 }}>
+          <span style={{ width: 24, height: 1, background: "#b5212b" }} />
+          {faq.kicker}
+        </div>
+        <h2 style={{ font: `700 ${isMobile ? "32px" : "48px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#262626" }}>{faq.heading}</h2>
+      </header>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 0 : "0 48px" }}>
+        {faq.items.map(function(item, i) {
+          return (
+            <div key={i} style={{ borderTop: "1px solid #e6e6e6", padding: "28px 0" }}>
+              <h3 style={{ font: '700 17px/1.3 "Inter", sans-serif', color: "#262626", margin: "0 0 10px" }}>{item.q}</h3>
+              <p style={{ font: '300 15px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: 0 }}>{item.a}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 /* ----------- Pre-footer CTA ----------- */
 function CTABand({ setRoute }) {
   const c = C();
@@ -661,4 +690,4 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };
