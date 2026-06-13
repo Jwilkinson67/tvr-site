@@ -124,7 +124,7 @@ window.TVR_CONTENT = {
     heading: "Simple from start to finish.",
     steps: [
       { title: "Book online",         body: "Pick your trailer and dates, fill out your info, and upload your license and insurance. Takes about 3 minutes." },
-      { title: "We review & approve", body: "We verify your documents and approve your booking within 1–2 hours. You'll get a confirmation email with pickup details." },
+      { title: "We review & approve", body: "We verify your documents and approve your booking within minutes. You'll get a confirmation email with pickup details." },
       { title: "Pick up your trailer",body: "Come to our Ooltewah location and the trailer will be ready for you to load and go." },
       { title: "Return when done",    body: "Drop off the trailer when you're finished. No hassle, no upsells." },
     ],
