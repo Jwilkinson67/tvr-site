@@ -7,300 +7,226 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; font-family: "Inter", Arial, sans-serif; background: #f6f7f9; color: #262626; font-size: 15px; }
-
     .topbar { background: #1568be; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
     .topbar-logo { font-weight: 700; font-size: 17px; }
     .topbar-sub { font-size: 12px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
+    .shell { max-width: 680px; margin: 40px auto; padding: 0 24px 80px; }
 
-    .shell { max-width: 780px; margin: 40px auto; padding: 0 24px 80px; }
-
-    /* Progress bar */
-    .progress-wrap { margin-bottom: 36px; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #6b6b6b; margin-bottom: 10px; }
-    .progress-track { height: 5px; background: #e0e0e0; border-radius: 3px; }
-    .progress-fill { height: 5px; background: #1568be; border-radius: 3px; transition: width 0.4s ease; }
-
-    /* Step dots */
-    .steps { display: flex; gap: 0; margin-bottom: 40px; }
-    .step-dot { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; position: relative; }
-    .step-dot:not(:last-child)::after { content: ""; position: absolute; top: 16px; left: calc(50% + 16px); right: calc(-50% + 16px); height: 2px; background: #e0e0e0; z-index: 0; }
-    .step-dot.done:not(:last-child)::after { background: #1568be; }
-    .dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 2px solid #e0e0e0; background: #fff; color: #9a9a9a; position: relative; z-index: 1; transition: all 0.3s; }
-    .step-dot.active .dot { border-color: #1568be; background: #1568be; color: #fff; }
-    .step-dot.done .dot { border-color: #1568be; background: #1568be; color: #fff; }
-    .step-dot.done .dot::after { content: "✓"; }
-    .step-label { font-size: 11px; font-weight: 600; color: #9a9a9a; text-align: center; }
-    .step-dot.active .step-label { color: #1568be; }
-    .step-dot.done .step-label { color: #1568be; }
+    /* Progress dots */
+    .dots { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
+    .dot-wrap { display: flex; align-items: center; }
+    .dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #d0d0d0; background: #fff; color: #9a9a9a; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+    .dot.active { border-color: #1568be; background: #1568be; color: #fff; }
+    .dot.done { border-color: #1568be; background: #1568be; color: #fff; font-size: 14px; }
+    .dot-line { width: 36px; height: 2px; background: #d0d0d0; }
+    .dot-line.done { background: #1568be; }
 
     /* Card */
-    .card { background: #fff; border: 1px solid #e0e0e0; padding: 40px; margin-bottom: 24px; }
-    .card-kicker { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #1568be; margin-bottom: 12px; }
-    .card-title { font-size: 26px; font-weight: 700; color: #262626; margin: 0 0 24px; line-height: 1.2; }
-    .card-body { color: #3c3c3c; line-height: 1.7; }
+    .card { background: #fff; border: 1px solid #e0e0e0; padding: 36px; margin-bottom: 20px; }
+    .kicker { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #1568be; margin-bottom: 10px; }
+    h2 { font-size: 24px; font-weight: 700; margin: 0 0 24px; line-height: 1.2; color: #262626; }
 
-    /* Steps list */
-    .steps-list { list-style: none; padding: 0; margin: 0 0 8px; }
-    .steps-list li { display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
-    .steps-list li:last-child { border-bottom: none; }
-    .step-num { width: 28px; height: 28px; border-radius: 50%; background: #1568be; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .step-text strong { display: block; margin-bottom: 3px; color: #262626; }
-    .step-text span { font-size: 13px; color: #6b6b6b; }
+    /* Checklist */
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid #f0f0f0; line-height: 1.5; }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { width: 22px; height: 22px; border-radius: 50%; background: #1568be; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .checklist strong { font-size: 14px; color: #262626; }
+    .checklist span { font-size: 13px; color: #6b6b6b; display: block; margin-top: 2px; }
 
-    /* Tip box */
-    .tip { background: #eef5ff; border-left: 4px solid #1568be; padding: 16px 20px; margin: 20px 0; font-size: 14px; color: #0b3d7a; line-height: 1.6; }
-    .tip strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
-
-    .warning { background: #fff8e0; border-left: 4px solid #b88017; padding: 16px 20px; margin: 20px 0; font-size: 14px; color: #7a5500; line-height: 1.6; }
-    .warning strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+    /* Tip / warning */
+    .tip { background: #eef5ff; border-left: 3px solid #1568be; padding: 14px 18px; margin: 20px 0; font-size: 13px; color: #0b3d7a; line-height: 1.6; }
+    .warn { background: #fff8e0; border-left: 3px solid #b88017; padding: 14px 18px; margin: 20px 0; font-size: 13px; color: #7a5500; line-height: 1.6; }
+    .tip b, .warn b { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
 
     /* Load diagram */
-    .load-diagram { background: #f4f6f9; border: 1px solid #e0e0e0; padding: 24px; margin: 20px 0; text-align: center; }
-    .trailer-bar { display: flex; height: 48px; border: 2px solid #262626; border-radius: 4px; overflow: hidden; position: relative; margin: 16px auto; max-width: 420px; }
-    .trailer-front { background: #1568be; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 12px; width: 60%; }
-    .trailer-rear { background: #e0e0e0; display: flex; align-items: center; justify-content: center; color: #6b6b6b; font-weight: 700; font-size: 12px; width: 40%; }
-    .axle-line { position: absolute; left: 60%; top: -4px; bottom: -4px; width: 3px; background: #b5212b; }
-    .diagram-label { font-size: 12px; color: #6b6b6b; margin-top: 8px; }
-    .diagram-title { font-size: 13px; font-weight: 700; color: #262626; margin-bottom: 8px; }
+    .diagram { background: #f4f6f9; border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; text-align: center; }
+    .trailer-bar { display: flex; height: 44px; max-width: 400px; margin: 12px auto; border: 2px solid #262626; overflow: hidden; position: relative; }
+    .t-front { background: #1568be; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 60%; }
+    .t-rear  { background: #e0e0e0; color: #6b6b6b; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 40%; }
+    .axle { position: absolute; left: 60%; top: -4px; bottom: -4px; width: 3px; background: #b5212b; }
+    .diagram-note { font-size: 12px; color: #6b6b6b; margin-top: 8px; }
 
     /* Quiz */
-    .quiz-q { margin-bottom: 28px; }
-    .quiz-q-text { font-weight: 700; font-size: 16px; color: #262626; margin-bottom: 14px; }
-    .quiz-options { display: flex; flex-direction: column; gap: 10px; }
-    .quiz-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 2px solid #e0e0e0; cursor: pointer; transition: all 0.15s; font-size: 14px; }
-    .quiz-option:hover { border-color: #1568be; background: #eef5ff; }
-    .quiz-option.selected { border-color: #1568be; background: #eef5ff; }
-    .quiz-option.correct { border-color: #22a355; background: #edfaf1; color: #155a30; }
-    .quiz-option.wrong { border-color: #b5212b; background: #fdf0f0; color: #7a1018; }
-    .quiz-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #d0d0d0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .quiz-option.selected .quiz-radio { border-color: #1568be; background: #1568be; }
-    .quiz-option.selected .quiz-radio::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+    .q-label { font-weight: 700; font-size: 15px; color: #262626; margin-bottom: 12px; }
+    .q-wrap { margin-bottom: 24px; }
+    .opt { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 2px solid #e0e0e0; margin-bottom: 8px; cursor: pointer; font-size: 14px; transition: border-color 0.15s, background 0.15s; }
+    .opt:hover { border-color: #1568be; background: #f0f6ff; }
+    .opt.sel { border-color: #1568be; background: #f0f6ff; }
+    .opt.correct { border-color: #22a355; background: #edfaf1; color: #155a30; font-weight: 600; }
+    .opt.wrong   { border-color: #b5212b; background: #fdf0f0; color: #7a1018; }
+    .radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d0d0d0; flex-shrink: 0; }
+    .opt.sel .radio { border-color: #1568be; background: #1568be; }
 
-    /* Coupon reveal */
-    .coupon-box { background: #fff; border: 2px dashed #1568be; padding: 40px; text-align: center; margin-bottom: 24px; }
-    .coupon-badge { display: inline-block; background: #1568be; color: #fff; font-weight: 700; font-size: 28px; letter-spacing: 4px; padding: 16px 40px; margin: 16px 0; }
-    .coupon-note { font-size: 13px; color: #6b6b6b; }
-    .stars { color: #f59e0b; font-size: 20px; margin-bottom: 8px; }
+    /* Coupon */
+    .coupon { background: #fff; border: 2px dashed #1568be; padding: 40px 32px; text-align: center; margin-bottom: 20px; }
+    .coupon-code { display: inline-block; background: #1568be; color: #fff; font-weight: 700; font-size: 26px; letter-spacing: 5px; padding: 14px 40px; margin: 16px 0; }
+    .coupon-sub { font-size: 13px; color: #6b6b6b; }
 
-    /* Buttons */
-    button.primary { background: #1568be; color: #fff; border: none; padding: 14px 32px; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 0.3px; display: block; width: 100%; margin-top: 24px; }
-    button.primary:hover { background: #1055a0; }
-    button.primary:disabled { background: #9ab8d8; cursor: not-allowed; }
-    button.outline { background: #fff; color: #1568be; border: 2px solid #1568be; padding: 12px 28px; font-weight: 700; font-size: 14px; cursor: pointer; }
+    /* Button */
+    .btn { display: block; width: 100%; padding: 14px; background: #1568be; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 24px; letter-spacing: 0.3px; }
+    .btn:hover { background: #1055a0; }
+    .btn:disabled { background: #9ab8d8; cursor: not-allowed; }
+    .btn-outline { background: #fff; color: #1568be; border: 2px solid #1568be; }
 
-    .preview-banner { background: #b5212b; color: #fff; text-align: center; padding: 10px; font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+    .preview-bar { background: #b5212b; color: #fff; text-align: center; padding: 9px; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+    .step-count { font-size: 12px; color: #9a9a9a; margin-bottom: 28px; text-align: center; }
   </style>
 </head>
 <body>
 
-<div class="preview-banner">PREVIEW — This is what the safety course will look like</div>
-
+<div class="preview-bar">PREVIEW — rentwithtvr.com/safety</div>
 <div class="topbar">
   <div class="topbar-logo">Tennessee Valley Rentals LLC</div>
-  <div class="topbar-sub">Trailer Safety Course</div>
+  <div class="topbar-sub">Trailer Safety · 4 min</div>
 </div>
 
 <div class="shell" id="app"></div>
 
 <script>
-const STEPS = [
-  { id: "hitch",  label: "Hitch Setup" },
-  { id: "chains", label: "Safety Chains" },
-  { id: "load",   label: "Load Placement" },
-  { id: "quiz",   label: "Quiz" },
-  { id: "done",   label: "Your Coupon" },
+var step = 0;
+var ans = {};
+var submitted = false;
+
+var STEPS = ["Hitch", "Chains", "Loading", "Driving", "Quiz", "Done"];
+
+var QUIZ = [
+  { q: "Safety chains should be routed:", opts: ["Straight across, parallel", "Crossed in an X under the tongue", "Over the top of the coupler"], a: 1 },
+  { q: "Where should 60% of your load sit?", opts: ["Behind the axle", "Evenly on both sides", "In front of the axle"], a: 2 },
+  { q: "Too much weight on the rear of the trailer causes:", opts: ["Tongue overload", "Trailer sway", "Better fuel economy"], a: 1 },
+  { q: "When stopping with a trailer, you should:", opts: ["Brake the same as normal", "Begin braking much earlier than usual", "Pump the brakes rapidly"], a: 1 },
 ];
 
-let currentStep = 0;
-let quizAnswers = {};
-let quizSubmitted = false;
-
-const QUIZ = [
-  {
-    q: "How should safety chains be routed under the trailer tongue?",
-    options: ["Straight across, side by side", "Crossed in an X pattern", "Looped once around the tongue"],
-    answer: 1,
-  },
-  {
-    q: "What percentage of your load should be placed in front of the axle?",
-    options: ["40%", "50%", "60%"],
-    answer: 2,
-  },
-  {
-    q: "Too much weight on the rear of the trailer causes:",
-    options: ["Better fuel economy", "Trailer sway — dangerous fishtailing", "Increased tongue weight"],
-    answer: 1,
-  },
-];
+function dots() {
+  var h = '<div class="dots">';
+  STEPS.forEach(function(s, i) {
+    var cls = i < step ? "done" : i === step ? "active" : "";
+    h += '<div class="dot-wrap"><div class="dot ' + cls + '">' + (i < step ? "✓" : (i+1)) + '</div></div>';
+    if (i < STEPS.length - 1) h += '<div class="dot-line ' + (i < step ? "done" : "") + '"></div>';
+  });
+  return h + '</div>';
+}
 
 function render() {
-  document.getElementById("app").innerHTML = buildStep(currentStep);
-  attachListeners();
+  var html = dots() + '<div class="step-count">' + STEPS[step] + ' · Step ' + (step+1) + ' of ' + STEPS.length + '</div>';
+  if (step === 0) html += hitchHTML();
+  if (step === 1) html += chainsHTML();
+  if (step === 2) html += loadHTML();
+  if (step === 3) html += drivingHTML();
+  if (step === 4) html += quizHTML();
+  if (step === 5) html += doneHTML();
+  document.getElementById("app").innerHTML = html;
+  window.scrollTo(0, 0);
 }
 
-function buildDots() {
-  return STEPS.map(function(s, i) {
-    var cls = i < currentStep ? "done" : i === currentStep ? "active" : "";
-    return '<div class="step-dot ' + cls + '">' +
-      '<div class="dot">' + (i < currentStep ? "" : (i + 1)) + '</div>' +
-      '<div class="step-label">' + s.label + '</div>' +
-    '</div>';
-  }).join("");
-}
+function next() { step++; render(); }
+function pick(qi, oi) { if (submitted) return; ans[qi] = oi; render(); }
+function submit() { submitted = true; render(); }
+function retry() { ans = {}; submitted = false; render(); }
 
-function buildStep(i) {
-  var pct = (i / (STEPS.length - 1)) * 100;
-  var header = '<div class="progress-wrap">' +
-    '<div class="progress-label"><span>' + STEPS[i].label + '</span><span>Step ' + (i + 1) + ' of ' + STEPS.length + '</span></div>' +
-    '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-  '</div>' +
-  '<div class="steps">' + buildDots() + '</div>';
-
-  if (i === 0) return header + buildHitch();
-  if (i === 1) return header + buildChains();
-  if (i === 2) return header + buildLoad();
-  if (i === 3) return header + buildQuiz();
-  if (i === 4) return header + buildDone();
-  return "";
-}
-
-function buildHitch() {
+function hitchHTML() {
   return '<div class="card">' +
-    '<div class="card-kicker">Step 1 · Hitch Setup</div>' +
-    '<h2 class="card-title">Connecting your hitch correctly.</h2>' +
-    '<ul class="steps-list">' +
-      '<li><div class="step-num">1</div><div class="step-text"><strong>Confirm your ball size</strong><span>TVR trailers require a 2 5/16" hitch ball. Using the wrong size can cause the trailer to detach while driving.</span></div></li>' +
-      '<li><div class="step-num">2</div><div class="step-text"><strong>Lower the coupler onto the ball</strong><span>Use your vehicle\'s hitch or a jack to lower the coupler fully onto the ball until it seats completely.</span></div></li>' +
-      '<li><div class="step-num">3</div><div class="step-text"><strong>Lock the coupler latch</strong><span>Close the latch and insert the safety pin or clip. Tug up on the tongue to confirm it\'s locked — it should not lift off.</span></div></li>' +
-      '<li><div class="step-num">4</div><div class="step-text"><strong>Connect the 7-way plug</strong><span>Plug into your vehicle\'s 7-way connector for trailer lights and electric brakes. Test all lights before leaving.</span></div></li>' +
-      '<li><div class="step-num">5</div><div class="step-text"><strong>Attach the breakaway cable</strong><span>Clip this to a solid structural point on your vehicle — NOT the ball mount. This activates the trailer brakes if the hitch separates.</span></div></li>' +
+    '<div class="kicker">Step 1 · Hitch Setup</div>' +
+    '<h2>Connect it right.</h2>' +
+    '<ul class="checklist">' +
+      '<li><div class="check-icon">1</div><div><strong>Ball size: 2 5/16"</strong><span>Verify before coupling. Wrong size = trailer can detach at speed.</span></div></li>' +
+      '<li><div class="check-icon">2</div><div><strong>Seat the coupler fully</strong><span>Lower onto the ball until it clicks and locks. Tug up — it should not lift.</span></div></li>' +
+      '<li><div class="check-icon">3</div><div><strong>Insert the safety pin</strong><span>Through the coupler latch. This is your first backup if the ball fails.</span></div></li>' +
+      '<li><div class="check-icon">4</div><div><strong>Connect the 7-way plug</strong><span>Lights and electric brakes. Test both before leaving.</span></div></li>' +
+      '<li><div class="check-icon">5</div><div><strong>Clip the breakaway cable</strong><span>To a solid point on your vehicle — not the ball mount. Activates trailer brakes if you separate.</span></div></li>' +
     '</ul>' +
-    '<div class="tip"><strong>Pro tip</strong>After connecting, drive forward 5 feet and check that everything is still secure before loading the trailer.</div>' +
-    '<button class="primary" onclick="nextStep()">Next: Safety Chains →</button>' +
+    '<div class="tip"><b>Before you pull away</b>Drive 5 feet, stop, get out, and check everything is still tight.</div>' +
+    '<button class="btn" onclick="next()">Next →</button>' +
   '</div>';
 }
 
-function buildChains() {
+function chainsHTML() {
   return '<div class="card">' +
-    '<div class="card-kicker">Step 2 · Safety Chains</div>' +
-    '<h2 class="card-title">Cross your chains — every time.</h2>' +
-    '<div class="card-body">' +
-      '<p>Safety chains are your backup if the hitch ever fails. Rigging them correctly is the difference between a close call and a serious accident.</p>' +
+    '<div class="kicker">Step 2 · Safety Chains</div>' +
+    '<h2>Cross them. Every time.</h2>' +
+    '<ul class="checklist">' +
+      '<li><div class="check-icon">1</div><div><strong>Always cross in an X under the tongue</strong><span>Left chain to right hook, right chain to left hook. Creates a cradle that catches the tongue if the hitch fails.</span></div></li>' +
+      '<li><div class="check-icon">2</div><div><strong>Slack — but not dragging</strong><span>Enough to turn without binding. Dragging chains wear through and spark.</span></div></li>' +
+      '<li><div class="check-icon">3</div><div><strong>Hooks face down</strong><span>So road vibration can\'t bounce them loose.</span></div></li>' +
+    '</ul>' +
+    '<div class="warn"><b>Non-negotiable</b>An uncrossed or unattached chain means a detached trailer can cross into oncoming traffic. 30 seconds. Do it.</div>' +
+    '<button class="btn" onclick="next()">Next →</button>' +
+  '</div>';
+}
+
+function loadHTML() {
+  return '<div class="card">' +
+    '<div class="kicker">Step 3 · Loading</div>' +
+    '<h2>Weight placement is everything.</h2>' +
+    '<div class="diagram">' +
+      '<div style="font-size:13px;font-weight:700;margin-bottom:8px;">Correct load distribution</div>' +
+      '<div class="trailer-bar"><div class="t-front">60% front</div><div class="axle"></div><div class="t-rear">40% rear</div></div>' +
+      '<div class="diagram-note">Red line = axle &nbsp;|&nbsp; Heavy items go in the blue zone</div>' +
     '</div>' +
-    '<ul class="steps-list">' +
-      '<li><div class="step-num">1</div><div class="step-text"><strong>Always cross in an X under the tongue</strong><span>Run the left chain to the right hook and the right chain to the left hook, crossing under the coupler tongue.</span></div></li>' +
-      '<li><div class="step-num">2</div><div class="step-text"><strong>Why cross them?</strong><span>The X pattern creates a cradle — if the hitch detaches, the tongue drops into the crossed chains instead of hitting the pavement and causing a jackknife.</span></div></li>' +
-      '<li><div class="step-num">3</div><div class="step-text"><strong>Leave the right amount of slack</strong><span>Enough slack to turn without binding, but chains should never drag on the ground. Dragging chains wear through fast and can cause sparks.</span></div></li>' +
-      '<li><div class="step-num">4</div><div class="step-text"><strong>Hook orientation matters</strong><span>Both hooks should open downward so road vibration can\'t bounce them loose.</span></div></li>' +
+    '<ul class="checklist">' +
+      '<li><div class="check-icon">✓</div><div><strong>60% of load in front of the axle</strong><span>Keeps tongue weight firm, tow vehicle stable.</span></div></li>' +
+      '<li><div class="check-icon">✓</div><div><strong>Too much rear weight = trailer sway</strong><span>The trailer fishtails. If it happens: do not brake hard. Ease off the gas and let speed drop naturally.</span></div></li>' +
+      '<li><div class="check-icon">✓</div><div><strong>Keep it low and strapped</strong><span>Low center of gravity = more stable. Everything must be secured before moving.</span></div></li>' +
     '</ul>' +
-    '<div class="warning"><strong>Never skip this</strong>Unchained or improperly chained trailers can separate, cross into oncoming traffic, and cause fatal accidents. Take 30 seconds and do it right.</div>' +
-    '<button class="primary" onclick="nextStep()">Next: Load Placement →</button>' +
+    '<div class="tip"><b>Tongue weight target</b>10–15% of total loaded trailer weight. For a 2,000 lb load, that\'s 200–300 lbs on the tongue.</div>' +
+    '<button class="btn" onclick="next()">Next →</button>' +
   '</div>';
 }
 
-function buildLoad() {
+function drivingHTML() {
   return '<div class="card">' +
-    '<div class="card-kicker">Step 3 · Load Placement</div>' +
-    '<h2 class="card-title">Where you put weight is everything.</h2>' +
-    '<div class="card-body"><p>Loading a trailer incorrectly is one of the leading causes of trailer sway and accidents. Follow these rules every time.</p></div>' +
-    '<div class="load-diagram">' +
-      '<div class="diagram-title">Correct load distribution</div>' +
-      '<div class="trailer-bar">' +
-        '<div class="trailer-front">60% — Front</div>' +
-        '<div class="axle-line"></div>' +
-        '<div class="trailer-rear">40% — Rear</div>' +
-      '</div>' +
-      '<div class="diagram-label">Red line = axle position &nbsp;|&nbsp; Blue = where heavy load goes</div>' +
-    '</div>' +
-    '<ul class="steps-list">' +
-      '<li><div class="step-num">1</div><div class="step-text"><strong>60% of load in front of the axle</strong><span>This keeps the tongue weighted down and your hitch connection firm. It gives your tow vehicle better steering control.</span></div></li>' +
-      '<li><div class="step-num">2</div><div class="step-text"><strong>Too much rear weight = trailer sway</strong><span>The trailer fishtails side to side. At highway speed this can be unrecoverable. If you feel sway, do NOT brake hard — gradually reduce speed.</span></div></li>' +
-      '<li><div class="step-num">3</div><div class="step-text"><strong>Too much front weight = tongue overload</strong><span>Pushes down on the hitch, lifts the rear wheels of your tow vehicle, and reduces braking and steering ability.</span></div></li>' +
-      '<li><div class="step-num">4</div><div class="step-text"><strong>Keep heavy items low and centered</strong><span>Low center of gravity = more stability. Strap everything down so nothing can shift during braking or turns.</span></div></li>' +
+    '<div class="kicker">Step 4 · Driving</div>' +
+    '<h2>Towing changes everything.</h2>' +
+    '<ul class="checklist">' +
+      '<li><div class="check-icon">1</div><div><strong>Start braking much earlier</strong><span>A loaded trailer adds significant stopping distance. Double the following distance you\'d normally keep.</span></div></li>' +
+      '<li><div class="check-icon">2</div><div><strong>Make wider turns</strong><span>The trailer tracks inside your wheels. Swing wide on right turns or the trailer will clip curbs.</span></div></li>' +
+      '<li><div class="check-icon">3</div><div><strong>Check your mirrors constantly</strong><span>Especially on lane changes. Trailers have a large blind spot. Signal early, move slowly.</span></div></li>' +
+      '<li><div class="check-icon">4</div><div><strong>Reduce speed on curves and ramps</strong><span>A trailer raises your center of gravity. What feels fine in a car can tip a loaded trailer.</span></div></li>' +
+      '<li><div class="check-icon">5</div><div><strong>No sudden moves</strong><span>Jerking the wheel or braking hard can cause sway. Smooth inputs only.</span></div></li>' +
     '</ul>' +
-    '<div class="tip"><strong>Target tongue weight</strong>Aim for 10–15% of total loaded trailer weight on the tongue. For a 2,000 lb load, that\'s 200–300 lbs of tongue weight.</div>' +
-    '<button class="primary" onclick="nextStep()">Take the Quiz →</button>' +
+    '<div class="tip"><b>If trailer sway starts</b>Do NOT brake. Ease off the gas. Hold the wheel straight. Let the trailer settle on its own.</div>' +
+    '<button class="btn" onclick="next()">Take the Quiz →</button>' +
   '</div>';
 }
 
-function buildQuiz() {
-  var allAnswered = Object.keys(quizAnswers).length === QUIZ.length;
-  var html = '<div class="card">' +
-    '<div class="card-kicker">Quick Quiz · 3 Questions</div>' +
-    '<h2 class="card-title">Let\'s make sure it sticks.</h2>' +
-    '<div class="card-body"><p style="margin-bottom:24px;">Answer correctly and unlock your $5 off coupon.</p></div>';
-
+function quizHTML() {
+  var allDone = Object.keys(ans).length === QUIZ.length;
+  var correct = QUIZ.filter(function(q, i) { return ans[i] === q.a; }).length;
+  var html = '<div class="card"><div class="kicker">Quiz · 4 Questions</div><h2>Quick check.</h2>';
   QUIZ.forEach(function(q, qi) {
-    html += '<div class="quiz-q">' +
-      '<div class="quiz-q-text">' + (qi + 1) + '. ' + q.q + '</div>' +
-      '<div class="quiz-options">';
-    q.options.forEach(function(opt, oi) {
-      var cls = "quiz-option";
-      if (quizAnswers[qi] === oi) {
-        if (quizSubmitted) {
-          cls += oi === q.answer ? " correct" : " wrong";
-        } else {
-          cls += " selected";
-        }
-      } else if (quizSubmitted && oi === q.answer) {
-        cls += " correct";
-      }
-      html += '<div class="' + cls + '" onclick="selectAnswer(' + qi + ',' + oi + ')">' +
-        '<div class="quiz-radio"></div>' + opt +
-      '</div>';
+    html += '<div class="q-wrap"><div class="q-label">' + (qi+1) + '. ' + q.q + '</div>';
+    q.opts.forEach(function(o, oi) {
+      var cls = "opt";
+      if (ans[qi] === oi) { cls += submitted ? (oi === q.a ? " correct" : " wrong") : " sel"; }
+      else if (submitted && oi === q.a) cls += " correct";
+      html += '<div class="' + cls + '" onclick="pick(' + qi + ',' + oi + ')"><div class="radio"></div>' + o + '</div>';
     });
-    html += '</div></div>';
+    html += '</div>';
   });
-
-  if (!quizSubmitted) {
-    html += '<button class="primary" ' + (allAnswered ? '' : 'disabled') + ' onclick="submitQuiz()">Submit Answers</button>';
+  if (!submitted) {
+    html += '<button class="btn" ' + (allDone ? '' : 'disabled') + ' onclick="submit()">Submit</button>';
+  } else if (correct === QUIZ.length) {
+    html += '<div class="tip" style="margin-top:16px;"><b>Perfect — ' + correct + '/4 ✓</b>You\'re ready to tow. Claim your discount below.</div>';
+    html += '<button class="btn" onclick="next()">Claim $5 off →</button>';
   } else {
-    var correct = QUIZ.filter(function(q, i) { return quizAnswers[i] === q.answer; }).length;
-    if (correct === QUIZ.length) {
-      html += '<div class="tip" style="margin-top:20px;"><strong>Perfect score! 🎉</strong>You got all 3 correct. Here\'s your reward.</div>';
-      html += '<button class="primary" onclick="nextStep()">Claim your $5 off →</button>';
-    } else {
-      html += '<div class="warning" style="margin-top:20px;"><strong>Not quite — ' + correct + '/3 correct</strong>Review the highlighted answers above and try again.</div>';
-      html += '<button class="primary" onclick="retryQuiz()">Try Again</button>';
-    }
+    html += '<div class="warn" style="margin-top:16px;"><b>' + correct + '/4 correct</b>Review the answers above and try again.</div>';
+    html += '<button class="btn" onclick="retry()">Try Again</button>';
   }
-
-  html += '</div>';
-  return html;
+  return html + '</div>';
 }
 
-function buildDone() {
-  return '<div class="coupon-box">' +
-    '<div class="stars">★★★★★</div>' +
-    '<div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">You passed! Here\'s your reward.</div>' +
-    '<div style="font-size:22px;font-weight:700;color:#262626;margin-bottom:4px;">$5 off your rental</div>' +
-    '<div class="coupon-badge">SAFE5</div>' +
-    '<div class="coupon-note">Enter this code at checkout. Valid for one rental. Cannot be combined with other offers.</div>' +
+function doneHTML() {
+  return '<div class="coupon">' +
+    '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">You passed — here\'s your reward</div>' +
+    '<div style="font-size:20px;font-weight:700;color:#262626;">$5 off your rental</div>' +
+    '<div class="coupon-code">SAFE5</div>' +
+    '<div class="coupon-sub">Enter at checkout. One use per customer.</div>' +
   '</div>' +
   '<div class="card" style="text-align:center;">' +
-    '<div style="font-size:13px;color:#6b6b6b;margin-bottom:20px;">Ready to book? Your code is waiting at checkout.</div>' +
-    '<button class="primary" style="max-width:320px;margin:0 auto;" onclick="alert(\'This would go to the booking page\')">Book Your Trailer →</button>' +
+    '<div style="font-size:14px;color:#6b6b6b;margin-bottom:4px;">Ready to book?</div>' +
+    '<button class="btn" style="max-width:280px;margin:16px auto 0;" onclick="alert(\'Goes to booking page\')">Reserve a Trailer →</button>' +
   '</div>';
 }
-
-function nextStep() {
-  if (currentStep < STEPS.length - 1) { currentStep++; render(); window.scrollTo(0,0); }
-}
-function selectAnswer(qi, oi) {
-  if (quizSubmitted) return;
-  quizAnswers[qi] = oi;
-  render();
-}
-function submitQuiz() {
-  quizSubmitted = true;
-  render();
-}
-function retryQuiz() {
-  quizAnswers = {};
-  quizSubmitted = false;
-  render();
-}
-function attachListeners() {}
 
 render();
 </script>
