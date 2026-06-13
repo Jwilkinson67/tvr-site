@@ -386,7 +386,7 @@ function HowItWorksBand() {
         {h.steps.map(function(step, i) {
           return (
             <div key={i} style={{ borderTop: "3px solid #1568be", paddingTop: 24 }}>
-              <div style={{ font: '700 48px/1 "Inter", sans-serif', color: "#e6e6e6", marginBottom: 16 }}>
+              <div style={{ font: '700 48px/1 "Inter", sans-serif', color: "#1568be", marginBottom: 16 }}>
                 {String(i + 1).padStart(2, "0")}
               </div>
               <h3 style={{ font: '700 18px/1.3 "Inter", sans-serif', color: "#262626", margin: "0 0 10px" }}>{step.title}</h3>
