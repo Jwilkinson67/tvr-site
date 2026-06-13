@@ -433,7 +433,7 @@ function CTABand({ setRoute }) {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   return (
-    <section style={{ position: "relative", background: "#f4f6f9", padding: isMobile ? "48px 24px" : "80px 80px", textAlign: "center" }}>
+    <section style={{ position: "relative", background: "#fff", padding: isMobile ? "48px 24px" : "80px 80px", textAlign: "center" }}>
       <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 64, height: 4, background: "#b5212b" }} />
       <h2 style={{ font: `700 ${isMobile ? "28px" : "36px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#262626", maxWidth: 760, marginInline: "auto" }}>
         {c.ctaBand.line1}<br />{c.ctaBand.line2}
