@@ -9,41 +9,30 @@
     body { margin: 0; font-family: "Inter", Arial, sans-serif; background: #f6f7f9; color: #262626; font-size: 15px; }
     .topbar { background: #1568be; color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; }
     .topbar-logo { font-weight: 700; font-size: 17px; }
-    .topbar-sub { font-size: 12px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
+    .topbar-sub  { font-size: 12px; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
     .shell { max-width: 680px; margin: 40px auto; padding: 0 24px 80px; }
-
-    .dots { display: flex; align-items: center; justify-content: center; margin-bottom: 36px; }
-    .dot-wrap { display: flex; align-items: center; }
+    .dots { display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
     .dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #d0d0d0; background: #fff; color: #9a9a9a; font-weight: 700; font-size: 11px; display: flex; align-items: center; justify-content: center; }
     .dot.active { border-color: #1568be; background: #1568be; color: #fff; }
     .dot.done   { border-color: #1568be; background: #1568be; color: #fff; }
-    .dot-line   { width: 28px; height: 2px; background: #d0d0d0; }
+    .dot-line   { width: 24px; height: 2px; background: #d0d0d0; }
     .dot-line.done { background: #1568be; }
-
-    .card { background: #fff; border: 1px solid #e0e0e0; padding: 36px; margin-bottom: 20px; }
+    .card { background: #fff; border: 1px solid #e0e0e0; padding: 32px; margin-bottom: 20px; }
     .kicker { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #1568be; margin-bottom: 10px; }
-    h2 { font-size: 24px; font-weight: 700; margin: 0 0 22px; line-height: 1.2; color: #262626; }
-
+    h2 { font-size: 24px; font-weight: 700; margin: 0 0 20px; line-height: 1.2; color: #262626; }
     .cl { list-style: none; padding: 0; margin: 0; }
     .cl li { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
     .cl li:last-child { border-bottom: none; }
     .ci { width: 22px; height: 22px; border-radius: 50%; background: #1568be; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
     .cl strong { font-size: 14px; color: #262626; display: block; margin-bottom: 2px; }
     .cl span { font-size: 13px; color: #6b6b6b; line-height: 1.5; }
-
-    .tip  { background: #eef5ff; border-left: 3px solid #1568be; padding: 13px 16px; margin: 18px 0; font-size: 13px; color: #0b3d7a; line-height: 1.6; }
-    .warn { background: #fff8e0; border-left: 3px solid #b88017; padding: 13px 16px; margin: 18px 0; font-size: 13px; color: #7a5500; line-height: 1.6; }
+    .tip  { background: #eef5ff; border-left: 3px solid #1568be; padding: 13px 16px; margin: 16px 0; font-size: 13px; color: #0b3d7a; line-height: 1.6; }
+    .warn { background: #fff8e0; border-left: 3px solid #b88017; padding: 13px 16px; margin: 16px 0; font-size: 13px; color: #7a5500; line-height: 1.6; }
     .tip b, .warn b { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
-
-    .diagram { background: #f4f6f9; border: 1px solid #e0e0e0; padding: 18px; margin: 18px 0; text-align: center; }
-    .trailer-bar { display: flex; height: 42px; max-width: 380px; margin: 10px auto; border: 2px solid #262626; overflow: hidden; position: relative; }
-    .t-front { background: #1568be; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 60%; }
-    .t-rear  { background: #e0e0e0; color: #6b6b6b; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; width: 40%; }
-    .axle    { position: absolute; left: 60%; top: -4px; bottom: -4px; width: 3px; background: #b5212b; }
-    .d-note  { font-size: 12px; color: #6b6b6b; margin-top: 6px; }
-
-    .q-wrap { margin-bottom: 22px; }
-    .q-label { font-weight: 700; font-size: 15px; margin-bottom: 11px; }
+    .anim-box { background: #f4f6f9; border: 1px solid #e0e0e0; padding: 20px; margin: 18px 0; display: flex; flex-direction: column; align-items: center; }
+    .anim-label { font-size: 12px; font-weight: 700; color: #6b6b6b; margin-top: 10px; text-align: center; letter-spacing: 0.5px; text-transform: uppercase; }
+    .q-wrap { margin-bottom: 20px; }
+    .q-label { font-weight: 700; font-size: 15px; margin-bottom: 10px; }
     .opt { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 2px solid #e0e0e0; margin-bottom: 7px; cursor: pointer; font-size: 14px; transition: border-color 0.12s, background 0.12s; }
     .opt:hover  { border-color: #1568be; background: #f0f6ff; }
     .opt.sel    { border-color: #1568be; background: #f0f6ff; }
@@ -51,16 +40,58 @@
     .opt.wrong  { border-color: #b5212b; background: #fdf0f0; color: #7a1018; }
     .radio { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #d0d0d0; flex-shrink: 0; }
     .opt.sel .radio { border-color: #1568be; background: #1568be; }
-
     .coupon { background: #fff; border: 2px dashed #1568be; padding: 36px 32px; text-align: center; margin-bottom: 20px; }
     .coupon-code { display: inline-block; background: #1568be; color: #fff; font-weight: 700; font-size: 26px; letter-spacing: 5px; padding: 13px 36px; margin: 14px 0; }
-
-    .btn { display: block; width: 100%; padding: 14px; background: #1568be; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 22px; }
+    .btn { display: block; width: 100%; padding: 14px; background: #1568be; color: #fff; border: none; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 20px; }
     .btn:hover { background: #1055a0; }
     .btn:disabled { background: #9ab8d8; cursor: not-allowed; }
-
-    .step-count { font-size: 12px; color: #9a9a9a; text-align: center; margin-bottom: 24px; }
+    .step-count { font-size: 12px; color: #9a9a9a; text-align: center; margin-bottom: 22px; }
     .preview-bar { background: #b5212b; color: #fff; text-align: center; padding: 9px; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+
+    /* Animations */
+    @keyframes checkPop {
+      0%   { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+      70%  { transform: scale(1.15) rotate(3deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    @keyframes slideRight {
+      0%   { transform: translateX(-60px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes sway {
+      0%,100% { transform: rotate(0deg); }
+      20%      { transform: rotate(-6deg); }
+      40%      { transform: rotate(8deg); }
+      60%      { transform: rotate(-5deg); }
+      80%      { transform: rotate(4deg); }
+    }
+    @keyframes pulse55 {
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.5; }
+    }
+    @keyframes arrowBounce {
+      0%,100% { transform: translateX(0); }
+      50%     { transform: translateX(8px); }
+    }
+    @keyframes weightDrop {
+      0%   { transform: translateY(-20px); opacity: 0; }
+      60%  { transform: translateY(4px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes chainDraw {
+      from { stroke-dashoffset: 200; }
+      to   { stroke-dashoffset: 0; }
+    }
+    @keyframes hitchDrop {
+      0%   { transform: translateY(-18px); }
+      60%  { transform: translateY(3px); }
+      80%  { transform: translateY(-1px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes glow {
+      0%,100% { filter: drop-shadow(0 0 0px #22a355); }
+      50%     { filter: drop-shadow(0 0 6px #22a355); }
+    }
   </style>
 </head>
 <body>
@@ -77,28 +108,27 @@
 var step = 0;
 var ans = {};
 var submitted = false;
-var STEPS = ["Pre-Trip", "Loading", "Driving", "On the Road", "Quiz", "Done"];
-
+var STEPS = ["Pre-Trip", "Loading", "Driving", "Hills & Backup", "Quiz", "Done"];
 var QUIZ = [
-  { q: "Safety chains should always be:", opts: ["Run straight across side by side", "Crossed in an X under the tongue", "Attached to the ball mount"], a: 1 },
+  { q: "Safety chains should always be:", opts: ["Run straight across, parallel", "Crossed in an X under the tongue", "Attached to the ball mount"], a: 1 },
   { q: "What percentage of load goes in front of the axle?", opts: ["40%", "50%", "60%"], a: 2 },
   { q: "The recommended max towing speed is:", opts: ["65 MPH", "55 MPH", "45 MPH"], a: 1 },
   { q: "If your trailer starts to sway, you should:", opts: ["Brake hard immediately", "Speed up to stabilize", "Ease off the gas and hold steady"], a: 2 },
-  { q: "When backing up a trailer, turn the wheel:", opts: ["The same direction you want the trailer to go", "Opposite the direction you want the trailer to go", "It doesn't matter"], a: 1 },
+  { q: "When backing up, turn the wheel:", opts: ["Same direction as the trailer", "Opposite the direction you want the trailer to go", "It doesn't matter — just go slow"], a: 1 },
 ];
 
 function dots() {
   var h = '<div class="dots">';
   STEPS.forEach(function(s, i) {
     var cls = i < step ? "done" : i === step ? "active" : "";
-    h += '<div class="dot-wrap"><div class="dot ' + cls + '">' + (i < step ? "✓" : (i+1)) + '</div></div>';
+    h += '<div class="dot ' + cls + '">' + (i < step ? "✓" : (i+1)) + '</div>';
     if (i < STEPS.length - 1) h += '<div class="dot-line ' + (i < step ? "done" : "") + '"></div>';
   });
   return h + '</div>';
 }
 
 function render() {
-  var fns = [pretrip, loading, driving, onroad, quiz, done];
+  var fns = [pretrip, loading, driving, onroad, quizStep, doneStep];
   document.getElementById("app").innerHTML = dots() +
     '<div class="step-count">' + STEPS[step] + ' · Step ' + (step+1) + ' of ' + STEPS.length + '</div>' +
     fns[step]();
@@ -110,19 +140,201 @@ function pick(qi, oi) { if (submitted) return; ans[qi] = oi; render(); }
 function submitQ() { submitted = true; render(); }
 function retry() { ans = {}; submitted = false; render(); }
 
+/* ── Hitch coupling SVG animation ── */
+function hitchAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="220" height="130" viewBox="0 0 220 130">' +
+      /* vehicle back */
+      '<rect x="10" y="30" width="80" height="50" rx="6" fill="#1568be"/>' +
+      '<rect x="10" y="55" width="80" height="4" fill="#0e4f96"/>' +
+      /* ball mount */
+      '<rect x="82" y="52" width="28" height="8" rx="2" fill="#444"/>' +
+      /* ball */
+      '<circle cx="116" cy="54" r="8" fill="#888"/>' +
+      /* coupler — animated dropping */
+      '<g style="animation: hitchDrop 1.2s ease 0.3s both infinite">' +
+        '<rect x="106" y="20" width="20" height="22" rx="3" fill="#444"/>' +
+        '<rect x="103" y="38" width="26" height="8" rx="2" fill="#333"/>' +
+      '</g>' +
+      /* tongue */
+      '<line x1="116" y1="42" x2="180" y2="42" stroke="#444" stroke-width="6" stroke-linecap="round"/>' +
+      /* trailer box */
+      '<rect x="140" y="22" width="70" height="52" rx="4" fill="#262626"/>' +
+      '<rect x="148" y="30" width="54" height="36" rx="2" fill="#1568be" opacity="0.15"/>' +
+      /* wheels */
+      '<circle cx="155" cy="82" r="10" fill="#333"/><circle cx="155" cy="82" r="5" fill="#666"/>' +
+      '<circle cx="185" cy="82" r="10" fill="#333"/><circle cx="185" cy="82" r="5" fill="#666"/>' +
+      /* lock icon animating green */
+      '<g style="animation: glow 1.6s ease 1.5s infinite">' +
+        '<circle cx="116" cy="54" r="10" fill="none" stroke="#22a355" stroke-width="2.5" opacity="0"/>' +
+        '<text x="116" y="115" text-anchor="middle" font-size="11" fill="#22a355" font-weight="700">LOCKED ✓</text>' +
+      '</g>' +
+    '</svg>' +
+    '<div class="anim-label">Coupler drops onto ball — tug up to confirm locked</div>' +
+  '</div>';
+}
+
+/* ── Safety chains X animation ── */
+function chainsAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="240" height="120" viewBox="0 0 240 120">' +
+      /* tongue */
+      '<rect x="60" y="55" width="80" height="10" rx="2" fill="#444"/>' +
+      /* coupler */
+      '<rect x="54" y="48" width="24" height="24" rx="4" fill="#333"/>' +
+      /* vehicle */
+      '<rect x="10" y="38" width="50" height="44" rx="5" fill="#1568be"/>' +
+      /* trailer */
+      '<rect x="145" y="30" width="85" height="60" rx="4" fill="#262626"/>' +
+      /* Left hook (right side of vehicle) */
+      '<circle cx="62" cy="95" r="4" fill="#b5212b"/>' +
+      /* Right hook */
+      '<circle cx="62" cy="25" r="4" fill="#b5212b"/>' +
+      /* Chain 1 — left hook crossing to right */
+      '<path d="M62,91 Q100,72 140,95" fill="none" stroke="#b5212b" stroke-width="3" stroke-dasharray="200" stroke-dashoffset="200" stroke-linecap="round" style="animation: chainDraw 1s ease 0.2s forwards"/>' +
+      /* Chain 2 — right hook crossing to left */
+      '<path d="M62,29 Q100,48 140,25" fill="none" stroke="#b5212b" stroke-width="3" stroke-dasharray="200" stroke-dashoffset="200" stroke-linecap="round" style="animation: chainDraw 1s ease 0.7s forwards"/>' +
+      /* X label */
+      '<text x="101" y="65" text-anchor="middle" font-size="18" font-weight="900" fill="#b5212b" opacity="0" style="animation: checkPop 0.4s ease 1.6s forwards">✕</text>' +
+      /* Attach points on trailer */
+      '<circle cx="140" cy="95" r="4" fill="#b5212b"/>' +
+      '<circle cx="140" cy="25" r="4" fill="#b5212b"/>' +
+    '</svg>' +
+    '<div class="anim-label">Left chain crosses to right hook — right chain crosses to left hook</div>' +
+  '</div>';
+}
+
+/* ── Load distribution animation ── */
+function loadAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="300" height="110" viewBox="0 0 300 110">' +
+      /* trailer outline */
+      '<rect x="30" y="20" width="240" height="60" rx="4" fill="#f4f6f9" stroke="#d0d0d0" stroke-width="2"/>' +
+      /* front zone (60%) */
+      '<rect x="30" y="20" width="144" height="60" rx="4" fill="#1568be" opacity="0.15"/>' +
+      /* rear zone (40%) */
+      '<rect x="174" y="20" width="96" height="60" fill="#e0e0e0" opacity="0.5"/>' +
+      /* axle */
+      '<rect x="172" y="14" width="4" height="72" fill="#b5212b"/>' +
+      /* weight block 1 */
+      '<rect x="50" y="32" width="36" height="36" rx="3" fill="#1568be" style="animation: weightDrop 0.7s ease 0.2s both"/>' +
+      '<text x="68" y="54" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" style="animation: weightDrop 0.7s ease 0.2s both">HEAVY</text>' +
+      /* weight block 2 */
+      '<rect x="100" y="32" width="36" height="36" rx="3" fill="#1568be" style="animation: weightDrop 0.7s ease 0.5s both"/>' +
+      '<text x="118" y="54" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" style="animation: weightDrop 0.7s ease 0.5s both">HEAVY</text>' +
+      /* light block rear */
+      '<rect x="195" y="38" width="36" height="24" rx="3" fill="#9a9a9a" style="animation: weightDrop 0.7s ease 0.8s both"/>' +
+      '<text x="213" y="53" text-anchor="middle" font-size="9" fill="#fff" style="animation: weightDrop 0.7s ease 0.8s both">light</text>' +
+      /* labels */
+      '<text x="102" y="100" text-anchor="middle" font-size="11" fill="#1568be" font-weight="700">60% — FRONT</text>' +
+      '<text x="222" y="100" text-anchor="middle" font-size="11" fill="#9a9a9a" font-weight="700">40% — REAR</text>' +
+      /* axle label */
+      '<text x="174" y="12" text-anchor="middle" font-size="9" fill="#b5212b" font-weight="700">AXLE</text>' +
+      /* wheels */
+      '<circle cx="174" cy="90" r="9" fill="#333"/><circle cx="174" cy="90" r="4" fill="#666"/>' +
+    '</svg>' +
+    '<div class="anim-label">Heavy items drop into the front zone — lighter items in the rear</div>' +
+  '</div>';
+}
+
+/* ── Sway animation ── */
+function swayAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="260" height="110" viewBox="0 0 260 110">' +
+      /* Road */
+      '<rect x="0" y="65" width="260" height="45" fill="#ddd"/>' +
+      '<line x1="0" y1="87" x2="260" y2="87" stroke="#fff" stroke-width="2" stroke-dasharray="16,12"/>' +
+      /* Tow vehicle — steady */
+      '<g transform="translate(10,30)">' +
+        '<rect x="0" y="0" width="60" height="36" rx="5" fill="#1568be"/>' +
+        '<rect x="8" y="6" width="44" height="18" rx="2" fill="#a8c8f0"/>' +
+        '<circle cx="12" cy="36" r="9" fill="#333"/><circle cx="12" cy="36" r="4" fill="#666"/>' +
+        '<circle cx="48" cy="36" r="9" fill="#333"/><circle cx="48" cy="36" r="4" fill="#666"/>' +
+      '</g>' +
+      /* Trailer — swaying */
+      '<g transform="translate(80,48)" style="transform-origin:80px 48px; animation: sway 2s ease-in-out 0.5s infinite">' +
+        '<line x1="-10" y1="-0" x2="20" y2="0" stroke="#444" stroke-width="5"/>' +
+        '<rect x="20" y="-28" width="90" height="52" rx="4" fill="#262626"/>' +
+        '<rect x="28" y="-22" width="74" height="38" rx="2" fill="#444"/>' +
+        '<circle cx="50" cy="26" r="9" fill="#333"/><circle cx="50" cy="26" r="4" fill="#666"/>' +
+        '<circle cx="90" cy="26" r="9" fill="#333"/><circle cx="90" cy="26" r="4" fill="#666"/>' +
+      '</g>' +
+      /* Warning text */
+      '<text x="130" y="14" text-anchor="middle" font-size="11" fill="#b5212b" font-weight="700" style="animation: pulse55 1s ease infinite">⚠ TRAILER SWAY — ease off gas, hold steady</text>' +
+    '</svg>' +
+    '<div class="anim-label">Too much rear weight causes dangerous fishtailing at speed</div>' +
+  '</div>';
+}
+
+/* ── Speed animation ── */
+function speedAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="200" height="110" viewBox="0 0 200 110">' +
+      /* Speedometer arc */
+      '<path d="M20,90 A80,80 0 0,1 180,90" fill="none" stroke="#e0e0e0" stroke-width="14" stroke-linecap="round"/>' +
+      '<path d="M20,90 A80,80 0 0,1 108,13" fill="none" stroke="#22a355" stroke-width="14" stroke-linecap="round"/>' +
+      /* Needle */
+      '<line x1="100" y1="90" x2="100" y2="28" stroke="#b5212b" stroke-width="3" stroke-linecap="round" transform="rotate(-15 100 90)" style="animation: none"/>' +
+      '<circle cx="100" cy="90" r="7" fill="#333"/>' +
+      /* Labels */
+      '<text x="16" y="108" font-size="10" fill="#6b6b6b">0</text>' +
+      '<text x="84" y="108" font-size="14" fill="#1568be" font-weight="900" style="animation: pulse55 1.4s ease infinite">55</text>' +
+      '<text x="172" y="108" font-size="10" fill="#6b6b6b">80</text>' +
+      '<text x="100" y="75" text-anchor="middle" font-size="10" fill="#6b6b6b">MPH</text>' +
+      /* Max line -->
+      '<path d="M116,18 A80,80 0 0,1 180,90" fill="none" stroke="#b5212b" stroke-width="14" stroke-linecap="round" opacity="0.3"/>' +
+      '<text x="100" y="50" text-anchor="middle" font-size="11" fill="#b5212b" font-weight="700">MAX</text>' +
+    '</svg>' +
+    '<div class="anim-label">Stay at or below 55 MPH when towing</div>' +
+  '</div>';
+}
+
+/* ── Backing up animation ── */
+function backupAnim() {
+  return '<div class="anim-box">' +
+    '<svg width="280" height="130" viewBox="0 0 280 130">' +
+      /* road */
+      '<rect x="0" y="70" width="280" height="60" fill="#ddd"/>' +
+      /* Vehicle going backward */
+      '<g transform="translate(30,30)">' +
+        '<rect x="0" y="0" width="65" height="42" rx="5" fill="#1568be"/>' +
+        '<rect x="8" y="6" width="49" height="22" rx="2" fill="#a8c8f0"/>' +
+        '<circle cx="15" cy="42" r="10" fill="#333"/><circle cx="15" cy="42" r="4" fill="#666"/>' +
+        '<circle cx="50" cy="42" r="10" fill="#333"/><circle cx="50" cy="42" r="4" fill="#666"/>' +
+        /* reverse arrow on vehicle */
+        '<text x="32" y="28" text-anchor="middle" font-size="14" fill="#fff" font-weight="900">◀</text>' +
+      '</g>' +
+      /* Trailer angled right */
+      '<g transform="translate(110,20) rotate(12 50 55)">' +
+        '<line x1="0" y1="55" x2="30" y2="55" stroke="#444" stroke-width="5"/>' +
+        '<rect x="30" y="30" width="90" height="52" rx="4" fill="#262626"/>' +
+        '<circle cx="55" cy="85" r="9" fill="#333"/><circle cx="55" cy="85" r="4" fill="#666"/>' +
+        '<circle cx="95" cy="85" r="9" fill="#333"/><circle cx="95" cy="85" r="4" fill="#666"/>' +
+      '</g>' +
+      /* Arrows */
+      '<text x="36" y="110" font-size="11" fill="#b5212b" font-weight="700" style="animation: arrowBounce 0.8s ease infinite">Wheel LEFT</text>' +
+      '<text x="155" y="18" font-size="11" fill="#22a355" font-weight="700">Trailer goes RIGHT →</text>' +
+      '<line x1="215" y1="22" x2="230" y2="35" stroke="#22a355" stroke-width="2" marker-end="url(#arr)"/>' +
+      '<defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#22a355"/></marker></defs>' +
+    '</svg>' +
+    '<div class="anim-label">Turn wheel LEFT → trailer goes RIGHT. Opposite always.</div>' +
+  '</div>';
+}
+
 function pretrip() {
   return '<div class="card">' +
     '<div class="kicker">Step 1 · Pre-Trip Checklist</div>' +
     '<h2>Check before you leave.</h2>' +
+    hitchAnim() +
     '<ul class="cl">' +
-      '<li><div class="ci">1</div><div><strong>Know your towing capacity</strong><span>Check your owner\'s manual. Never exceed your vehicle\'s rated tow limit — it stresses your engine and increases accident risk.</span></div></li>' +
-      '<li><div class="ci">2</div><div><strong>Ball size: 2 5/16" — verify before coupling</strong><span>Wrong ball size means the trailer can detach at speed. Seat the coupler fully, lock the latch, insert the safety pin.</span></div></li>' +
+      '<li><div class="ci">1</div><div><strong>Know your towing capacity</strong><span>Check your owner\'s manual. Never exceed your vehicle\'s rated limit — it damages your engine and increases accident risk.</span></div></li>' +
+      '<li><div class="ci">2</div><div><strong>Ball size: 2 5/16" — verify before coupling</strong><span>Wrong size means the trailer can detach at speed. Seat the coupler fully, lock the latch, insert the safety pin.</span></div></li>' +
       '<li><div class="ci">3</div><div><strong>Cross the safety chains in an X under the tongue</strong><span>Creates a cradle if the hitch fails. Hooks face down. Slack but not dragging.</span></div></li>' +
-      '<li><div class="ci">4</div><div><strong>Test lights and brakes</strong><span>Have someone stand behind the trailer. Check running lights, brake lights, and turn signals before moving.</span></div></li>' +
-      '<li><div class="ci">5</div><div><strong>Check tire pressure on both trailer and tow vehicle</strong><span>Under-inflated tires run hot and can blow out, especially under load.</span></div></li>' +
-      '<li><div class="ci">6</div><div><strong>Connect the 7-way plug and breakaway cable</strong><span>Breakaway cable attaches to your vehicle frame — not the ball mount. Activates trailer brakes if you separate.</span></div></li>' +
+      '<li><div class="ci">4</div><div><strong>Test lights and electric brakes</strong><span>Have someone stand behind. Check running lights, brake lights, and turn signals before moving.</span></div></li>' +
+      '<li><div class="ci">5</div><div><strong>Check tire pressure — trailer and tow vehicle</strong><span>Under-inflated tires run hot and can blow out under load.</span></div></li>' +
+      '<li><div class="ci">6</div><div><strong>Attach the breakaway cable</strong><span>To your vehicle frame — not the ball mount. Activates trailer brakes if you separate.</span></div></li>' +
     '</ul>' +
-    '<div class="tip"><b>Before pulling away</b>Drive forward 5 feet, stop, get out, and verify everything is still tight.</div>' +
+    '<div class="tip"><b>Before pulling away</b>Drive 5 feet, stop, get out, and check everything is still tight.</div>' +
     '<button class="btn" onclick="next()">Next →</button>' +
   '</div>';
 }
@@ -131,19 +343,15 @@ function loading() {
   return '<div class="card">' +
     '<div class="kicker">Step 2 · Loading</div>' +
     '<h2>Weight placement matters.</h2>' +
-    '<div class="diagram">' +
-      '<div style="font-size:13px;font-weight:700;margin-bottom:8px;">Correct load distribution</div>' +
-      '<div class="trailer-bar"><div class="t-front">60% — Front</div><div class="axle"></div><div class="t-rear">40% — Rear</div></div>' +
-      '<div class="d-note">Red line = axle &nbsp;|&nbsp; Heavy items go in the blue zone</div>' +
-    '</div>' +
+    loadAnim() +
+    chainsAnim() +
     '<ul class="cl">' +
       '<li><div class="ci">✓</div><div><strong>60% of load in front of the axle</strong><span>Keeps tongue weight firm and your tow vehicle stable.</span></div></li>' +
       '<li><div class="ci">✓</div><div><strong>Spread weight evenly side to side</strong><span>A trailer heavy on one side pulls and handles poorly.</span></div></li>' +
-      '<li><div class="ci">✓</div><div><strong>Keep heavy items low and centered</strong><span>Low center of gravity = more stable at speed.</span></div></li>' +
+      '<li><div class="ci">✓</div><div><strong>Keep heavy items low and strapped</strong><span>Low center of gravity = more stable. Shifting load changes balance mid-trip.</span></div></li>' +
       '<li><div class="ci">✗</div><div><strong>Never load heavy items in the rear</strong><span>Too much rear weight causes trailer sway — dangerous fishtailing at highway speeds.</span></div></li>' +
-      '<li><div class="ci">✓</div><div><strong>Strap everything down</strong><span>Shifting load changes your weight distribution mid-trip. Secure it before moving.</span></div></li>' +
     '</ul>' +
-    '<div class="tip"><b>Tongue weight target</b>10–15% of total loaded trailer weight. For a 2,000 lb load: 200–300 lbs on the tongue.</div>' +
+    '<div class="tip"><b>Tongue weight target</b>10–15% of total loaded trailer weight. For 2,000 lbs loaded: 200–300 lbs on the tongue.</div>' +
     '<button class="btn" onclick="next()">Next →</button>' +
   '</div>';
 }
@@ -152,15 +360,16 @@ function driving() {
   return '<div class="card">' +
     '<div class="kicker">Step 3 · Driving</div>' +
     '<h2>Everything takes longer with a trailer.</h2>' +
+    speedAnim() +
+    swayAnim() +
     '<ul class="cl">' +
-      '<li><div class="ci">1</div><div><strong>Max speed: 55 MPH</strong><span>Trailers add weight and length — slower acceleration, longer stopping distance, less room for error. Stay at or below 55.</span></div></li>' +
-      '<li><div class="ci">2</div><div><strong>5-second following distance minimum</strong><span>Braking takes significantly longer when towing. Double the gap you\'d normally keep.</span></div></li>' +
-      '<li><div class="ci">3</div><div><strong>Swing wide on turns</strong><span>Trailers track inside your wheels. On right turns especially, swing wide or the trailer clips the curb.</span></div></li>' +
-      '<li><div class="ci">4</div><div><strong>Check mirrors constantly</strong><span>Adjust side mirrors before you leave so you can see both the trailer and traffic behind. Large blind spots — signal early, move slowly.</span></div></li>' +
-      '<li><div class="ci">5</div><div><strong>No cruise control</strong><span>Cruise can\'t react fast enough to hills or sudden traffic changes. Stay in manual control.</span></div></li>' +
-      '<li><div class="ci">6</div><div><strong>Smooth inputs only</strong><span>No jerking the wheel or sudden braking. Every action is amplified by the trailer.</span></div></li>' +
+      '<li><div class="ci">1</div><div><strong>Max speed: 55 MPH</strong><span>Trailers add weight and length — longer stopping distance, slower acceleration, less room for error.</span></div></li>' +
+      '<li><div class="ci">2</div><div><strong>5-second following distance minimum</strong><span>Braking takes significantly longer. Double your normal gap.</span></div></li>' +
+      '<li><div class="ci">3</div><div><strong>Swing wide on turns</strong><span>Trailers track inside your wheels. On right turns, swing wide or the trailer clips the curb.</span></div></li>' +
+      '<li><div class="ci">4</div><div><strong>Check mirrors constantly</strong><span>Adjust before you leave. Signal early, move slowly on lane changes.</span></div></li>' +
+      '<li><div class="ci">5</div><div><strong>No cruise control</strong><span>Can\'t react fast enough to hills or sudden traffic. Stay in manual control.</span></div></li>' +
     '</ul>' +
-    '<div class="warn"><b>If trailer sway starts</b>Do NOT brake hard or speed up. Ease off the gas, hold the wheel steady, let speed drop naturally. Pull over and recheck your load.</div>' +
+    '<div class="warn"><b>If sway starts</b>Do NOT brake hard. Ease off the gas, hold steady, let speed drop naturally. Pull over and recheck your load.</div>' +
     '<button class="btn" onclick="next()">Next →</button>' +
   '</div>';
 }
@@ -169,19 +378,20 @@ function onroad() {
   return '<div class="card">' +
     '<div class="kicker">Step 4 · Hills & Backing Up</div>' +
     '<h2>Two situations that catch people off guard.</h2>' +
+    backupAnim() +
     '<ul class="cl">' +
-      '<li><div class="ci">1</div><div><strong>Going uphill — use a lower gear</strong><span>Gives your engine more power without overworking it. Don\'t let it lug at low RPM in a high gear.</span></div></li>' +
-      '<li><div class="ci">2</div><div><strong>Going downhill — engine brake, don\'t ride the brakes</strong><span>Shift to a lower gear and let the engine slow you. Riding the brakes overheats them and reduces stopping power when you need it most.</span></div></li>' +
-      '<li><div class="ci">3</div><div><strong>Backing up — turn the wheel opposite</strong><span>Want the trailer to go right? Turn the wheel left. Go slow and make small corrections. Use both mirrors.</span></div></li>' +
-      '<li><div class="ci">4</div><div><strong>Stop and check at every fuel stop</strong><span>Is the hitch still tight? Chains in place? Tires look okay? Lights still working? Takes 60 seconds and catches problems early.</span></div></li>' +
-      '<li><div class="ci">5</div><div><strong>Carry a spare tire for the trailer</strong><span>Trailer tires aren\'t always the same as your vehicle — a flat on the trailer can leave you stranded if you\'re unprepared.</span></div></li>' +
+      '<li><div class="ci">1</div><div><strong>Going uphill — use a lower gear</strong><span>More power without overworking the engine.</span></div></li>' +
+      '<li><div class="ci">2</div><div><strong>Going downhill — engine brake, don\'t ride the brakes</strong><span>Shift down and let the engine slow you. Riding brakes overheats them and kills stopping power.</span></div></li>' +
+      '<li><div class="ci">3</div><div><strong>Backing up — turn wheel opposite of where you want the trailer</strong><span>Go slow. Small corrections. Use both mirrors. A spotter helps.</span></div></li>' +
+      '<li><div class="ci">4</div><div><strong>Check at every fuel stop</strong><span>Hitch tight? Chains in place? Tires okay? Lights working? 60 seconds every stop.</span></div></li>' +
+      '<li><div class="ci">5</div><div><strong>Carry a trailer spare tire</strong><span>Trailer tires aren\'t always the same as your vehicle — a flat can leave you stranded.</span></div></li>' +
     '</ul>' +
-    '<div class="tip"><b>Always wear your seatbelt</b>Non-negotiable. Towing increases the forces involved in any collision.</div>' +
+    '<div class="tip"><b>Always buckle up</b>Towing increases the forces involved in any collision.</div>' +
     '<button class="btn" onclick="next()">Take the Quiz →</button>' +
   '</div>';
 }
 
-function quiz() {
+function quizStep() {
   var allDone = Object.keys(ans).length === QUIZ.length;
   var correct = QUIZ.filter(function(q, i) { return ans[i] === q.a; }).length;
   var html = '<div class="card"><div class="kicker">Quiz · 5 Questions</div><h2>Quick check.</h2>';
@@ -198,16 +408,16 @@ function quiz() {
   if (!submitted) {
     html += '<button class="btn" ' + (allDone ? '' : 'disabled') + ' onclick="submitQ()">Submit Answers</button>';
   } else if (correct === QUIZ.length) {
-    html += '<div class="tip" style="margin-top:16px;"><b>Perfect — 5/5 ✓</b>You know your stuff. Claim your discount below.</div>';
+    html += '<div class="tip" style="margin-top:14px;"><b>Perfect — 5/5 ✓</b>You\'re ready to tow safely. Claim your discount.</div>';
     html += '<button class="btn" onclick="next()">Claim $5 off →</button>';
   } else {
-    html += '<div class="warn" style="margin-top:16px;"><b>' + correct + '/5 correct</b>Review the highlighted answers and try again.</div>';
+    html += '<div class="warn" style="margin-top:14px;"><b>' + correct + '/5 correct</b>Review the highlighted answers and try again.</div>';
     html += '<button class="btn" onclick="retry()">Try Again</button>';
   }
   return html + '</div>';
 }
 
-function done() {
+function doneStep() {
   return '<div class="coupon">' +
     '<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Safety certified — here\'s your reward</div>' +
     '<div style="font-size:20px;font-weight:700;color:#262626;">$5 off your rental</div>' +
