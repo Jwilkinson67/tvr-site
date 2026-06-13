@@ -94,7 +94,7 @@
 
     /* ------- Marketing app (intercepts route="booking" → switches outer view) ------- */
     function MarketingApp({ setView }) {
-      const { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer } = window.MK;
+      const { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer } = window.MK;
       const [route, setRouteRaw] = useState("home");
 
       // Intercept setRoute: any switch to "booking" jumps to the booking view at the App level.
@@ -113,6 +113,7 @@
           <TopNav route={route} setRoute={setRoute}/>
           {route === "home" && <>
             <HeroDark setRoute={setRoute}/>
+            <HowItWorksBand/>
             <FleetGrid setRoute={setRoute}/>
             <PickupBand setRoute={setRoute}/>
             <FAQBand/>

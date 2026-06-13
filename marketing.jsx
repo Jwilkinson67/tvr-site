@@ -367,6 +367,37 @@ function PickupBand() {
 
 }
 
+/* ----------- How it works ----------- */
+function HowItWorksBand() {
+  const c = C();
+  const isMobile = useWindowWidth() < 768;
+  const h = c.howItWorks;
+  if (!h) return null;
+  return (
+    <section style={{ background: "#fff", padding: isMobile ? "56px 24px" : "80px 80px" }}>
+      <header style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>
+          {h.kicker}
+        </div>
+        <h2 style={{ font: `700 ${isMobile ? "32px" : "48px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#262626" }}>{h.heading}</h2>
+      </header>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(4, 1fr)", gap: isMobile ? 32 : 24, maxWidth: 1100, marginInline: "auto" }}>
+        {h.steps.map(function(step, i) {
+          return (
+            <div key={i} style={{ borderTop: "3px solid #1568be", paddingTop: 24 }}>
+              <div style={{ font: '700 48px/1 "Inter", sans-serif', color: "#e6e6e6", marginBottom: 16 }}>
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <h3 style={{ font: '700 18px/1.3 "Inter", sans-serif', color: "#262626", margin: "0 0 10px" }}>{step.title}</h3>
+              <p style={{ font: '300 14px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: 0 }}>{step.body}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 /* ----------- FAQ ----------- */
 function FAQBand() {
   const c = C();
@@ -690,4 +721,4 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };

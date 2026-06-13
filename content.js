@@ -118,6 +118,18 @@ window.TVR_CONTENT = {
        onto the placeholder in the running page. ------------------ */
   ],
 
+  /* ---------- Marketing · How it works ---------- */
+  howItWorks: {
+    kicker:  "HOW IT WORKS",
+    heading: "Simple from start to finish.",
+    steps: [
+      { title: "Book online",         body: "Pick your trailer and dates, fill out your info, and upload your license and insurance. Takes about 3 minutes." },
+      { title: "We review & approve", body: "We verify your documents and approve your booking within 1–2 hours. You'll get a confirmation email with pickup details." },
+      { title: "Pick up your trailer",body: "Come to our Ooltewah location, sign the rental contract, and you're on your way." },
+      { title: "Return when done",    body: "Drop off the trailer when you're finished. No hassle, no upsells." },
+    ],
+  },
+
   /* ---------- Marketing · FAQ ---------- */
   faq: {
     kicker:  "FAQ",
