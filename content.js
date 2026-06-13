@@ -143,7 +143,7 @@ window.TVR_CONTENT = {
 
   /* ---------- Marketing · footer ---------- */
   footer: {
-    blurb: "Tennessee Valley Rentals LLC — trailer rental operation based in Chattanooga, TN. Pickup details sent with your confirmation.",
+    blurb: "Tennessee Valley Rentals LLC — trailer rental operation based in Chattanooga, TN. Serving Chattanooga, Ooltewah, Cleveland, and surrounding areas. Pickup details sent with your confirmation.",
     columns: [],
   },
 
