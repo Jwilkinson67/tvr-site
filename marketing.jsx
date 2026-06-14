@@ -395,6 +395,9 @@ function HowItWorksBand() {
           );
         })}
       </div>
+      <div style={{ textAlign: "center", marginTop: isMobile ? 40 : 56 }}>
+        <MkButton onClick={() => window.location.href = "book.html"} style={{ display: "inline-block", padding: "16px 40px", fontSize: 16 }}>Book Today</MkButton>
+      </div>
     </section>
   );
 }
