@@ -56,8 +56,8 @@ window.TVR_CONTENT = {
       name:      "Enclosed Cargo 7 × 14",
       navLabel:  "Enclosed Cargo 14ft",
       subheading:"7ft x 14ft, 6000lbs",
-      tagline:   "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it. Everything you need to get the job done.",
-      detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it. Everything you need to get the job done.",
+      tagline:   "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes a hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it.",
+      detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes a hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it.",
       photo:     "assets/fleet/Spartan-enclosed-14ft.jpg.png",
       photoExtra: [
         "assets/fleet/Spartan-enclosed-back-14ft.jpg",
