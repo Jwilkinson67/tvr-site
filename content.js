@@ -64,7 +64,7 @@ window.TVR_CONTENT = {
         "assets/fleet/Spartan-enclosed-14ft-3.jpg",
         "assets/fleet/Spartan-enclosed-14ft-4.jpg",
         "assets/fleet/Spartan-enclosed-14ft-5.jpg",
-        "assets/fleet/Spartan-enclosed-14ft-6.jpg",
+        "assets/fleet/Spartan-enclosed-14ft-7.jpg",
       ],
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
