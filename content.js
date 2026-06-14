@@ -56,8 +56,8 @@ window.TVR_CONTENT = {
       name:      "Enclosed Cargo 7 × 14",
       navLabel:  "Enclosed Cargo 14ft",
       subheading:"7ft x 14ft, 6000lbs",
-      tagline:   "Secure, weather-protected enclosed trailer perfect for moving, storage, and keeping your items protected. Includes straps, a dolly, and an adjustable hitch for an easy pickup-and-go rental.",
-      detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather.",
+      tagline:   "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it. Everything you need to get the job done.",
+      detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it. Everything you need to get the job done.",
       photo:     "assets/fleet/Spartan-enclosed-14ft.jpg.png",
       photoExtra: [
         "assets/fleet/Spartan-enclosed-back-14ft.jpg",
