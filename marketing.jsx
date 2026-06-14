@@ -396,7 +396,7 @@ function HowItWorksBand() {
         })}
       </div>
       <div style={{ textAlign: "center", marginTop: isMobile ? 40 : 56 }}>
-        <MkButton onClick={() => window.location.href = "book.html"} style={{ borderRadius: 6, height: 52, padding: "0 48px", fontSize: 16 }}>Book Today</MkButton>
+        <button onClick={() => window.location.href = "book.html"} style={{ background: "#1568be", color: "#fff", border: 0, borderRadius: 8, padding: "16px 48px", font: '700 16px/1 "Inter", sans-serif', cursor: "pointer", letterSpacing: "0.5px" }}>Book Today</button>
       </div>
     </section>
   );
