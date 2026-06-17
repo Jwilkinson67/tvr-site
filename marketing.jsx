@@ -82,8 +82,8 @@ function PromoPopup({ setRoute }) {
           <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#cfe0fb", marginBottom: 10, textTransform: "uppercase" }}>
             Celebrate 250 Years of America
           </div>
-          <div style={{ font: '900 30px/1.05 "Inter", sans-serif', color: "#fff", marginBottom: 4 }}>
-            AMERICA 250
+          <div style={{ fontSize: 40, lineHeight: 1, marginBottom: 4 }}>
+            🇺🇸
           </div>
           <div style={{ font: '900 56px/1 "Inter", sans-serif', color: "#fff", margin: "6px 0" }}>
             10% <span style={{ color: "#ff5a5f" }}>OFF</span>
