@@ -76,7 +76,7 @@ function PromoPopup({ setRoute }) {
   if (!open) return null;
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, background: "rgba(10,15,30,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: "#fff", maxWidth: 420, width: "100%", borderRadius: 10, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.35)" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: "#fff", maxWidth: 420, width: "100%", borderRadius: 0, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.35)" }}>
         <button onClick={close} aria-label="Close" style={{ position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: "50%", border: 0, background: "rgba(255,255,255,0.85)", color: "#262626", fontSize: 16, fontWeight: 700, cursor: "pointer", zIndex: 2 }}>×</button>
         <div style={{
           position: "relative", overflow: "hidden",
@@ -94,10 +94,10 @@ function PromoPopup({ setRoute }) {
           </div>
         </div>
         <div style={{ padding: isMobile ? "22px 24px 28px" : "26px 32px 32px", textAlign: "center" }}>
-          <p style={{ font: '400 14px/1.6 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 18px" }}>
+          <p style={{ font: '700 14px/1.6 "Inter", sans-serif', color: "#262626", margin: "0 0 18px" }}>
             Use the code below at checkout to save 10% on your next trailer rental.
           </p>
-          <div style={{ border: "2px dashed #1568be", borderRadius: 6, padding: "12px 20px", marginBottom: 20 }}>
+          <div style={{ border: "2px dashed #1568be", borderRadius: 0, padding: "12px 20px", marginBottom: 20 }}>
             <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1px", color: "#6b6b6b", marginBottom: 4, textTransform: "uppercase" }}>Use code</div>
             <div style={{ font: '900 22px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "2px" }}>AMERICA250</div>
           </div>
