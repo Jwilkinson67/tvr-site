@@ -782,17 +782,22 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const trailer = TRAILERS[state.trailerId];
   const fleet   = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
   const fleetT  = fleet.find(x => x.id === state.trailerId);
-  const days         = state.days || 1;
-  const rentalAmount = trailer ? calcRental(trailer, days) : 0;
-  const taxAmount    = Math.round(rentalAmount * 0.0925);
+  const days          = state.days || 1;
+  const baseRental    = trailer ? calcRental(trailer, days) : 0;
   const depositAmount = fleetT?.deposit || 200;
-  const totalAmount  = rentalAmount + taxAmount + depositAmount;
 
   const [couponCode,    setCouponCode]    = React.useState("");
   const [couponOpen,    setCouponOpen]    = React.useState(false);
-  const [couponApplied, setCouponApplied] = React.useState(false);
+  const [coupon,        setCoupon]        = React.useState(null); // { type: "free" } | { type: "percent", percent }
   const [couponError,   setCouponError]   = React.useState(null);
   const [couponLoading, setCouponLoading] = React.useState(false);
+
+  const couponApplied = coupon?.type === "free";
+  // 10%-style coupons only ever discount the rental line — tax is computed
+  // on the discounted rental, and the deposit is never touched.
+  const rentalAmount = coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental;
+  const taxAmount    = Math.round(rentalAmount * 0.0925);
+  const totalAmount  = rentalAmount + taxAmount + depositAmount;
 
   const chargeTotal = couponApplied ? 0 : totalAmount;
 
@@ -808,10 +813,10 @@ function StepPayment({ state, setState, onNext, onBack }) {
       });
       const result = await res.json();
       if (result.valid) {
-        setCouponApplied(true);
+        setCoupon(result.type === "percent" ? { type: "percent", percent: result.percent } : { type: "free" });
       } else {
         setCouponError("Invalid code.");
-        setCouponApplied(false);
+        setCoupon(null);
       }
     } catch {
       setCouponError("Could not validate — try submitting anyway.");
@@ -867,7 +872,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           dropoff: state.dropoff,
           days: state.days,
           paymentMethodId: paymentMethod.id,
-          rentalAmount,
+          rentalAmount: baseRental,
           taxAmount,
           depositAmount,
           totalAmount: chargeTotal,
@@ -936,7 +941,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           dropoff: state.dropoff,
           days: state.days,
           paymentMethodId: "COUPON-FREE",
-          rentalAmount,
+          rentalAmount: baseRental,
           taxAmount,
           depositAmount,
           totalAmount: 0,
@@ -1052,7 +1057,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
             <input
               value={couponCode}
-              onChange={e => { setCouponCode(e.target.value); setCouponApplied(false); setCouponError(null); }}
+              onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }}
               onKeyDown={e => e.key === "Enter" && applyCoupon()}
               placeholder="Enter code"
               style={{
@@ -1076,6 +1081,11 @@ function StepPayment({ state, setState, onNext, onBack }) {
             Code applied — <strong style={{ fontWeight: 700 }}>no charge</strong>.
           </div>
         )}
+        {coupon?.type === "percent" && (
+          <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>
+            Code applied — <strong style={{ fontWeight: 700 }}>{coupon.percent}% off the rental rate</strong> (tax and deposit unaffected).
+          </div>
+        )}
         {couponError && (
           <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#dc2626" }}>{couponError}</div>
         )}
@@ -1086,7 +1096,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
             Card data goes directly to Stripe — TVR never sees the full number.{" "}
-            Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
+            Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
           </span>
         </div>
       )}

@@ -40,6 +40,24 @@ const HEADERS = {
 function ok(body)         { return { statusCode: 200, headers: HEADERS, body: JSON.stringify(body) }; }
 function err(status, msg) { return { statusCode: status, headers: HEADERS, body: JSON.stringify({ error: msg }) }; }
 
+/* ── Coupons ─────────────────────────────────────────────────────────────
+   ADMIN_COUPON_CODE (env var)  → full comp, $0 charged, skips Stripe.
+   PERCENT_COUPONS (below)      → % off the rental line only — never
+                                   applied to tax or the deposit. */
+const PERCENT_COUPONS = {
+  AMERICA250: 10,
+};
+
+function getCoupon(code) {
+  if (!code) return null;
+  const trimmed = String(code).trim();
+  const adminCode = process.env.ADMIN_COUPON_CODE;
+  if (adminCode && trimmed === adminCode) return { type: "free" };
+  const percent = PERCENT_COUPONS[trimmed.toUpperCase()];
+  if (percent) return { type: "percent", percent };
+  return null;
+}
+
 /* ── Signed token for approve/decline links ─────────────────────────────── */
 function makeToken(action, bookingId) {
   return crypto
@@ -222,8 +240,8 @@ exports.handler = async (event) => {
 
   // ── coupon validation ─────────────────────────────────────────────────────
   if (body.action === "coupon") {
-    const adminCode = process.env.ADMIN_COUPON_CODE;
-    return ok({ valid: !!(adminCode && body.code === adminCode) });
+    const coupon = getCoupon(body.code);
+    return ok({ valid: !!coupon, type: coupon?.type || null, percent: coupon?.percent || null });
   }
 
   // ── availability ──────────────────────────────────────────────────────────
@@ -250,10 +268,23 @@ exports.handler = async (event) => {
       customer,
     } = body;
 
-    // Admin coupon overrides charge to $0 and skips Stripe entirely
-    const adminCode = process.env.ADMIN_COUPON_CODE;
-    const couponValid = adminCode && couponCode === adminCode;
-    const chargeAmount = couponValid ? 0 : (totalAmount || depositAmount);
+    // Admin coupon overrides charge to $0 and skips Stripe entirely.
+    // Percent coupons are recomputed here (not trusted from the client) so a
+    // discount can never bleed into tax or the deposit.
+    const coupon = getCoupon(couponCode);
+    const couponValid = coupon?.type === "free";
+
+    let computedRental = rentalAmount || 0;
+    let computedTax    = taxAmount || 0;
+    let computedTotal  = totalAmount || depositAmount;
+
+    if (coupon?.type === "percent") {
+      computedRental = Math.round((rentalAmount || 0) * (1 - coupon.percent / 100));
+      computedTax    = Math.round(computedRental * 0.0925);
+      computedTotal  = computedRental + computedTax + (depositAmount || 0);
+    }
+
+    const chargeAmount = couponValid ? 0 : computedTotal;
 
     if (!trailerId || !pickup || !dropoff || (!couponValid && !chargeAmount)) {
       return err(400, "Missing required booking fields.");
@@ -362,8 +393,8 @@ exports.handler = async (event) => {
       payment_intent_id: paymentIntentId,
       stripe_customer_id: stripeCustomerId,
       stripe_payment_method_id: stripePaymentMethodId,
-      rental_amount: couponValid ? 0 : (rentalAmount || 0),
-      tax_amount: couponValid ? 0 : (taxAmount || 0),
+      rental_amount: couponValid ? 0 : computedRental,
+      tax_amount: couponValid ? 0 : computedTax,
       deposit_amount: couponValid ? 0 : (depositAmount || chargeAmount),
       total_charged: chargeAmount,
     };
