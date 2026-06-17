@@ -80,7 +80,7 @@ function PromoPopup({ setRoute }) {
         <button onClick={close} aria-label="Close" style={{ position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: "50%", border: 0, background: "rgba(255,255,255,0.85)", color: "#262626", fontSize: 16, fontWeight: 700, cursor: "pointer", zIndex: 2 }}>×</button>
         <div style={{ background: "linear-gradient(180deg, #0b2a5c 0%, #1568be 100%)", padding: isMobile ? "32px 24px 22px" : "40px 32px 26px", textAlign: "center" }}>
           <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#cfe0fb", marginBottom: 10, textTransform: "uppercase" }}>
-            ★ Celebrate 250 Years of America ★
+            Celebrate 250 Years of America
           </div>
           <div style={{ font: '900 30px/1.05 "Inter", sans-serif', color: "#fff", marginBottom: 4 }}>
             AMERICA 250
