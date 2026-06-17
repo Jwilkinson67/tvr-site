@@ -60,6 +60,55 @@ function PhotoSlot({ id, src, scale = 1, placeholder = "Drop a photo", style, pl
 
 }
 
+/* ----------- Promo popup ----------- */
+function PromoPopup({ setRoute }) {
+  const [open, setOpen] = useState(false);
+  const isMobile = useWindowWidth() < 768;
+  React.useEffect(() => {
+    if (sessionStorage.getItem("tvr_promo_dismissed")) return;
+    const t = setTimeout(() => setOpen(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+  function close() {
+    setOpen(false);
+    sessionStorage.setItem("tvr_promo_dismissed", "1");
+  }
+  if (!open) return null;
+  return (
+    <div onClick={close} style={{ position: "fixed", inset: 0, background: "rgba(10,15,30,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: "#fff", maxWidth: 420, width: "100%", borderRadius: 10, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.35)" }}>
+        <button onClick={close} aria-label="Close" style={{ position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: "50%", border: 0, background: "rgba(255,255,255,0.85)", color: "#262626", fontSize: 16, fontWeight: 700, cursor: "pointer", zIndex: 2 }}>×</button>
+        <div style={{ background: "linear-gradient(180deg, #0b2a5c 0%, #1568be 100%)", padding: isMobile ? "32px 24px 22px" : "40px 32px 26px", textAlign: "center" }}>
+          <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#cfe0fb", marginBottom: 10, textTransform: "uppercase" }}>
+            ★ Celebrate 250 Years of America ★
+          </div>
+          <div style={{ font: '900 30px/1.05 "Inter", sans-serif', color: "#fff", marginBottom: 4 }}>
+            AMERICA 250
+          </div>
+          <div style={{ font: '900 56px/1 "Inter", sans-serif', color: "#fff", margin: "6px 0" }}>
+            10% <span style={{ color: "#ff5a5f" }}>OFF</span>
+          </div>
+          <div style={{ display: "inline-block", background: "#b5212b", color: "#fff", font: '800 14px/1 "Inter", sans-serif', letterSpacing: "1.5px", padding: "8px 22px", textTransform: "uppercase", marginTop: 6 }}>
+            Trailer Rentals
+          </div>
+        </div>
+        <div style={{ padding: isMobile ? "22px 24px 28px" : "26px 32px 32px", textAlign: "center" }}>
+          <p style={{ font: '400 14px/1.6 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 18px" }}>
+            Use the code below at checkout to save 10% on your next trailer rental.
+          </p>
+          <div style={{ border: "2px dashed #1568be", borderRadius: 6, padding: "12px 20px", marginBottom: 20 }}>
+            <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1px", color: "#6b6b6b", marginBottom: 4, textTransform: "uppercase" }}>Use code</div>
+            <div style={{ font: '900 22px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "2px" }}>AMERICA250</div>
+          </div>
+          <button onClick={() => { close(); setRoute("booking"); }} style={{ width: "100%", background: "#1568be", color: "#fff", border: 0, padding: "15px 0", font: '700 15px/1 "Inter", sans-serif', letterSpacing: "0.5px", cursor: "pointer" }}>
+            Book Now & Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ----------- Top nav ----------- */
 function TopNav({ route, setRoute }) {
   const c = C();
@@ -725,4 +774,4 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, Button: MkButton };
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, PromoPopup, Button: MkButton };
