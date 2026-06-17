@@ -79,36 +79,43 @@ function PromoPopup({ setRoute }) {
       <div onClick={(e) => e.stopPropagation()} style={{ position: "relative", background: "#fff", maxWidth: 420, width: "100%", borderRadius: 10, overflow: "hidden", boxShadow: "0 20px 60px rgba(0,0,0,0.35)" }}>
         <button onClick={close} aria-label="Close" style={{ position: "absolute", top: 12, right: 12, width: 30, height: 30, borderRadius: "50%", border: 0, background: "rgba(255,255,255,0.85)", color: "#262626", fontSize: 16, fontWeight: 700, cursor: "pointer", zIndex: 2 }}>×</button>
         <div style={{
-          position: "relative", overflow: "hidden",
-          background: "radial-gradient(ellipse at 25% 15%, rgba(255,205,130,0.55), transparent 55%)," +
-                      "radial-gradient(ellipse at 85% 75%, rgba(255,150,70,0.4), transparent 55%)," +
-                      "linear-gradient(180deg, #0c2340 0%, #1d4a82 38%, #c97a42 78%, #f0aa5e 100%)",
+          position: "relative", overflow: "hidden", background: "#f4f2ec",
           padding: isMobile ? "34px 24px 22px" : "44px 32px 26px", textAlign: "center"
         }}>
-          <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#ffe9c8", marginBottom: 14, textTransform: "uppercase", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
-            Celebrate 250 Years of America
-          </div>
-          <svg width="120" height="100" viewBox="0 0 120 100" style={{ marginBottom: 4, filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.35))" }}>
-            <line x1="14" y1="6" x2="14" y2="96" stroke="#c0b27a" strokeWidth="3"/>
-            <circle cx="14" cy="6" r="3.5" fill="#e8cf8f"/>
-            <path d="M14,12 C 55,4 95,16 112,10 C 100,22 100,30 112,38 C 95,32 60,40 14,34 Z" fill="#fff"/>
-            <clipPath id="flagClip"><path d="M14,12 C 55,4 95,16 112,10 C 100,22 100,30 112,38 C 95,32 60,40 14,34 Z"/></clipPath>
-            <g clipPath="url(#flagClip)">
-              <rect x="14" y="9"  width="100" height="3.4" fill="#b22234"/>
-              <rect x="14" y="15.8" width="100" height="3.4" fill="#b22234"/>
-              <rect x="14" y="22.6" width="100" height="3.4" fill="#b22234"/>
-              <rect x="14" y="29.4" width="100" height="3.4" fill="#b22234"/>
-              <rect x="14" y="9" width="44" height="14" fill="#3c3b6e"/>
-              {Array.from({ length: 12 }).map((_, i) => (
-                <circle key={i} cx={18 + (i % 4) * 9} cy={12.5 + Math.floor(i / 4) * 4.5} r="1" fill="#fff"/>
-              ))}
-            </g>
-          </svg>
-          <div style={{ font: '900 56px/1 "Inter", sans-serif', color: "#fff", margin: "6px 0", textShadow: "0 3px 10px rgba(0,0,0,0.4)" }}>
-            10% <span style={{ color: "#ff7a4a" }}>OFF</span>
-          </div>
-          <div style={{ display: "inline-block", background: "#b5212b", color: "#fff", font: '800 14px/1 "Inter", sans-serif', letterSpacing: "1.5px", padding: "8px 22px", textTransform: "uppercase", marginTop: 6 }}>
-            Trailer Rentals
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "repeating-linear-gradient(0deg, rgba(178,34,51,0.16) 0px, rgba(178,34,51,0.16) 11px, transparent 11px, transparent 22px)"
+          }} />
+          <div style={{
+            position: "absolute", top: 0, left: 0, width: "42%", height: "46%",
+            background: "rgba(28,46,89,0.14)"
+          }} />
+          <div style={{ position: "relative" }}>
+            <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#1c2e59", marginBottom: 14, textTransform: "uppercase" }}>
+              Celebrate 250 Years of America
+            </div>
+            <svg width="120" height="100" viewBox="0 0 120 100" style={{ marginBottom: 4, filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.18))" }}>
+              <line x1="14" y1="6" x2="14" y2="96" stroke="#a6926a" strokeWidth="3"/>
+              <circle cx="14" cy="6" r="3.5" fill="#cdb988"/>
+              <path d="M14,12 C 55,4 95,16 112,10 C 100,22 100,30 112,38 C 95,32 60,40 14,34 Z" fill="#fff" stroke="#d8d4c8" strokeWidth="1"/>
+              <clipPath id="flagClip"><path d="M14,12 C 55,4 95,16 112,10 C 100,22 100,30 112,38 C 95,32 60,40 14,34 Z"/></clipPath>
+              <g clipPath="url(#flagClip)">
+                <rect x="14" y="9"  width="100" height="3.4" fill="#b22234"/>
+                <rect x="14" y="15.8" width="100" height="3.4" fill="#b22234"/>
+                <rect x="14" y="22.6" width="100" height="3.4" fill="#b22234"/>
+                <rect x="14" y="29.4" width="100" height="3.4" fill="#b22234"/>
+                <rect x="14" y="9" width="44" height="14" fill="#3c3b6e"/>
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <circle key={i} cx={18 + (i % 4) * 9} cy={12.5 + Math.floor(i / 4) * 4.5} r="1" fill="#fff"/>
+                ))}
+              </g>
+            </svg>
+            <div style={{ font: '900 56px/1 "Inter", sans-serif', color: "#1c2e59", margin: "6px 0" }}>
+              10% <span style={{ color: "#b5212b" }}>OFF</span>
+            </div>
+            <div style={{ display: "inline-block", background: "#b5212b", color: "#fff", font: '800 14px/1 "Inter", sans-serif', letterSpacing: "1.5px", padding: "8px 22px", textTransform: "uppercase", marginTop: 6 }}>
+              Trailer Rentals
+            </div>
           </div>
         </div>
         <div style={{ padding: isMobile ? "22px 24px 28px" : "26px 32px 32px", textAlign: "center" }}>
