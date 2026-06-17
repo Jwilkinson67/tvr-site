@@ -82,9 +82,22 @@ function PromoPopup({ setRoute }) {
           <div style={{ font: '800 13px/1 "Inter", sans-serif', letterSpacing: "2px", color: "#cfe0fb", marginBottom: 10, textTransform: "uppercase" }}>
             Celebrate 250 Years of America
           </div>
-          <div style={{ fontSize: 40, lineHeight: 1, marginBottom: 4 }}>
-            🇺🇸
-          </div>
+          <svg width="64" height="43" viewBox="0 0 64 43" style={{ marginBottom: 8, borderRadius: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}>
+            <rect width="64" height="43" fill="#fff"/>
+            <g fill="#b22234">
+              <rect y="0"    width="64" height="3.3"/>
+              <rect y="6.6"  width="64" height="3.3"/>
+              <rect y="13.2" width="64" height="3.3"/>
+              <rect y="19.8" width="64" height="3.3"/>
+              <rect y="26.4" width="64" height="3.3"/>
+              <rect y="33"   width="64" height="3.3"/>
+              <rect y="39.6" width="64" height="3.3"/>
+            </g>
+            <rect width="26" height="23.1" fill="#3c3b6e"/>
+            {Array.from({ length: 18 }).map((_, i) => (
+              <circle key={i} cx={3 + (i % 6) * 4} cy={3 + Math.floor(i / 6) * 7} r="1" fill="#fff"/>
+            ))}
+          </svg>
           <div style={{ font: '900 56px/1 "Inter", sans-serif', color: "#fff", margin: "6px 0" }}>
             10% <span style={{ color: "#ff5a5f" }}>OFF</span>
           </div>
