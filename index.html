@@ -203,7 +203,8 @@
 
       return (
         <div data-screen-label={"Marketing · " + route}>
-          {route === "home" && <PromoPopup setRoute={setRoute}/>}
+          {/* PromoPopup disabled — AMERICA250 coupon stays active, just not advertised. Re-enable by uncommenting. */}
+          {false && route === "home" && <PromoPopup setRoute={setRoute}/>}
           <TopNav route={route} setRoute={setRoute}/>
           {route === "home" && <>
             <HeroDark setRoute={setRoute}/>
