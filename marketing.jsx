@@ -237,7 +237,7 @@ function FleetCard({ trailer, onSpecs }) {
       plateStyle={{ aspectRatio: "16 / 10", overflow: "hidden" }}
       style={{ width: "100%", height: "100%" }} />
       {photos.length > 1 && (
-        <div style={{ display: "flex", gap: 6, padding: "10px 24px 0", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "10px 24px 0", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
           {photos.map((p, i) => (
             <button key={i} onClick={() => setActiveIdx(i)} style={{
               width: 52, height: 40,
@@ -362,7 +362,7 @@ function FleetDetail({ trailerId, setRoute }) {
               plateStyle={{ background: "transparent" }}
               style={{ width: "100%", height: isMobile ? 220 : 360 }} />
             {photos.length > 1 && (
-              <div style={{ display: "flex", gap: 8, marginTop: 10, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 4 }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 10, overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 4 }}>
                 {photos.map((p, i) => (
                   <button key={i} onClick={() => setActiveIdx(i)} style={{
                     width: isMobile ? 60 : 72, height: isMobile ? 48 : 56,
