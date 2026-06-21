@@ -776,26 +776,26 @@ function Footer() {
         {/* Documents */}
         <div>
           <div style={colHead}>Documents</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={btn}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Rental Agreement
             </a>
-            <a href="assets/TVR-Renter-Insurance-FAQ.pdf" target="_blank" rel="noopener" style={btn}>
+            <a href="assets/TVR-Renter-Insurance-FAQ.pdf" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Renter Insurance FAQ
             </a>
-            <a href="/privacy.html" target="_blank" rel="noopener" style={btn}>
+            <a href="/privacy.html" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Privacy Policy
             </a>
-            <a href="/sms-terms.html" target="_blank" rel="noopener" style={btn}>
+            <a href="/sms-terms.html" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
