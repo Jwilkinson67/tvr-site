@@ -5,7 +5,8 @@
   "description": "Tennessee Valley Rentals — trailer rental site",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
-    "stripe": "^14.10.0"
+    "stripe": "^14.10.0",
+    "twilio": "^6.0.2"
   },
   "devDependencies": {
     "@babel/parser": "^7.29.7"
