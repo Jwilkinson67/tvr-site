@@ -220,12 +220,38 @@ function HeroDark({ setRoute }) {
 
 /* ----------- Fleet card ----------- */
 function FleetCard({ trailer, onSpecs }) {
+  const [activeIdx, setActiveIdx] = React.useState(0);
+  const extras = trailer.photoExtra
+    ? (Array.isArray(trailer.photoExtra) ? trailer.photoExtra : [trailer.photoExtra])
+    : [];
+  const photos = [
+    { src: trailer.photo, id: `detail-${trailer.id}`, label: "Main", scale: trailer.photoScale || 1 },
+    ...extras.map((src, i) => ({ src, id: `detail-${trailer.id}-extra-${i}`, label: `Photo ${i + 2}`, scale: 1 })),
+  ];
+  const active = photos[activeIdx] || photos[0];
+
   return (
     <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column" }}>
-      <PhotoSlot id={`detail-${trailer.id}`} src={trailer.photo} scale={trailer.photoScale || 1}
+      <PhotoSlot id={active.id} src={active.src} scale={active.scale}
       placeholder={`Drop a photo of the ${trailer.name}`}
       plateStyle={{ aspectRatio: "16 / 10", overflow: "hidden" }}
       style={{ width: "100%", height: "100%" }} />
+      {photos.length > 1 && (
+        <div style={{ display: "flex", gap: 6, padding: "10px 24px 0", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+          {photos.map((p, i) => (
+            <button key={i} onClick={() => setActiveIdx(i)} style={{
+              width: 52, height: 40,
+              padding: 0, cursor: "pointer", flexShrink: 0,
+              border: `2px solid ${activeIdx === i ? "#1568be" : "#e0e0e0"}`,
+              borderRadius: 2, overflow: "hidden", background: "#f4f6f9",
+              transition: "border-color 120ms",
+            }}>
+              <img src={p.src} alt={p.label}
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </button>
+          ))}
+        </div>
+      )}
       <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8 }}>
         <h3 style={{ font: '700 24px/1.25 "Inter", sans-serif', margin: 0, color: "#262626" }}>{trailer.name}</h3>
         {trailer.subheading &&
