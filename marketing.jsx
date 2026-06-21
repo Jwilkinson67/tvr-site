@@ -724,7 +724,7 @@ function Footer() {
   const btn = { display: "flex", alignItems: "center", gap: 8, background: "#fff", border: "1px solid #e6e6e6", padding: "10px 16px", textDecoration: "none", font: '700 12px/1 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px" };
   return (
     <footer style={{ background: "#f4f6f9", padding: isMobile ? "48px 24px" : "64px 80px" }}>
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
         <div>
@@ -776,26 +776,33 @@ function Footer() {
         {/* Documents */}
         <div>
           <div style={colHead}>Documents</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={btn}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Rental Agreement
             </a>
-            <a href="assets/TVR-Renter-Insurance-FAQ.pdf" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
+            <a href="assets/TVR-Renter-Insurance-FAQ.pdf" target="_blank" rel="noopener" style={btn}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Renter Insurance FAQ
             </a>
-            <a href="/privacy.html" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
+          </div>
+        </div>
+
+        {/* Legal */}
+        <div>
+          <div style={colHead}>Legal</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <a href="/privacy.html" target="_blank" rel="noopener" style={btn}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
               Privacy Policy
             </a>
-            <a href="/sms-terms.html" target="_blank" rel="noopener" style={{ ...btn, padding: "10px 12px", gap: 6 }}>
+            <a href="/sms-terms.html" target="_blank" rel="noopener" style={btn}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" aria-hidden="true">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
