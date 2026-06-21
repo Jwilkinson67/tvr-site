@@ -729,7 +729,7 @@ function Footer() {
         {/* Logo */}
         <div>
           <img src="assets/tvr-logo-transparent.png" alt="Tennessee Valley Rentals LLC"
-            style={{ height: 110, width: "auto", display: "block" }} />
+            style={{ height: 138, width: "auto", display: "block" }} />
         </div>
 
         {/* Contact — first column */}
