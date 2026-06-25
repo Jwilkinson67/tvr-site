@@ -809,13 +809,13 @@ function StepPayment({ state, setState, onNext, onBack }) {
       const res = await fetch("/.netlify/functions/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "coupon", code: couponCode.trim() }),
+        body: JSON.stringify({ action: "coupon", code: couponCode.trim(), days }),
       });
       const result = await res.json();
       if (result.valid) {
         setCoupon(result.type === "percent" ? { type: "percent", percent: result.percent } : { type: "free" });
       } else {
-        setCouponError("Invalid code.");
+        setCouponError(result.reason === "multi-day-required" ? "This code is only valid on rentals of 2+ days." : "Invalid code.");
         setCoupon(null);
       }
     } catch {

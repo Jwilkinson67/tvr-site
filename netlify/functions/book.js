@@ -42,19 +42,21 @@ function err(status, msg) { return { statusCode: status, headers: HEADERS, body:
 
 /* ── Coupons ─────────────────────────────────────────────────────────────
    ADMIN_COUPON_CODE (env var)  → full comp, $0 charged, skips Stripe.
+                                   Owner's test code — not day-restricted.
    PERCENT_COUPONS (below)      → % off the rental line only — never
-                                   applied to tax or the deposit. */
+                                   applied to tax or the deposit. Only valid
+                                   on multi-day (2+ day) rentals. */
 const PERCENT_COUPONS = {
   AMERICA250: 10,
 };
 
-function getCoupon(code) {
+function getCoupon(code, days) {
   if (!code) return null;
   const trimmed = String(code).trim();
   const adminCode = process.env.ADMIN_COUPON_CODE;
   if (adminCode && trimmed === adminCode) return { type: "free" };
   const percent = PERCENT_COUPONS[trimmed.toUpperCase()];
-  if (percent) return { type: "percent", percent };
+  if (percent && Number(days) >= 2) return { type: "percent", percent };
   return null;
 }
 
@@ -240,8 +242,13 @@ exports.handler = async (event) => {
 
   // ── coupon validation ─────────────────────────────────────────────────────
   if (body.action === "coupon") {
-    const coupon = getCoupon(body.code);
-    return ok({ valid: !!coupon, type: coupon?.type || null, percent: coupon?.percent || null });
+    const days = Number(body.days) || 0;
+    const coupon = getCoupon(body.code, days);
+    if (!coupon) {
+      const wouldMatch = PERCENT_COUPONS[String(body.code || "").trim().toUpperCase()];
+      return ok({ valid: false, reason: wouldMatch && days < 2 ? "multi-day-required" : null });
+    }
+    return ok({ valid: true, type: coupon.type, percent: coupon.percent || null });
   }
 
   // ── availability ──────────────────────────────────────────────────────────
@@ -271,7 +278,7 @@ exports.handler = async (event) => {
     // Admin coupon overrides charge to $0 and skips Stripe entirely.
     // Percent coupons are recomputed here (not trusted from the client) so a
     // discount can never bleed into tax or the deposit.
-    const coupon = getCoupon(couponCode);
+    const coupon = getCoupon(couponCode, days);
     const couponValid = coupon?.type === "free";
 
     let computedRental = rentalAmount || 0;
