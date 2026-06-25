@@ -67,7 +67,7 @@ window.TVR_CONTENT = {
         "assets/fleet/Spartan-enclosed-14ft-7.jpg",
       ],
       photoScale: 1,        // visual zoom inside the card / summary plate
-      daily:     110,
+      daily:     115,
       weekly:    600,
       deposit:   100,
       kickerLong:"Spartan",
