@@ -386,17 +386,21 @@ function StepTrailerDates({ state, setState, onNext }) {
             </div>
             <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup time</div>
-              <input type="time" value={state.pickupTime || DEFAULT_PICKUP_TIME}
+              <select value={state.pickupTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, e.target.value, state.dropoff, state.dropoffTime); setState({...state, pickupTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
-              />
+              >
+                {HOUR_OPTIONS.map(h => <option key={h.value} value={h.value}>{h.label}</option>)}
+              </select>
             </div>
             <div style={{ padding: "14px 16px" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return time</div>
-              <input type="time" value={state.dropoffTime || DEFAULT_PICKUP_TIME}
+              <select value={state.dropoffTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, state.pickupTime, state.dropoff, e.target.value); setState({...state, dropoffTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
-              />
+              >
+                {HOUR_OPTIONS.map(h => <option key={h.value} value={h.value}>{h.label}</option>)}
+              </select>
             </div>
           </div>
           {(state.pickup && !pickupPastOk) || (state.pickup && state.dropoff && !dateOrderOk) ? (
@@ -420,13 +424,13 @@ function StepTrailerDates({ state, setState, onNext }) {
             }}/>
           </Field>
           <Field label="Pickup time">
-            <Input type="time" value={state.pickupTime || DEFAULT_PICKUP_TIME} onChange={v => {
+            <Select value={state.pickupTime || DEFAULT_PICKUP_TIME} options={HOUR_OPTIONS} onChange={v => {
               const d = computeDays(state.pickup, v, state.dropoff, state.dropoffTime);
               setState({...state, pickupTime: v, days: d});
             }}/>
           </Field>
           <Field label="Return time">
-            <Input type="time" value={state.dropoffTime || DEFAULT_PICKUP_TIME} onChange={v => {
+            <Select value={state.dropoffTime || DEFAULT_PICKUP_TIME} options={HOUR_OPTIONS} onChange={v => {
               const d = computeDays(state.pickup, state.pickupTime, state.dropoff, v);
               setState({...state, dropoffTime: v, days: d});
             }}/>
@@ -473,6 +477,12 @@ function StepTrailerDates({ state, setState, onNext }) {
 }
 
 const DEFAULT_PICKUP_TIME = "09:00";
+
+// On-the-hour options only (7 AM – 8 PM) so picking a time is a single click.
+const HOUR_OPTIONS = Array.from({length: 14}, (_, i) => {
+  const v = String(i + 7).padStart(2, "0") + ":00";
+  return { value: v, label: fmtTime(v) };
+});
 
 // Billed in 24-hour blocks from the exact pickup moment: under 24h elapsed = 1 day,
 // any time over a 24h boundary rolls to the next day (e.g. 24h01m = 2 days).
