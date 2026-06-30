@@ -440,7 +440,7 @@ function StepTrailerDates({ state, setState, onNext }) {
 function computeDays(p, d) {
   if (!p || !d) return 0;
   const dp = new Date(p), dd = new Date(d);
-  const days = Math.max(1, Math.round((dd - dp) / (1000*60*60*24)));
+  const days = Math.max(1, Math.round((dd - dp) / (1000*60*60*24)) + 1);
   return days;
 }
 
