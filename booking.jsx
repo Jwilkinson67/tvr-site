@@ -453,7 +453,7 @@ function StepTrailerDates({ state, setState, onNext }) {
       <div style={{ marginBottom: 32 }}>
         <Field label="Pickup notes (optional)" hint="Anything we should know — flexibility on the time above, gate codes, what you're hauling, etc.">
           <textarea value={state.pickupNote || ""} onChange={e => setState({...state, pickupNote: e.target.value})}
-            placeholder="e.g. Could be 30 min late, running an errand first"
+            placeholder="e.g. First time renting a trailer — could use a quick walkthrough"
             style={{
               display: "block", width: "100%", minHeight: 80, padding: "14px 16px",
               background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
