@@ -79,6 +79,13 @@ function fmtDate(s) {
   const [y, m, d] = s.split("-");
   return `${m}/${d}/${y.slice(2)}`;
 }
+function fmtTime(t) {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  const period = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${period}`;
+}
 
 /* ----------- Primitives ----------- */
 function BkButton({ variant = "primary", children, onClick, disabled, full, ...rest }) {
@@ -232,8 +239,8 @@ function OrderSummary({ state }) {
       )}
 
       <div style={{ display: "grid", gap: 10, paddingBottom: 16, borderBottom: "1px solid #e6e6e6" }}>
-        <SummaryRow k="Pickup" v={state.pickup || "—"}/>
-        <SummaryRow k="Return" v={state.dropoff || "—"}/>
+        <SummaryRow k="Pickup" v={state.pickup ? state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") : "—"}/>
+        <SummaryRow k="Return" v={state.dropoff ? state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") : "—"}/>
         <SummaryRow k="Duration" v={days + " day" + (days !== 1 ? "s" : "")}/>
       </div>
 
@@ -322,7 +329,9 @@ function StepTrailerDates({ state, setState, onNext }) {
   }, [state.trailerId]);
 
   // Sanity-check the date range and surface any conflict with stored bookings.
-  const dateOrderOk  = !state.pickup || !state.dropoff || state.pickup <= state.dropoff;
+  const pickupDT = state.pickup  ? new Date(state.pickup  + "T" + (state.pickupTime  || DEFAULT_PICKUP_TIME)) : null;
+  const dropoffDT = state.dropoff ? new Date(state.dropoff + "T" + (state.dropoffTime || DEFAULT_PICKUP_TIME)) : null;
+  const dateOrderOk  = !pickupDT || !dropoffDT || dropoffDT > pickupDT;
   const pickupPastOk = !state.pickup  || state.pickup  >= today;
   const conflict     = state.trailerId && dateOrderOk && pickupPastOk
     ? Bookings.conflict(state.trailerId, state.pickup, state.dropoff)
@@ -361,24 +370,38 @@ function StepTrailerDates({ state, setState, onNext }) {
       {isMobile ? (
         <div style={{ border: "1px solid #e6e6e6", marginBottom: 12 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
-            <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
+            <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6", borderBottom: "1px solid #e6e6e6" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup date</div>
               <input type="date" min={today} value={state.pickup || ""}
-                onChange={e => { const d = computeDays(e.target.value, state.dropoff); setState({...state, pickup: e.target.value, days: d}); }}
+                onChange={e => { const d = computeDays(e.target.value, state.pickupTime, state.dropoff, state.dropoffTime); setState({...state, pickup: e.target.value, days: d}); }}
+                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+              />
+            </div>
+            <div style={{ padding: "14px 16px", borderBottom: "1px solid #e6e6e6" }}>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return date</div>
+              <input type="date" min={state.pickup || today} value={state.dropoff || ""}
+                onChange={e => { const d = computeDays(state.pickup, state.pickupTime, e.target.value, state.dropoffTime); setState({...state, dropoff: e.target.value, days: d}); }}
+                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+              />
+            </div>
+            <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup time</div>
+              <input type="time" value={state.pickupTime || DEFAULT_PICKUP_TIME}
+                onChange={e => { const d = computeDays(state.pickup, e.target.value, state.dropoff, state.dropoffTime); setState({...state, pickupTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
             <div style={{ padding: "14px 16px" }}>
-              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return date</div>
-              <input type="date" min={state.pickup || today} value={state.dropoff || ""}
-                onChange={e => { const d = computeDays(state.pickup, e.target.value); setState({...state, dropoff: e.target.value, days: d}); }}
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return time</div>
+              <input type="time" value={state.dropoffTime || DEFAULT_PICKUP_TIME}
+                onChange={e => { const d = computeDays(state.pickup, state.pickupTime, state.dropoff, e.target.value); setState({...state, dropoffTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
           </div>
           {(state.pickup && !pickupPastOk) || (state.pickup && state.dropoff && !dateOrderOk) ? (
             <div style={{ padding: "8px 16px", background: "#fff2f2", borderTop: "1px solid #fecaca", font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626" }}>
-              {!pickupPastOk ? "Pickup date can't be in the past." : "Return must be on or after pickup."}
+              {!pickupPastOk ? "Pickup date can't be in the past." : "Return must be after pickup."}
             </div>
           ) : null}
         </div>
@@ -386,14 +409,26 @@ function StepTrailerDates({ state, setState, onNext }) {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
           <Field label="Pickup date" error={state.pickup && !pickupPastOk ? "Pickup date can't be in the past." : null}>
             <Input type="date" min={today} value={state.pickup} onChange={v => {
-              const d = computeDays(v, state.dropoff);
+              const d = computeDays(v, state.pickupTime, state.dropoff, state.dropoffTime);
               setState({...state, pickup: v, days: d});
             }}/>
           </Field>
-          <Field label="Return date" error={state.pickup && state.dropoff && !dateOrderOk ? "Return must be on or after pickup." : null}>
+          <Field label="Return date" error={state.pickup && state.dropoff && !dateOrderOk ? "Return must be after pickup." : null}>
             <Input type="date" min={state.pickup || today} value={state.dropoff} onChange={v => {
-              const d = computeDays(state.pickup, v);
+              const d = computeDays(state.pickup, state.pickupTime, v, state.dropoffTime);
               setState({...state, dropoff: v, days: d});
+            }}/>
+          </Field>
+          <Field label="Pickup time">
+            <Input type="time" value={state.pickupTime || DEFAULT_PICKUP_TIME} onChange={v => {
+              const d = computeDays(state.pickup, v, state.dropoff, state.dropoffTime);
+              setState({...state, pickupTime: v, days: d});
+            }}/>
+          </Field>
+          <Field label="Return time">
+            <Input type="time" value={state.dropoffTime || DEFAULT_PICKUP_TIME} onChange={v => {
+              const d = computeDays(state.pickup, state.pickupTime, state.dropoff, v);
+              setState({...state, dropoffTime: v, days: d});
             }}/>
           </Field>
         </div>
@@ -412,9 +447,9 @@ function StepTrailerDates({ state, setState, onNext }) {
       )}
 
       <div style={{ marginBottom: 32 }}>
-        <Field label="Preferred pickup time (optional)" hint="Roughly when you'd like to swing by. We'll confirm a time with you and have the trailer staged and ready.">
+        <Field label="Pickup notes (optional)" hint="Anything we should know — flexibility on the time above, gate codes, what you're hauling, etc.">
           <textarea value={state.pickupNote || ""} onChange={e => setState({...state, pickupNote: e.target.value})}
-            placeholder="e.g. Saturday morning, around 9 AM… or whenever works after 5 PM"
+            placeholder="e.g. Could be 30 min late, running an errand first"
             style={{
               display: "block", width: "100%", minHeight: 80, padding: "14px 16px",
               background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
@@ -437,11 +472,17 @@ function StepTrailerDates({ state, setState, onNext }) {
   );
 }
 
-function computeDays(p, d) {
+const DEFAULT_PICKUP_TIME = "09:00";
+
+// Billed in 24-hour blocks from the exact pickup moment: under 24h elapsed = 1 day,
+// any time over a 24h boundary rolls to the next day (e.g. 24h01m = 2 days).
+function computeDays(p, pt, d, dt) {
   if (!p || !d) return 0;
-  const dp = new Date(p), dd = new Date(d);
-  const days = Math.max(1, Math.round((dd - dp) / (1000*60*60*24)) + 1);
-  return days;
+  const dp = new Date(p + "T" + (pt || DEFAULT_PICKUP_TIME));
+  const dd = new Date(d + "T" + (dt || DEFAULT_PICKUP_TIME));
+  const diffMs = dd - dp;
+  if (diffMs <= 0) return 1;
+  return Math.ceil(diffMs / (1000*60*60*24));
 }
 
 /* ---------- 2. Customer info ---------- */
@@ -894,7 +935,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             hitch: state.hitch,
             brakeController: state.brakeController,
             purpose: state.purpose,
-            pickupNote: state.pickupNote,
+            pickupNote: [`Pickup ${fmtTime(state.pickupTime || DEFAULT_PICKUP_TIME)} · Return ${fmtTime(state.dropoffTime || DEFAULT_PICKUP_TIME)}`, state.pickupNote].filter(Boolean).join(" — "),
             signature: state.signature,
           },
         }),
@@ -963,7 +1004,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             hitch: state.hitch,
             brakeController: state.brakeController,
             purpose: state.purpose,
-            pickupNote: state.pickupNote,
+            pickupNote: [`Pickup ${fmtTime(state.pickupTime || DEFAULT_PICKUP_TIME)} · Return ${fmtTime(state.dropoffTime || DEFAULT_PICKUP_TIME)}`, state.pickupNote].filter(Boolean).join(" — "),
             signature: state.signature,
           },
         }),
@@ -1130,7 +1171,7 @@ function StepDone({ state, onReset }) {
             You're set, {state.name?.split(" ")[0] || "friend"}.
           </h1>
           <p style={{ font: '300 17px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, maxWidth: 520 }}>
-            We'll have the {trailer?.name} ready for pickup on <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}</strong>. {state.pickupNote ? <>You wrote <em style={{ fontStyle: "normal", color: "#262626" }}>"{state.pickupNote}"</em> for your preferred time — we'll text you to lock that in.</> : <>We'll text you shortly to confirm a pickup time and send the address.</>} A confirmation has been sent to {state.email}.
+            We'll have the {trailer?.name} ready for pickup on <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}{state.pickupTime ? " at " + fmtTime(state.pickupTime) : ""}</strong>. We'll text you to confirm and send the pickup address. A confirmation has been sent to {state.email}.
           </p>
         </div>
       </div>
@@ -1144,8 +1185,8 @@ function StepDone({ state, onReset }) {
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 24 }}>
         {[
-          { k: "Pickup", v: state.pickup },
-          { k: "Return", v: state.dropoff },
+          { k: "Pickup", v: state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") },
+          { k: "Return", v: state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") },
           { k: "Confirmation", v: "Sent to phone" },
         ].map((c, i) => (
           <div key={i} style={{ padding: 24, borderRight: !isMobile && i < 2 ? "1px solid #e6e6e6" : 0, borderBottom: isMobile && i < 2 ? "1px solid #e6e6e6" : 0 }}>
