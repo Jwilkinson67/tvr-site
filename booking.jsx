@@ -118,10 +118,10 @@ function Field({ label, hint, error, children }) {
   );
 }
 
-function Input({ value, onChange, placeholder, type = "text", min, max }) {
+function Input({ value, onChange, placeholder, type = "text", min, max, autoComplete }) {
   return (
     <input value={value || ""} onChange={e => onChange?.(e.target.value)} placeholder={placeholder} type={type}
-      min={min} max={max}
+      min={min} max={max} autoComplete={autoComplete}
       style={{
         display: "block", width: "100%", height: 48, padding: "14px 16px",
         background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
@@ -503,22 +503,22 @@ function StepCustomer({ state, setState, onNext, onBack }) {
     <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
         <Field label="Full name" hint="As shown on your driver's license">
-          <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd"/>
+          <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd" autoComplete="name"/>
         </Field>
         <Field label="Email">
-          <Input type="email" value={state.email} onChange={v => setState({...state, email: v})} placeholder="you@email.com"/>
+          <Input type="email" value={state.email} onChange={v => setState({...state, email: v})} placeholder="you@email.com" autoComplete="email"/>
         </Field>
         <Field label="Phone">
-          <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100"/>
+          <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
         </Field>
         <Field label="Driver's license #">
           <Input value={state.dlNumber || ""} onChange={v => setState({...state, dlNumber: v})} placeholder="TN-123456789"/>
         </Field>
         <Field label="Street address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
-          <Input value={state.address || ""} onChange={v => setState({...state, address: v})} placeholder="123 Main St"/>
+          <Input value={state.address || ""} onChange={v => setState({...state, address: v})} placeholder="123 Main St" autoComplete="street-address"/>
         </Field>
         <Field label="City">
-          <Input value={state.city || ""} onChange={v => setState({...state, city: v})} placeholder="Chattanooga"/>
+          <Input value={state.city || ""} onChange={v => setState({...state, city: v})} placeholder="Chattanooga" autoComplete="address-level2"/>
         </Field>
         <Field label="State / ZIP">
           <Input value={state.stateZip || ""} onChange={v => setState({...state, stateZip: v})} placeholder="TN 37363"/>

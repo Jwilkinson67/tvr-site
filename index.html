@@ -190,10 +190,10 @@
       const { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, PromoPopup } = window.MK;
       const [route, setRouteRaw] = useState("home");
 
-      // Intercept setRoute: any switch to "booking" jumps to the booking view at the App level.
+      // Intercept setRoute: "booking" or "booking:<trailerId>" jumps to the booking view.
       const setRoute = (r) => {
-        if (r === "booking") {
-          setView("booking");
+        if (r === "booking" || r.startsWith("booking:")) {
+          setView(r);
           window.scrollTo(0, 0);
           return;
         }
@@ -292,14 +292,16 @@
 
     /* ------- Top-level router ------- */
     function App() {
-      const [view, setView] = useState("marketing"); // "marketing" | "booking"
+      const [view, setView] = useState("marketing"); // "marketing" | "booking" | "booking:<trailerId>"
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       applyTweaks(t); // run before child renders so they read updated content
+      const isBooking = view === "booking" || view.startsWith("booking:");
+      const presetTrailer = view.startsWith("booking:") ? view.slice(8) : "";
       return (
         <>
-          {view === "marketing"
+          {!isBooking
             ? <MarketingApp setView={setView}/>
-            : <BookingApp setView={setView}/>}
+            : <BookingApp setView={setView} presetTrailer={presetTrailer}/>}
           <TweaksPanel title="Tweaks" noDeckControls>
             <TweakSection label="Hero">
               <TweakText label="Title (line 1)" value={t.hero_title1} onChange={v => setTweak('hero_title1', v)}/>

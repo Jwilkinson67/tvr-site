@@ -350,7 +350,7 @@ function FleetDetail({ trailerId, setRoute }) {
             }
             <p style={{ font: `300 ${isMobile ? "16px" : "18px"}/1.55 "Inter", sans-serif`, color: "#3c3c3c", marginTop: 24, marginBottom: 32 }}>{t.detailTagline || t.tagline}</p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <MkButton onClick={() => setRoute("booking")}>Reserve · ${t.daily}/day</MkButton>
+              <MkButton onClick={() => setRoute("booking:" + t.id)}>Reserve · ${t.daily}/day</MkButton>
               <MkButton variant="secondary" onClick={() => setRoute("home")}>← Back</MkButton>
             </div>
           </div>
