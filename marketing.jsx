@@ -261,12 +261,12 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
           </div>
         }
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, minHeight: 44 }}>{trailer.tagline}</p>
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-          <MkButton onClick={onReserve} style={{ height: 42, padding: "0 36px", fontSize: "14px", background: "#1568be", color: "#fff", border: 0, fontWeight: 800, letterSpacing: "0.5px" }}>Reserve</MkButton>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, paddingTop: 12, borderTop: "1px solid #e6e6e6" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, paddingTop: 16, borderTop: "1px solid #e6e6e6" }}>
           <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${trailer.daily}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / day</span></div>
           <UpperLink onClick={onSpecs}>More details</UpperLink>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}>
+          <MkButton onClick={onReserve} style={{ height: 42, padding: "0 36px", fontSize: "14px", background: "#1568be", color: "#fff", border: 0, fontWeight: 800, letterSpacing: "0.5px" }}>Reserve</MkButton>
         </div>
       </div>
     </article>);
