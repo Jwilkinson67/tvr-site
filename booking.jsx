@@ -540,9 +540,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Insurance company">
           <Input value={state.insuranceCompany || ""} onChange={v => setState({...state, insuranceCompany: v})} placeholder="State Farm"/>
         </Field>
-        <Field label="Policy #">
-          <Input value={state.policyNumber || ""} onChange={v => setState({...state, policyNumber: v})} placeholder="POL-123456"/>
-        </Field>
+
         <Field label="Trip purpose (optional)">
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
         </Field>
