@@ -260,7 +260,7 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
             {trailer.subheading}
           </div>
         }
-        <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, minHeight: 44 }}>{trailer.tagline}</p>
+        <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, flex: 1 }}>{trailer.tagline}</p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, paddingTop: 16, borderTop: "1px solid #e6e6e6" }}>
           <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${trailer.daily}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / day</span></div>
           <UpperLink onClick={onSpecs}>More details</UpperLink>
