@@ -219,7 +219,7 @@ function HeroDark({ setRoute }) {
 }
 
 /* ----------- Fleet card ----------- */
-function FleetCard({ trailer, onSpecs }) {
+function FleetCard({ trailer, onSpecs, onReserve }) {
   const [activeIdx, setActiveIdx] = React.useState(0);
   const extras = trailer.photoExtra
     ? (Array.isArray(trailer.photoExtra) ? trailer.photoExtra : [trailer.photoExtra])
@@ -262,10 +262,11 @@ function FleetCard({ trailer, onSpecs }) {
         }
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, minHeight: 44 }}>{trailer.tagline}</p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, paddingTop: 16, borderTop: "1px solid #e6e6e6" }}>
-          <div>
-            <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${trailer.daily}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / day</span></div>
+          <div style={{ font: '700 18px/1 "Inter", sans-serif', color: "#262626" }}>${trailer.daily}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / day</span></div>
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+            <MkButton onClick={onReserve} style={{ height: 38, padding: "0 20px", fontSize: "13px", background: "#1568be", color: "#fff", border: 0, fontWeight: 800, letterSpacing: "0.5px" }}>Reserve</MkButton>
+            <UpperLink onClick={onSpecs}>More details</UpperLink>
           </div>
-          <UpperLink onClick={onSpecs}>More details</UpperLink>
         </div>
       </div>
     </article>);
@@ -284,7 +285,7 @@ function FleetGrid({ setRoute }) {
         <UpperLink onClick={() => setRoute("booking")}>{c.fleetSection.link}</UpperLink>
       </header>
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: isMobile ? 16 : 32 }}>
-        {c.fleet.map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} />)}
+        {c.fleet.map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} onReserve={() => setRoute("booking:" + t.id)} />)}
       </div>
     </section>);
 
