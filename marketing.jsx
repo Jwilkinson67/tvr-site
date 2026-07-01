@@ -252,7 +252,7 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
           ))}
         </div>
       )}
-      <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
         <h3 style={{ font: '700 24px/1.25 "Inter", sans-serif', margin: 0, color: "#262626" }}>{trailer.name}</h3>
         {trailer.subheading &&
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 10 }}>
