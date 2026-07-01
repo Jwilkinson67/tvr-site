@@ -685,13 +685,22 @@ function StepDocs({ state, setState, onNext, onBack }) {
 /* ---------- 5. Agreement ---------- */
 function StepAgreement({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 640;
-  const valid = state.signature && state.signature.trim().length > 2 && state.agreed;
+  const [scrolledThrough, setScrolledThrough] = React.useState(false);
+  const valid = scrolledThrough && state.signature && state.signature.trim().length > 2 && state.agreed;
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  function handleAgreementScroll(e) {
+    const el = e.target;
+    if (!scrolledThrough && el.scrollTop + el.clientHeight >= el.scrollHeight - 20) {
+      setScrolledThrough(true);
+    }
+  }
+
   return (
     <StepShell title="Sign the rental agreement" kicker="STEP 4 · AGREEMENT">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, maxWidth: 480 }}>
-          Read the full agreement below. Sign by typing your full name — this counts as a legal e-signature. We'll email you a signed copy.
+          Scroll through the full agreement below, then sign by typing your full name — this counts as a legal e-signature. We'll email you a signed copy.
         </p>
         <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -704,7 +713,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
           <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>TVR Rental Agreement</span>
           <span style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>v 1.0 · {today}</span>
         </div>
-        <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }}>
+        <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }} onScroll={handleAgreementScroll}>
           {[
             ["§1. Definitions", "Agreement means this form and all rental documents. You/your/renter means the customer, authorized renter, and anyone responsible for charges. All persons included as you/your are signing to agree jointly and separately to all obligations, terms, conditions, and amounts owed under this Agreement. We/us/our means Tennessee Valley Rentals LLC. Authorized Driver means only drivers approved on this Agreement. Trailer means the non-motorized trailer rented or any substitutes. Loss of Use means our lost rental time during repair or replacement, calculated at the daily rental rate. Diminished Value means any reduction in value after damage or loss."],
             ["§2. Rental, Indemnity and Warranties", "This is a trailer rental contract. We may repossess the trailer at any time and without prior notice to the extent permitted by law, if it is abandoned, overdue, or used in violation of law or this Agreement. You agree to indemnify and hold us harmless from claims, liability, costs, and attorney fees arising from this rental or your use of the trailer. The trailer is rented as-is, with no express, implied, or apparent warranties, including merchantability or fitness for particular purpose."],
@@ -733,8 +742,15 @@ function StepAgreement({ state, setState, onNext, onBack }) {
         </div>
       </div>
 
+      {!scrolledThrough && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, font: '400 13px/1.4 "Inter", sans-serif', color: "#7a5500" }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+          Scroll through the full agreement above to unlock the signature.
+        </div>
+      )}
+
       {/* Signature block — contract-grade */}
-      <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9" }}>
+      <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9", opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Signature</div>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
           <div>
@@ -756,7 +772,7 @@ function StepAgreement({ state, setState, onNext, onBack }) {
         </div>
       </div>
 
-      <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24, cursor: "pointer" }}>
+      <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24, cursor: scrolledThrough ? "pointer" : "not-allowed", opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
         <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
           I have read and agree to the TVR Rental Agreement above (§1–§18). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
