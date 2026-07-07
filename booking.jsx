@@ -587,7 +587,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
 function StepDocs({ state, setState, onNext, onBack }) {
   const docs = [
     { id: "license", t: "Driver's license", s: "Front and back. JPG, PNG, or PDF, max 10 MB." },
-    { id: "insurance", t: "Insurance certificate", s: "Auto policy that covers towing. PDF or JPG." },
+    { id: "insurance", t: "Insurance card", s: "Auto policy that covers driver and vehicle used." },
   ];
   const valid = docs.every(d => state.docs?.[d.id] && state.docs[d.id].status !== "uploading");
 
