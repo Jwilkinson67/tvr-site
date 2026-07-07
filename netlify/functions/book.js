@@ -422,7 +422,7 @@ exports.handler = async (event) => {
       const declineUrl = `${fnBase}?action=decline&id=${bookingId}&token=${makeToken("decline", bookingId)}`;
       const docUrls = await signedDocUrls(docPaths);
 
-      await Promise.all([
+      const emailTasks = [
         sendEmail({
           to: process.env.OWNER_EMAIL,
           subject: `New booking — ${trailerName || trailerId} — ${pickup}`,
@@ -433,7 +433,28 @@ exports.handler = async (event) => {
           subject: `Booking request received — ${trailerName || trailerId}, ${pickup}`,
           html: customerRequestEmail(bookingRow),
         }),
-      ]);
+      ];
+
+      if (customer.marketingOptIn && process.env.RESEND_AUDIENCE_ID) {
+        const [firstName, ...rest] = (customer.name || "").split(" ");
+        emailTasks.push(
+          fetch(`https://api.resend.com/audiences/${process.env.RESEND_AUDIENCE_ID}/contacts`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: customer.email,
+              first_name: firstName || "",
+              last_name: rest.join(" ") || "",
+              unsubscribed: false,
+            }),
+          }).catch(e => console.error("Resend audience add failed:", e))
+        );
+      }
+
+      await Promise.all(emailTasks);
     } catch (emailErr) {
       // Don't fail the booking if email fails — just log it
       console.error("Notification email failed:", emailErr);

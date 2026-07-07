@@ -578,6 +578,13 @@ function StepCustomer({ state, setState, onNext, onBack }) {
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
         </Field>
       </div>
+      <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 32, cursor: "pointer" }}>
+        <input type="checkbox" checked={!!state.marketingOptIn} onChange={e => setState({...state, marketingOptIn: e.target.checked})}
+          style={{ marginTop: 3, flexShrink: 0, width: 16, height: 16, accentColor: "#1568be" }}/>
+        <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>
+          Send me occasional deals and reminders from TVR <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>(optional)</em>
+        </span>
+      </label>
       <StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · upload documents" disabled={!valid}/>
     </StepShell>
   );
@@ -994,6 +1001,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             purpose: state.purpose,
             pickupNote: [`Pickup ${fmtTime(state.pickupTime || DEFAULT_PICKUP_TIME)} · Return ${fmtTime(state.dropoffTime || DEFAULT_PICKUP_TIME)}`, state.pickupNote].filter(Boolean).join(" — "),
             signature: state.signature,
+            marketingOptIn: !!state.marketingOptIn,
           },
         }),
       });
@@ -1063,6 +1071,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             purpose: state.purpose,
             pickupNote: [`Pickup ${fmtTime(state.pickupTime || DEFAULT_PICKUP_TIME)} · Return ${fmtTime(state.dropoffTime || DEFAULT_PICKUP_TIME)}`, state.pickupNote].filter(Boolean).join(" — "),
             signature: state.signature,
+            marketingOptIn: !!state.marketingOptIn,
           },
         }),
       });
