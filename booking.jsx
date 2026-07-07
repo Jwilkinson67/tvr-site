@@ -150,6 +150,55 @@ function Select({ value, onChange, options }) {
   );
 }
 
+function AddressAutocomplete({ state, setState }) {
+  const inputRef = React.useRef(null);
+  const acRef    = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!inputRef.current) return;
+    const init = () => {
+      if (!window.google?.maps?.places) return;
+      acRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+        types: ["address"],
+        componentRestrictions: { country: "us" },
+        fields: ["address_components"],
+      });
+      acRef.current.addListener("place_changed", () => {
+        const place = acRef.current.getPlace();
+        if (!place?.address_components) return;
+        const get  = (t) => place.address_components.find(c => c.types.includes(t))?.long_name  || "";
+        const getS = (t) => place.address_components.find(c => c.types.includes(t))?.short_name || "";
+        const street = [get("street_number"), get("route")].filter(Boolean).join(" ");
+        const city   = get("locality") || get("sublocality") || get("administrative_area_level_2");
+        const state2 = getS("administrative_area_level_1");
+        const zip    = get("postal_code");
+        setState(s => ({ ...s, address: street, city, stateZip: [state2, zip].filter(Boolean).join(" ") }));
+        if (inputRef.current) inputRef.current.value = street;
+      });
+    };
+    if (window.google?.maps?.places) { init(); }
+    else {
+      const t = setInterval(() => { if (window.google?.maps?.places) { init(); clearInterval(t); } }, 200);
+      return () => clearInterval(t);
+    }
+  }, []);
+
+  return (
+    <input ref={inputRef} defaultValue={state.address || ""}
+      onChange={e => setState(s => ({ ...s, address: e.target.value }))}
+      placeholder="123 Main St, Chattanooga, TN"
+      autoComplete="off"
+      style={{
+        display: "block", width: "100%", height: 48, padding: "14px 16px",
+        background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
+        font: '300 16px/1.55 "Inter", sans-serif', outline: "none",
+      }}
+      onFocus={e => e.target.style.borderColor = "#262626"}
+      onBlur={e  => e.target.style.borderColor = "#e6e6e6"}
+    />
+  );
+}
+
 /* ----------- Top bar + Stepper ----------- */
 function TopBar() {
   const isMobile = useWindowWidth() < 768;
@@ -514,14 +563,8 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Driver's license #">
           <Input value={state.dlNumber || ""} onChange={v => setState({...state, dlNumber: v})} placeholder="TN-123456789"/>
         </Field>
-        <Field label="Street address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
-          <Input value={state.address || ""} onChange={v => setState({...state, address: v})} placeholder="123 Main St" autoComplete="street-address"/>
-        </Field>
-        <Field label="City">
-          <Input value={state.city || ""} onChange={v => setState({...state, city: v})} placeholder="Chattanooga" autoComplete="address-level2"/>
-        </Field>
-        <Field label="State / ZIP">
-          <Input value={state.stateZip || ""} onChange={v => setState({...state, stateZip: v})} placeholder="TN 37363"/>
+        <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
+          <AddressAutocomplete state={state} setState={setState}/>
         </Field>
         <Field label="Tow vehicle" hint="Year, make, model — used to confirm hitch class">
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>

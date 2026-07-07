@@ -141,6 +141,14 @@
       .booking-main { padding: 24px; }
     }
   </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFjy7T6OGNfzFCXXqfN8Rts2a4iF7AT7c&libraries=places&loading=async"></script>
+  <style>
+    /* Ensure Google's address dropdown floats above everything */
+    .pac-container { z-index: 99999 !important; font-family: "Inter", sans-serif; }
+    .pac-item { font: 300 14px/2 "Inter", sans-serif; padding: 0 12px; }
+    .pac-item:hover { background: #f4f6f9; }
+    .pac-item-query { font-weight: 700; color: #262626; }
+  </style>
 </head>
 <body>
   <div id="root"></div>
