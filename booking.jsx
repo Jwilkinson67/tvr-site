@@ -1213,6 +1213,36 @@ function StepPayment({ state, setState, onNext, onBack }) {
 function StepDone({ state, onReset }) {
   const isMobile = useWindowWidth() < 640;
   const trailer = TRAILERS[state.trailerId];
+  const [password, setPassword]     = React.useState("");
+  const [acctStatus, setAcctStatus] = React.useState("idle"); // idle | loading | success | error
+  const [acctError, setAcctError]   = React.useState("");
+
+  async function handleCreateAccount() {
+    if (password.length < 6) { setAcctError("Password must be at least 6 characters."); return; }
+    setAcctStatus("loading");
+    setAcctError("");
+    try {
+      const res  = await fetch("/.netlify/functions/create-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: state.email,
+          password,
+          profile: {
+            name: state.name, phone: state.phone,
+            address: state.address, city: state.city, stateZip: state.stateZip,
+            tow: state.tow, hitch: state.hitch, brakeController: state.brakeController,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setAcctStatus("error"); setAcctError(data.error || "Something went wrong."); return; }
+      setAcctStatus("success");
+    } catch {
+      setAcctStatus("error");
+      setAcctError("Network error. Please try again.");
+    }
+  }
   return (
     <StepShell title={null} kicker={null} wide>
       <div style={{ position: "relative", background: "#f4f6f9", padding: 48, marginBottom: 24 }}>
@@ -1257,6 +1287,40 @@ function StepDone({ state, onReset }) {
         <BkButton>Add to calendar</BkButton>
         <BkButton variant="secondary" onClick={onReset}>New reservation</BkButton>
       </div>
+
+      {acctStatus === "success" ? (
+        <div style={{ marginTop: 24, display: "flex", gap: 12, alignItems: "center", padding: "16px 20px", background: "#f0fdf4", borderLeft: "4px solid #22c55e" }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+          <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+            <strong style={{ fontWeight: 700, color: "#262626" }}>Account created.</strong> Next time you book, sign in to skip entering your details.
+          </span>
+        </div>
+      ) : (
+        <div style={{ marginTop: 24, padding: 24, background: "#f4f6f9", borderTop: "3px solid #1568be" }}>
+          <div style={{ font: '700 15px/1 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>Book faster next time</div>
+          <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b", margin: "0 0 16px" }}>
+            Save your info to {state.email} so you don't have to re-enter it next time.
+          </p>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <input
+              type="password"
+              placeholder="Choose a password"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setAcctError(""); }}
+              style={{ flex: 1, minWidth: 180, height: 44, padding: "0 14px", border: "1px solid #e6e6e6",
+                background: "#fff", font: '300 15px/1 "Inter", sans-serif', outline: "none" }}
+              onFocus={e => e.target.style.borderColor = "#262626"}
+              onBlur={e  => e.target.style.borderColor = "#e6e6e6"}
+            />
+            <BkButton onClick={handleCreateAccount} disabled={acctStatus === "loading"}>
+              {acctStatus === "loading" ? "Creating…" : "Create account"}
+            </BkButton>
+          </div>
+          {acctError && (
+            <div style={{ font: '300 13px/1.4 "Inter", sans-serif', color: "#b5212b", marginTop: 8 }}>{acctError}</div>
+          )}
+        </div>
+      )}
     </StepShell>
   );
 }
