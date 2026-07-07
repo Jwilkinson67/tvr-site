@@ -563,7 +563,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete state={state} setState={setState}/>
         </Field>
-        <Field label="Tow vehicle" hint="Year, make, model — used to confirm hitch class">
+        <Field label="Tow vehicle" hint="Year, make, model — used to confirm towing capacity">
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
         </Field>
         <Field label="Do you have a 2-5/16 inch hitch ball?" hint="All TVR trailers require a 2-5/16 inch ball coupler">
