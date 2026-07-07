@@ -547,7 +547,7 @@ function computeDays(p, pt, d, dt) {
 /* ---------- 2. Customer info ---------- */
 function StepCustomer({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
-  const valid = state.name && state.email && state.phone && state.tow && state.address && state.dlNumber && state.insuranceCompany && state.hitch && state.brakeController;
+  const valid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
   return (
     <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
@@ -560,17 +560,11 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label="Phone">
           <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
         </Field>
-        <Field label="Driver's license #">
-          <Input value={state.dlNumber || ""} onChange={v => setState({...state, dlNumber: v})} placeholder="TN-123456789"/>
-        </Field>
         <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete state={state} setState={setState}/>
         </Field>
         <Field label="Tow vehicle" hint="Year, make, model — used to confirm hitch class">
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
-        </Field>
-        <Field label="Tow vehicle plate #">
-          <Input value={state.towPlate || ""} onChange={v => setState({...state, towPlate: v})} placeholder="TN ABC-1234"/>
         </Field>
         <Field label="Do you have a 2-5/16 inch hitch ball?" hint="All TVR trailers require a 2-5/16 inch ball coupler">
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
@@ -580,10 +574,6 @@ function StepCustomer({ state, setState, onNext, onBack }) {
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
             options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
         </Field>
-        <Field label="Insurance company">
-          <Input value={state.insuranceCompany || ""} onChange={v => setState({...state, insuranceCompany: v})} placeholder="State Farm"/>
-        </Field>
-
         <Field label="Trip purpose (optional)">
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
         </Field>
