@@ -1362,6 +1362,298 @@ function StepPayment({ state, setState, onNext, onBack }) {
   );
 }
 
+/* ---------- 3+4 combined: Agreement & Payment ---------- */
+function StepAgreementPay({ state, setState, onNext, onBack }) {
+  const isMobile = useWindowWidth() < 640;
+  const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  // ── Agreement ──
+  const [scrolledThrough, setScrolledThrough] = React.useState(false);
+  const agreementDone = scrolledThrough && state.signature && state.signature.trim().length > 2 && state.agreed;
+
+  function handleAgreementScroll(e) {
+    const el = e.target;
+    if (!scrolledThrough && el.scrollTop + el.clientHeight >= el.scrollHeight - 20) setScrolledThrough(true);
+  }
+
+  // ── Payment (Stripe) ──
+  const cardMountRef     = React.useRef(null);
+  const stripeRef        = React.useRef(null);
+  const cardElementRef   = React.useRef(null);
+  const [stripeReady,  setStripeReady]  = React.useState(false);
+  const [cardComplete, setCardComplete] = React.useState(false);
+  const [cardError,    setCardError]    = React.useState(null);
+  const [processing,   setProcessing]   = React.useState(false);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    function tryMount() {
+      if (cancelled) return;
+      if (!window.Stripe || !cardMountRef.current) { setTimeout(tryMount, 100); return; }
+      const stripe   = window.Stripe(window.TVR_STRIPE_KEY);
+      const elements = stripe.elements();
+      const card     = elements.create("card", {
+        hidePostalCode: false,
+        style: {
+          base: { fontSize: "16px", fontFamily: '"Inter", system-ui, sans-serif', fontWeight: "300", color: "#262626", lineHeight: "48px", "::placeholder": { color: "#9a9a9a" }, iconColor: "#1568be" },
+          invalid: { color: "#dc2626", iconColor: "#dc2626" },
+        },
+      });
+      card.mount(cardMountRef.current);
+      card.on("change", (event) => { setCardError(event.error ? event.error.message : null); setCardComplete(!!event.complete); });
+      stripeRef.current      = stripe;
+      cardElementRef.current = card;
+      setStripeReady(true);
+    }
+    tryMount();
+    return () => {
+      cancelled = true;
+      if (cardElementRef.current) { try { cardElementRef.current.destroy(); } catch (e) {} cardElementRef.current = null; }
+    };
+  }, []);
+
+  const trailer       = TRAILERS[state.trailerId];
+  const fleet         = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
+  const fleetT        = fleet.find(x => x.id === state.trailerId);
+  const days          = state.days || 1;
+  const baseRental    = trailer ? calcRental(trailer, days) : 0;
+  const depositAmount = fleetT?.deposit || 200;
+
+  const [couponCode,    setCouponCode]    = React.useState("");
+  const [couponOpen,    setCouponOpen]    = React.useState(false);
+  const [coupon,        setCoupon]        = React.useState(null);
+  const [couponError,   setCouponError]   = React.useState(null);
+  const [couponLoading, setCouponLoading] = React.useState(false);
+
+  const couponApplied = coupon?.type === "free";
+  const rentalAmount  = coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental;
+  const taxAmount     = Math.round(rentalAmount * 0.0925);
+  const totalAmount   = rentalAmount + taxAmount + depositAmount;
+  const chargeTotal   = couponApplied ? 0 : totalAmount;
+
+  async function applyCoupon() {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true); setCouponError(null);
+    try {
+      const res = await fetch("/.netlify/functions/book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "coupon", code: couponCode.trim(), days }) });
+      const result = await res.json();
+      if (result.valid) { setCoupon(result.type === "percent" ? { type: "percent", percent: result.percent } : { type: "free" }); }
+      else { setCouponError(result.reason === "multi-day-required" ? "This code is only valid on rentals of 2+ days." : "Invalid code."); setCoupon(null); }
+    } catch { setCouponError("Could not validate — try submitting anyway."); }
+    finally { setCouponLoading(false); }
+  }
+
+  const valid = agreementDone && (couponApplied ? !processing : (stripeReady && cardComplete && !processing));
+
+  const bookingPayload = (paymentMethodId, total) => ({
+    action: "book",
+    trailerId: state.trailerId,
+    trailerName: (window.TVR_CONTENT?.fleet || []).find(x => x.id === state.trailerId)?.name,
+    pickup: state.pickup, dropoff: state.dropoff, days: state.days,
+    paymentMethodId, rentalAmount: baseRental, taxAmount, depositAmount, totalAmount: total,
+    couponCode: couponCode.trim() || undefined,
+    sessionId: state.sessionId, docPaths: state.docPaths || {},
+    customer: {
+      name: state.name, email: state.email, phone: state.phone,
+      address: state.address, city: state.city, stateZip: state.stateZip,
+      dlNumber: state.dlNumber, towPlate: state.towPlate,
+      insuranceCompany: state.insuranceCompany, policyNumber: state.policyNumber,
+      tow: state.tow, hitch: state.hitch, brakeController: state.brakeController,
+      purpose: state.purpose,
+      pickupNote: [`Pickup ${fmtTime(state.pickupTime || DEFAULT_PICKUP_TIME)} · Return ${fmtTime(state.dropoffTime || DEFAULT_PICKUP_TIME)}`, state.pickupNote].filter(Boolean).join(" — "),
+      signature: state.signature, marketingOptIn: !!state.marketingOptIn,
+    },
+  });
+
+  async function finishBooking(paymentMethodId, total) {
+    try {
+      const res    = await fetch("/.netlify/functions/book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(bookingPayload(paymentMethodId, total)) });
+      const result = await res.json();
+      if (!result.success) { setCardError(result.error || "Booking failed. Please try again."); setProcessing(false); return; }
+      Bookings.add(state.trailerId, { id: result.bookingId, pickup: state.pickup, dropoff: state.dropoff, name: state.name || "", bookedAt: new Date().toISOString() });
+      setProcessing(false);
+      setState(s => ({...s, bookingId: result.bookingId}));
+      window.location.href = "/booking-confirmed";
+    } catch {
+      const bookingId = "TVR-" + Date.now().toString(36).toUpperCase();
+      Bookings.add(state.trailerId, { id: bookingId, pickup: state.pickup, dropoff: state.dropoff, name: state.name || "", bookedAt: new Date().toISOString() });
+      setProcessing(false);
+      setState(s => ({...s, bookingId}));
+      window.location.href = "/booking-confirmed";
+    }
+  }
+
+  async function handlePay() {
+    const c = Bookings.conflict(state.trailerId, state.pickup, state.dropoff);
+    if (c) { alert(`Those dates were just booked (${fmtDate(c.pickup)} – ${fmtDate(c.dropoff)}). Please pick different dates.`); return; }
+    setProcessing(true); setCardError(null);
+    const { paymentMethod, error } = await stripeRef.current.createPaymentMethod({ type: "card", card: cardElementRef.current, billing_details: { name: state.name || state.cardName || "" } });
+    if (error) { setCardError(error.message); setProcessing(false); return; }
+    await finishBooking(paymentMethod.id, chargeTotal);
+  }
+
+  async function handleFreeBook() {
+    setProcessing(true); setCardError(null);
+    await finishBooking("COUPON-FREE", 0);
+  }
+
+  return (
+    <StepShell title="Sign & pay" kicker="STEP 3 · AGREEMENT & PAYMENT">
+      {/* ── Agreement ── */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, maxWidth: 480 }}>
+          Scroll through the full agreement below, then sign and pay to complete your booking.
+        </p>
+        <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Download PDF ›
+        </a>
+      </div>
+
+      <div style={{ border: "1px solid #cccccc", marginBottom: 24, background: "#fff" }}>
+        <div style={{ background: "#f4f6f9", borderBottom: "1px solid #e6e6e6", padding: "14px 24px", display: "flex", justifyContent: "space-between" }}>
+          <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>TVR Rental Agreement</span>
+          <span style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>v 1.0 · {today}</span>
+        </div>
+        <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }} onScroll={handleAgreementScroll}>
+          {[
+            ["§1. Definitions", "Agreement means this form and all rental documents. You/your/renter means the customer, authorized renter, and anyone responsible for charges. All persons included as you/your are signing to agree jointly and separately to all obligations, terms, conditions, and amounts owed under this Agreement. We/us/our means Tennessee Valley Rentals LLC. Authorized Driver means only drivers approved on this Agreement. Trailer means the non-motorized trailer rented or any substitutes. Loss of Use means our lost rental time during repair or replacement, calculated at the daily rental rate. Diminished Value means any reduction in value after damage or loss."],
+            ["§2. Rental, Indemnity and Warranties", "This is a trailer rental contract. We may repossess the trailer at any time and without prior notice to the extent permitted by law, if it is abandoned, overdue, or used in violation of law or this Agreement. You agree to indemnify and hold us harmless from claims, liability, costs, and attorney fees arising from this rental or your use of the trailer. The trailer is rented as-is, with no express, implied, or apparent warranties, including merchantability or fitness for particular purpose."],
+            ["§3. Condition and Return", "You must return the trailer to the agreed location by the agreed date and time, in the same condition received except ordinary wear. It is your responsibility before departure to inspect the trailer for its safety and condition until you accept it or report issues. Replacement equipment may be at our prior approval."],
+            ["§4. Damage, Loss, Theft and Reporting", "You are responsible for all damage to, loss of, or theft of the trailer and equipment, whether or not you are at fault, including weather, road conditions, vandalism, recovery, storage, Loss of Use, Diminished Value, missing equipment, and reasonable administrative expenses. If the trailer is lost, stolen, not returned, not repaired, or we reasonably elect not to repair, you are responsible for the trailer actual cash value, replacement cost, or remaining financial loss. You must report accidents, theft, damage, or loss to us and police within 24 hours."],
+            ["§5. Equipment / Replacement Cost", "You acknowledge receiving the listed equipment and replacement costs. If any listed item is lost, stolen, damaged, or not returned, you agree to pay the listed replacement cost, or cost of actual repair or replacement, whichever is greater. You had an opportunity to inspect the trailer, tires, hitch, lights, and equipment before accepting it."],
+            ["§6. Tow Vehicle and Cargo Responsibility", "You are solely responsible for confirming that your tow vehicle is legally and mechanically capable of towing the trailer and load. You are solely responsible for safe loading, weight distribution, balancing, and securing all cargo."],
+            ["§7. Prohibited Uses", "Prohibited uses include: transporting hazardous, dangerous, or illegal materials; transporting people; driving under the influence; use by anyone not listed as an Authorized Driver; false or misleading info at reservation; use outside the continental United States; overloading; towing under/through insufficient clearance; continued use when damage is likely; damage from misuse; or intent to criminally conceal, confiscate, or modify the trailer without written permission."],
+            ["§8. Charges", "You agree to pay on demand all amounts due, including rental time, taxes, traffic/toll/parking/camera citations, towing, storage, recovery, collection costs, attorney fees, 5% late payment fee if applicable, and a cleaning fee up to $500 if returned substantially less clean than rented. If we pay a toll or citation for you, a $100 administrative fee may apply to each charge. Early returns do not create a refund unless agreed in writing."],
+            ["§9. Deposit and Payment Authorization", "We may apply your deposit to any amounts owed, including our reasonable estimate of damages, administrative costs, Loss of Use, storage, and any other applicable charges. You authorize us to charge your card or payment method on file for amounts owed under this Agreement, including charges discovered after return, subject to your right to dispute them through legal routes."],
+            ["§10. Late Return", "The trailer must be returned by the agreed check-in date and time. Late returns are charged at the daily rental rate for each additional day or partial day, plus documented loss, expense, or reservation impact. If the trailer is overdue and we cannot obtain prompt return, we may seek recovery at your expense."],
+            ["§11. Cancellation, Rescheduling, No-Show", "Cancellations, rescheduling, and no-shows are governed by the booking terms provided at reservation. Unless different written terms apply, deposits or prepaid amounts may be applied to late cancellation or rescheduling fees rather than another customer. Cancellations made less than 24 hours before the scheduled rental start time may be subject to a $25 late cancellation fee. No-shows may result in forfeiture of any deposit or prepaid amounts."],
+            ["§12. GPS Tracking", "For security, recovery, and fleet management, the trailer may have GPS or other tracking technology. You consent to tracking during the rental period and agree not to remove, tamper with, disable, or obscure any device."],
+            ["§13. Insurance", "You represent that you have valid automobile liability insurance and any required coverage for towing and using the trailer. You are responsible for confirming coverage. Providing insurance information does not mean we verified coverage or accepted responsibility for any loss."],
+            ["§14. Modifications / Entire Agreement", "No item can be waived or modified except in writing signed by both parties. This Agreement is the entire agreement between you and us regarding this rental, and all prior representations or agreements are merged into it."],
+            ["§15. Waiver and Severability", "Our waiver of any breach is not a waiver of any additional breach or future performance. Accepting payment or not exercising a right does not waive any provision. You release us from consequential, special, or punitive damages related to this rental or reservation. If any provision is void or unenforceable, the remaining provisions stay valid and enforceable."],
+            ["§16. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any claim or dispute related to this Agreement shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates, unless applicable law requires otherwise."],
+            ["§17. Required Photos", "The renter is responsible for submitting clear before-rental and after-rental photos of the trailer and included equipment as requested by TVR. Photos should show the trailer's general condition, tires, lights, coupler, safety chains, jack, ramps/doors/gate, straps, tools, spare tire, and any existing damage. Failure to submit required before and after photos may delay deposit return and may result in partial or full forfeiture of the deposit if TVR cannot reasonably verify the trailer's condition at check-out or return."],
+            ["§18. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
+          ].map(([h, b], i) => (
+            <div key={i} style={{ marginBottom: 20 }}>
+              <div style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>{h}</div>
+              <p style={{ font: '300 14px/1.6 "Inter", sans-serif', color: "#3c3c3c", margin: 0 }}>{b}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {!scrolledThrough && (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, font: '400 13px/1.4 "Inter", sans-serif', color: "#7a5500" }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+          Scroll through the full agreement above to unlock the signature and payment.
+        </div>
+      )}
+
+      <div style={{ opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
+        <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9", marginBottom: 24 }}>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Signature</div>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
+            <div>
+              <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || "Type your full legal name"}
+                style={{ width: "100%", height: 48, padding: "0 0 6px 0", background: "transparent", color: state.signature ? "#1568be" : "#9a9a9a", border: 0, borderBottom: "1px solid #262626", borderRadius: 0, font: state.signature ? '700 24px/1 "Brush Script MT", "Comic Sans MS", cursive' : '300 16px/1 "Inter", sans-serif', outline: "none" }}/>
+              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>SIGNED BY (RENTER)</div>
+            </div>
+            <div style={{ width: 32 }}/>
+            <div>
+              <div style={{ height: 48, display: "flex", alignItems: "flex-end", paddingBottom: 6, font: '300 16px/1 "Inter", sans-serif', color: "#262626", borderBottom: "1px solid #262626" }}>{today}</div>
+              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>DATE</div>
+            </div>
+          </div>
+        </div>
+
+        <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 40, cursor: "pointer" }}>
+          <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
+          <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+            I have read and agree to the TVR Rental Agreement above (§1–§18). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
+          </span>
+        </label>
+      </div>
+
+      {/* ── Payment ── */}
+      <div style={{ opacity: agreementDone ? 1 : 0.4, pointerEvents: agreementDone ? "auto" : "none" }}>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20 }}>Payment</div>
+
+        {window.TVR_STRIPE_KEY?.startsWith("pk_test_") && (
+          <div style={{ padding: "12px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, display: "flex", gap: 12, alignItems: "flex-start" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b88017" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <div>
+              <div style={{ font: '700 12px/1.3 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase" }}>Stripe Test Mode</div>
+              <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 2 }}>No card will be charged. Use test card <strong style={{ fontWeight: 700, color: "#262626" }}>4242 4242 4242 4242</strong>, any future expiry, any CVC.</div>
+            </div>
+          </div>
+        )}
+
+        {couponApplied ? (
+          <div style={{ padding: "20px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>Coupon applied — no payment required.</span>
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: 20 }}>
+              <Field label="Cardholder name">
+                <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || "Name on card"}/>
+              </Field>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>Card details</div>
+              <div style={{ minHeight: 48, padding: "0 16px", background: "#fff", border: cardError ? "1px solid #dc2626" : "1px solid #cccccc", display: "flex", alignItems: "center" }}>
+                <div ref={cardMountRef} style={{ width: "100%" }}/>
+                {!stripeReady && <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>Loading secure card field…</span>}
+              </div>
+              {cardError && <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626", marginTop: 6, letterSpacing: "0.3px" }}>{cardError}</div>}
+              {!cardError && <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>Card number, expiry, CVC, and ZIP. Powered by Stripe.</div>}
+            </div>
+          </>
+        )}
+
+        <div style={{ marginTop: 20 }}>
+          <button type="button" onClick={() => setCouponOpen(o => !o)} style={{ background: "none", border: 0, padding: 0, cursor: "pointer", font: '400 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px" }}>
+            {couponOpen ? "▲ Hide coupon code" : "▼ Have a coupon code?"}
+          </button>
+          {couponOpen && (
+            <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <input value={couponCode} onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }} onKeyDown={e => e.key === "Enter" && applyCoupon()} placeholder="Enter code"
+                style={{ flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", borderRadius: 0, outline: "none", background: "#fff", color: "#262626", font: '300 14px/1 "Inter", sans-serif' }}/>
+              <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{ height: 40, padding: "0 16px", background: "#262626", color: "#fff", border: 0, cursor: couponLoading || !couponCode.trim() ? "not-allowed" : "pointer", font: '700 12px/1 "Inter", sans-serif', letterSpacing: "0.5px", opacity: couponLoading || !couponCode.trim() ? 0.5 : 1 }}>
+                {couponLoading ? "…" : "Apply"}
+              </button>
+            </div>
+          )}
+          {coupon?.type === "percent" && <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>Code applied — <strong style={{ fontWeight: 700 }}>{coupon.percent}% off the rental rate</strong> (tax and deposit unaffected).</div>}
+          {couponError && <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#dc2626" }}>{couponError}</div>}
+        </div>
+
+        {!couponApplied && (
+          <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+              Card data goes directly to Stripe — TVR never sees the full number.{" "}
+              Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginTop: 32 }}>
+        <StepFooter
+          onBack={processing ? null : onBack}
+          onNext={couponApplied ? handleFreeBook : handlePay}
+          nextLabel={processing ? "Processing…" : couponApplied ? "Complete booking (free)" : `Pay $${chargeTotal} & confirm`}
+          disabled={!valid}
+        />
+      </div>
+    </StepShell>
+  );
+}
+
 /* ---------- 7. Confirmation ---------- */
 function StepDone({ state, onReset }) {
   const isMobile = useWindowWidth() < 640;
@@ -1501,7 +1793,7 @@ function StepFooter({ onBack, onNext, nextLabel, disabled }) {
 
 window.BK = {
   TopBar, Stepper, OrderSummary,
-  StepTrailerDates, StepCustomer, StepDocs, StepCustomerDocs, StepAgreement, StepPayment, StepDone,
+  StepTrailerDates, StepCustomer, StepDocs, StepCustomerDocs, StepAgreement, StepPayment, StepAgreementPay, StepDone,
   Button: BkButton,
   TRAILERS,
 };

@@ -232,13 +232,13 @@
     }
 
     /* ------- Booking app ------- */
-    const STEPS = ["Trailer", "Info & Docs", "Sign", "Pay", "Done"];
+    const STEPS = ["Trailer", "Info & Docs", "Sign & Pay", "Done"];
 
     function BookingApp({ setView, presetTrailer }) {
       const C = window.TVR_CONTENT.booking;
       const {
         TopBar, Stepper, OrderSummary,
-        StepTrailerDates, StepCustomerDocs, StepAgreement, StepPayment, StepDone,
+        StepTrailerDates, StepCustomerDocs, StepAgreementPay, StepDone,
       } = window.BK;
 
       const today = new Date();
@@ -266,7 +266,7 @@
 
       const StepComp = [
         StepTrailerDates, StepCustomerDocs,
-        StepAgreement, StepPayment, StepDone,
+        StepAgreementPay, StepDone,
       ][step];
 
       return (
