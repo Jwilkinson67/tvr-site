@@ -46,7 +46,9 @@
     img { max-width: 100%; display: block; }
 
     .nav { background: #fff; border-bottom: 1px solid #e6e6e6; padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-logo img { height: 28px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-line { width: 32px; height: 2.5px; background: #b5212b; flex-shrink: 0; }
+    .nav-logo-text { font: 800 17px/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif; font-style: italic; color: #1568be; letter-spacing: 0.5px; text-transform: uppercase; }
     .nav-phone { font: 300 13px/1 "Inter", sans-serif; color: #6b6b6b; }
     .nav-book { background: #1568be; color: #fff; font: 700 12px/1 "Inter", sans-serif; letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 20px; }
     .nav-book:hover { background: #1257a3; }
@@ -137,9 +139,10 @@
 
 <!-- Nav -->
 <nav class="nav">
-  <div class="nav-logo">
-    <a href="/"><img src="assets/tvr-logo-primary.png" alt="Tennessee Valley Rentals"></a>
-  </div>
+  <a href="/" class="nav-logo">
+    <span class="nav-logo-line"></span>
+    <span class="nav-logo-text">Tennessee Valley Rentals LLC</span>
+  </a>
   <span class="nav-phone">(321) 765-3077</span>
   <a href="/?book=hauler" class="nav-book">Book Now</a>
 </nav>
