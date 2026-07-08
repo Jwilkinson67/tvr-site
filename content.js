@@ -198,10 +198,10 @@ window.TVR_CONTENT = {
       photo: "assets/aaron-n.jpg",
     },
     {
-      name: "Ben and Tara Wolfe",
-      date: "June 11, 2026",
+      name: "Ryan Holloway",
+      date: "July 5, 2026",
       stars: 5,
-      text: "Great communication and easy booking system. I prefer to support small businesses. I had a great experience and will definitely rent from them again.",
+      text: "Great option for trailer rental. Has a number to call if you have any issues. Answered immediately and helped us with the issue we were having. We rented the open car trailer and it comes with a nice winch for pulling the car onto the trailer which helped out a lot. Also a toolbox full of straps and everything else you would need. DEFINITELY RECOMMEND OVER U HAUL. Definitely will be back for future rentals.",
       photo: null,
     },
     {
