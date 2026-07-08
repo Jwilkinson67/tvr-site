@@ -300,7 +300,8 @@
 
     /* ------- Top-level router ------- */
     function App() {
-      const [view, setView] = useState("marketing"); // "marketing" | "booking" | "booking:<trailerId>"
+      const urlBook = new URLSearchParams(window.location.search).get("book");
+      const [view, setView] = useState(urlBook ? "booking:" + urlBook : "marketing"); // "marketing" | "booking" | "booking:<trailerId>"
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       applyTweaks(t); // run before child renders so they read updated content
       const isBooking = view === "booking" || view.startsWith("booking:");
