@@ -722,6 +722,33 @@ function StepDocs({ state, setState, onNext, onBack }) {
 function StepCustomerDocs({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
 
+  // ── Return customer login ──
+  const [loginOpen,    setLoginOpen]    = React.useState(false);
+  const [loginEmail,   setLoginEmail]   = React.useState("");
+  const [loginPass,    setLoginPass]    = React.useState("");
+  const [loginStatus,  setLoginStatus]  = React.useState("idle"); // idle | loading | success | error
+  const [loginError,   setLoginError]   = React.useState("");
+  const [addressKey,   setAddressKey]   = React.useState(0); // incremented on login to force re-mount
+
+  async function handleLogin() {
+    if (!loginEmail || !loginPass) return;
+    setLoginStatus("loading"); setLoginError("");
+    try {
+      const res  = await fetch("/.netlify/functions/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail, password: loginPass }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setLoginStatus("error"); setLoginError(data.error || "Invalid email or password."); return; }
+      setState(s => ({ ...s, name: data.name, email: loginEmail, phone: data.phone, address: data.address, city: data.city, stateZip: data.stateZip, tow: data.tow, hitch: data.hitch, brakeController: data.brakeController }));
+      setAddressKey(k => k + 1);
+      setLoginStatus("success");
+    } catch {
+      setLoginStatus("error"); setLoginError("Network error. Please try again.");
+    }
+  }
+
   const docs = [
     { id: "license",   t: "Driver's license", s: "Front of ID." },
     { id: "insurance", t: "Insurance card",    s: "Auto policy that covers driver and vehicle used." },
@@ -782,6 +809,46 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
 
   return (
     <StepShell title="Your info & documents" kicker="STEP 2 · CUSTOMER INFO & ID">
+      {/* ── Return customer login ── */}
+      {loginStatus === "success" ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", background: "#f0fdf4", borderLeft: "4px solid #22c55e", marginBottom: 28 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+          <span style={{ font: '300 14px/1.4 "Inter", sans-serif', color: "#3c3c3c" }}>
+            <strong style={{ fontWeight: 700, color: "#262626" }}>Signed in.</strong> Your info has been pre-filled — review it below and upload your documents.
+          </span>
+        </div>
+      ) : (
+        <div style={{ marginBottom: 28, padding: 20, background: "#f4f6f9", borderLeft: "3px solid #1568be" }}>
+          {!loginOpen ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>Returning customer?</span>
+              <button onClick={() => setLoginOpen(true)} style={{ background: "none", border: 0, padding: 0, cursor: "pointer", font: '700 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px" }}>
+                Sign in to pre-fill →
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div style={{ font: '700 13px/1 "Inter", sans-serif', color: "#262626", marginBottom: 14, letterSpacing: "0.3px" }}>Sign in to your TVR account</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <input type="email" placeholder="Email" value={loginEmail} onChange={e => { setLoginEmail(e.target.value); setLoginError(""); }}
+                  style={{ flex: 1, minWidth: 160, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
+                  onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
+                  onKeyDown={e => e.key === "Enter" && handleLogin()}/>
+                <input type="password" placeholder="Password" value={loginPass} onChange={e => { setLoginPass(e.target.value); setLoginError(""); }}
+                  style={{ flex: 1, minWidth: 140, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
+                  onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
+                  onKeyDown={e => e.key === "Enter" && handleLogin()}/>
+                <BkButton onClick={handleLogin} disabled={loginStatus === "loading"}>
+                  {loginStatus === "loading" ? "Signing in…" : "Sign in"}
+                </BkButton>
+              </div>
+              {loginError && <div style={{ font: '300 13px/1.4 "Inter", sans-serif', color: "#b5212b", marginTop: 8 }}>{loginError}</div>}
+              <button onClick={() => setLoginOpen(false)} style={{ background: "none", border: 0, padding: 0, marginTop: 10, cursor: "pointer", font: '300 12px/1 "Inter", sans-serif', color: "#9b9b9b" }}>Cancel</button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Customer fields ── */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
         <Field label="Full name" hint="As shown on your driver's license">
@@ -794,7 +861,7 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
           <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
         </Field>
         <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
-          <AddressAutocomplete state={state} setState={setState}/>
+          <AddressAutocomplete key={addressKey} state={state} setState={setState}/>
         </Field>
         <Field label="Tow vehicle" hint="Year, make, model — used to confirm towing capacity">
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
