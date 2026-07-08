@@ -718,6 +718,150 @@ function StepDocs({ state, setState, onNext, onBack }) {
   );
 }
 
+/* ---------- 2+3 combined: Customer Info & Documents ---------- */
+function StepCustomerDocs({ state, setState, onNext, onBack }) {
+  const isMobile = useWindowWidth() < 768;
+
+  const docs = [
+    { id: "license",   t: "Driver's license", s: "Front of ID." },
+    { id: "insurance", t: "Insurance card",    s: "Auto policy that covers driver and vehicle used." },
+  ];
+
+  const customerValid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
+  const docsValid     = docs.every(d => state.docs?.[d.id] && state.docs[d.id].status !== "uploading");
+  const valid         = customerValid && docsValid;
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  function handleFile(id, e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      alert("That file is over 10 MB. Please pick a smaller file.");
+      e.target.value = "";
+      return;
+    }
+    setState(s => ({
+      ...s,
+      docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploading" } },
+    }));
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result.split(",")[1];
+      try {
+        const res = await fetch("/.netlify/functions/upload-doc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: base64, filename: file.name, mimeType: file.type || "application/octet-stream", docId: id, sessionId: state.sessionId }),
+        });
+        const result = await res.json();
+        setState(s => ({
+          ...s,
+          docs:     { ...(s.docs || {}),     [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" } },
+          docPaths: { ...(s.docPaths || {}), [id]: result.path || "" },
+        }));
+      } catch {
+        setState(s => ({
+          ...s,
+          docs: { ...(s.docs || {}), [id]: { name: file.name, size: formatSize(file.size), type: file.type, status: "uploaded" } },
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
+
+  function triggerPick(id) {
+    const el = document.getElementById(`tvr-upload2-${id}`);
+    if (el) el.click();
+  }
+
+  return (
+    <StepShell title="Your info & documents" kicker="STEP 2 · CUSTOMER INFO & ID">
+      {/* ── Customer fields ── */}
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
+        <Field label="Full name" hint="As shown on your driver's license">
+          <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd" autoComplete="name"/>
+        </Field>
+        <Field label="Email">
+          <Input type="email" value={state.email} onChange={v => setState({...state, email: v})} placeholder="you@email.com" autoComplete="email"/>
+        </Field>
+        <Field label="Phone">
+          <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
+        </Field>
+        <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
+          <AddressAutocomplete state={state} setState={setState}/>
+        </Field>
+        <Field label="Tow vehicle" hint="Year, make, model — used to confirm towing capacity">
+          <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
+        </Field>
+        <Field label="Do you have a 2-5/16 inch hitch ball?" hint="All TVR trailers require a 2-5/16 inch ball coupler">
+          <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
+            options={["Yes — I have the right hitch ball", "No — I will use TVR's"]}/>
+        </Field>
+        <Field label="7-way trailer plug & brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
+          <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
+            options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
+        </Field>
+        <Field label="Trip purpose (optional)">
+          <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
+        </Field>
+      </div>
+      <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 32, cursor: "pointer" }}>
+        <input type="checkbox" checked={!!state.marketingOptIn} onChange={e => setState({...state, marketingOptIn: e.target.checked})}
+          style={{ marginTop: 3, flexShrink: 0, width: 16, height: 16, accentColor: "#1568be" }}/>
+        <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>
+          Send me occasional deals and reminders from TVR <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>(optional)</em>
+        </span>
+      </label>
+
+      {/* ── Documents ── */}
+      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>Documents</div>
+      <div style={{ display: "grid", gap: 16, marginBottom: 24 }}>
+        {docs.map(d => {
+          const f = state.docs?.[d.id];
+          return (
+            <div key={d.id} style={{ border: f ? "1px solid #e6e6e6" : "1px dashed #cccccc", background: f ? "#fff" : "#f4f6f9", padding: 22, display: "flex", gap: 16, alignItems: "center" }}>
+              <input id={`tvr-upload2-${d.id}`} type="file" accept="image/*,application/pdf"
+                style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }}
+                onChange={(e) => handleFile(d.id, e)}/>
+              <div style={{ width: 44, height: 44, border: "1px solid " + (f ? "#22c55e" : "#cccccc"), background: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {f ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                )}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
+                <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? "uploading…" : "uploaded"}</span></> : d.s}
+                </div>
+              </div>
+              {f ? (
+                <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>Replace</BkButton>
+              ) : (
+                <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>Upload</BkButton>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ padding: 16, background: "#f4f6f9", borderLeft: "2px solid #1568be", marginBottom: 32 }}>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 8 }}>Privacy</div>
+        <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
+          Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return.
+        </div>
+      </div>
+      <StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · rental agreement" disabled={!valid}/>
+    </StepShell>
+  );
+}
+
 /* ---------- (Coverage step removed — customer brings their own insurance) ---------- */
 
 /* ---------- 5. Agreement ---------- */
@@ -1357,7 +1501,7 @@ function StepFooter({ onBack, onNext, nextLabel, disabled }) {
 
 window.BK = {
   TopBar, Stepper, OrderSummary,
-  StepTrailerDates, StepCustomer, StepDocs, StepAgreement, StepPayment, StepDone,
+  StepTrailerDates, StepCustomer, StepDocs, StepCustomerDocs, StepAgreement, StepPayment, StepDone,
   Button: BkButton,
   TRAILERS,
 };
