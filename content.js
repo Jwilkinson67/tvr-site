@@ -209,7 +209,7 @@ window.TVR_CONTENT = {
       date: "July 9, 2026",
       stars: 5,
       text: "Julian was great! The pickup and drop off was so smooth. The trailer did great handling my $60,000 baby! Would trust this trailer again. Comes with a winch too! Can't beat it for the price. He was very helpful. 10/10",
-      photo: "assets/david-myers.jpg",
+      photo: "assets/David Myers.png",
     },
   ],
   googleReviewUrl: "https://g.page/r/CWniJIMNhoVzEAI/review",
