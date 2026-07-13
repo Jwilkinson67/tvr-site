@@ -232,14 +232,17 @@
     }
 
     /* ------- Booking app ------- */
-    const STEPS = ["Trailer", "Info & Docs", "Sign & Pay", "Done"];
+    const STEPS_EN = ["Trailer", "Info & Docs", "Sign & Pay", "Done"];
+    const STEPS_ES = ["Remolque", "Info y Docs", "Firmar y Pagar", "Listo"];
 
     function BookingApp({ setView, presetTrailer }) {
       const C = window.TVR_CONTENT.booking;
       const {
-        TopBar, Stepper, OrderSummary,
+        LangContext, TopBar, Stepper, OrderSummary,
         StepTrailerDates, StepCustomerDocs, StepAgreementPay, StepDone,
       } = window.BK;
+
+      const [lang, setLang] = React.useState("en");
 
       const today = new Date();
       const inThree = new Date(today.getTime() + 3 * 86400 * 1000);
@@ -260,6 +263,7 @@
       const [state, setState] = useState(initial);
       const [step, setStep]   = useState(0);
 
+      const STEPS = lang === "es" ? STEPS_ES : STEPS_EN;
       const goNext = () => { setStep(s => Math.min(STEPS.length - 1, s + 1)); window.scrollTo(0, 0); };
       const goBack = () => { setStep(s => Math.max(0, s - 1)); window.scrollTo(0, 0); };
       const reset  = () => { setState(initial); setStep(0); setView("marketing"); };
@@ -270,6 +274,7 @@
       ][step];
 
       return (
+        <LangContext.Provider value={{ lang, setLang }}>
         <div data-screen-label={"Booking · step " + (step + 1) + " · " + STEPS[step]} className="tvr-booking-bg">
           {/* Back-to-marketing strip */}
           <div style={{
@@ -287,7 +292,7 @@
           </div>
 
           <TopBar/>
-          <Stepper steps={STEPS} current={step}/>
+          <Stepper steps={STEPS} current={step} />
           <div className="booking-shell">
             <div className="booking-main">
               <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
@@ -295,6 +300,7 @@
             {step < STEPS.length - 1 && <OrderSummary state={state}/>}
           </div>
         </div>
+        </LangContext.Provider>
       );
     }
 

@@ -47,6 +47,177 @@ const Bookings = {
 // Expose for debugging (run `TVR_Bookings.clear()` in DevTools to wipe).
 window.TVR_Bookings = Bookings;
 
+/* ====================================================
+   LANGUAGE / TRANSLATIONS
+   ==================================================== */
+const LangContext = React.createContext({ lang: "en", setLang: () => {} });
+function useLang() { return React.useContext(LangContext); }
+
+const TRANSLATIONS = {
+  en: {
+    bookingLabel: "Booking", needHelp: "Need help?",
+    reservationSummary: "Reservation summary", noTrailerSelected: "No trailer selected",
+    pickup: "Pickup", return: "Return", duration: "Duration", day: "day", days: "days",
+    tax: "Tax (9.25%)", refundableDeposit: "Refundable deposit", chargedToday: "Charged today",
+    rentalWeek: "week", rentalWeeks: "weeks",
+    step1Title: "Pick a trailer and dates", step1Kicker: "STEP 1 · TRAILER & DATES",
+    pickupDate: "Pickup date", returnDate: "Return date", pickupTime: "Pickup time", returnTime: "Return time",
+    pickupNotes: "Pickup notes (optional)",
+    pickupNotesHint: "Anything we should know — flexibility on the time above, gate codes, what you're hauling, etc.",
+    pickupNotesPlaceholder: "e.g. First time renting a trailer — could use a quick walkthrough",
+    pickupPastError: "Pickup date can't be in the past.", returnBeforePickup: "Return must be after pickup.",
+    trailerAlreadyBooked: "That trailer is already booked for those dates.",
+    reservedDates: "Pick a different range or choose the other trailer.",
+    checkingAvailability: "Checking availability…", continueCustomerInfo: "Continue · customer info",
+    step2Title: "Tell us about you", step2Kicker: "STEP 2 · CUSTOMER INFO",
+    fullName: "Full name", fullNameHint: "As shown on your driver's license",
+    email: "Email", phone: "Phone", address: "Address", addressPlaceholder: "123 Main St, Chattanooga, TN",
+    towVehicle: "Tow vehicle", towVehicleHint: "Year, make, model — used to confirm towing capacity",
+    towVehiclePlaceholder: "2021 Ford F-150",
+    hitchQuestion: "Do you have a 2-5/16 inch hitch ball?", hitchHint: "All TVR trailers require a 2-5/16 inch ball coupler",
+    hitchYes: "Yes — I have the right hitch ball", hitchNo: "No — I will use TVR's",
+    brakeQuestion: "7-way trailer plug & brake controller?", brakeHint: "Required to operate TVR trailers — controls trailer brakes",
+    brakeYes: "Yes — my vehicle has both", brakeNo: "No — I don't have one or both",
+    tripPurpose: "Trip purpose (optional)", tripPurposePlaceholder: "Moving · Vehicle transport · Equipment",
+    marketingOptIn: "Send me occasional deals and reminders from TVR", optional: "(optional)",
+    continueUploadDocs: "Continue · upload documents",
+    step3Title: "Upload documents", step3Kicker: "STEP 3 · ID & INSURANCE",
+    driverLicense: "Driver's license", driverLicenseHint: "Front of ID.",
+    insuranceCard: "Insurance card", insuranceCardHint: "Auto policy that covers driver and vehicle used.",
+    uploading: "uploading…", uploaded: "uploaded", replace: "Replace", upload: "Upload",
+    privacyTitle: "Privacy",
+    privacyText: "Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return. See the rental agreement for details.",
+    privacyTextShort: "Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return.",
+    continueAgreement: "Continue · rental agreement",
+    step23Title: "Your info & documents", step23Kicker: "STEP 2 · CUSTOMER INFO & ID",
+    returningCustomer: "Returning customer?", signInPrefill: "Sign in to pre-fill →",
+    signInTitle: "Sign in to your TVR account", emailPlaceholder: "Email", passwordPlaceholder: "Password",
+    signIn: "Sign in", signingIn: "Signing in…", cancel: "Cancel",
+    signedIn: "Signed in.", signedInDesc: "Your info has been pre-filled — review it below and upload your documents.",
+    invalidCredentials: "Invalid email or password.", networkError: "Network error. Please try again.",
+    documentsSection: "Documents",
+    step4Title: "Sign the rental agreement", step4Kicker: "STEP 4 · AGREEMENT",
+    agreementIntro: "Scroll through the full agreement below, then sign by typing your full name — this counts as a legal e-signature. We'll email you a signed copy.",
+    agreementNote: null,
+    downloadPDF: "Download PDF ›", agreementTitle: "TVR Rental Agreement",
+    scrollToUnlock: "Scroll through the full agreement above to unlock the signature.",
+    scrollToUnlockPay: "Scroll through the full agreement above to unlock the signature and payment.",
+    signatureLabel: "Signature", signedBy: "SIGNED BY (RENTER)", dateLabel: "DATE",
+    signaturePlaceholder: "Type your full legal name",
+    agreementCheckbox: "I have read and agree to the TVR Rental Agreement above (§1–§18). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.",
+    continuePayment: "Continue · payment",
+    step6Title: "Payment", step6Kicker: "STEP 6 · PAYMENT",
+    step3bTitle: "Sign & pay", step3bKicker: "STEP 3 · AGREEMENT & PAYMENT",
+    step3bIntro: "Scroll through the full agreement below, then sign and pay to complete your booking.",
+    paymentSection: "Payment",
+    cardholderName: "Cardholder name", nameOnCard: "Name on card", cardDetails: "Card details",
+    loadingCardField: "Loading secure card field…", cardFieldHint: "Card number, expiry, CVC, and ZIP. Powered by Stripe.",
+    haveCoupon: "▼ Have a coupon code?", hideCoupon: "▲ Hide coupon code",
+    enterCode: "Enter code", apply: "Apply",
+    couponApplied: "Coupon applied — no payment required. No card will be charged.",
+    couponAppliedShort: "Coupon applied — no payment required.",
+    codeAppliedFree: "Code applied — no charge.",
+    couponMultiDayError: "This code is only valid on rentals of 2+ days.",
+    couponInvalidError: "Invalid code.", couponValidateError: "Could not validate — try submitting anyway.",
+    testModeTitle: "Stripe Test Mode",
+    testModeDesc: "No card will be charged. Use test card",
+    processing: "Processing…", completeFree: "Complete Booking (Free)", completeFreeShort: "Complete booking (free)",
+    reservationSubmitted: "RESERVATION #{id} · SUBMITTED",
+    youreSet: "You're set,", confirmationSuffix: ".",
+    bookingPendingTitle: "Your booking is pending review.",
+    bookingPendingDesc: "You'll receive a confirmation email once TVR approves your reservation. This typically happens within a few hours during business hours.",
+    pickupLabel: "Pickup", returnLabel: "Return", confirmationLabel: "Confirmation", sentToPhone: "Sent to phone",
+    addToCalendar: "Add to calendar", newReservation: "New reservation",
+    bookFasterTitle: "Book faster next time",
+    bookFasterDesc: "Save your info so you don't have to re-enter it next time.",
+    choosePassword: "Choose a password", createAccount: "Create account", creating: "Creating…",
+    accountCreated: "Account created.", accountCreatedDesc: "Next time you book, sign in to skip entering your details.",
+    passwordTooShort: "Password must be at least 6 characters.", somethingWentWrong: "Something went wrong.",
+    back: "← Back",
+  },
+  es: {
+    bookingLabel: "Reserva", needHelp: "¿Necesita ayuda?",
+    reservationSummary: "Resumen de reserva", noTrailerSelected: "Ningún remolque seleccionado",
+    pickup: "Recogida", return: "Devolución", duration: "Duración", day: "día", days: "días",
+    tax: "Impuesto (9.25%)", refundableDeposit: "Depósito reembolsable", chargedToday: "Cobro hoy",
+    rentalWeek: "semana", rentalWeeks: "semanas",
+    step1Title: "Seleccione un remolque y fechas", step1Kicker: "PASO 1 · REMOLQUE Y FECHAS",
+    pickupDate: "Fecha de recogida", returnDate: "Fecha de devolución", pickupTime: "Hora de recogida", returnTime: "Hora de devolución",
+    pickupNotes: "Notas de recogida (opcional)",
+    pickupNotesHint: "Cualquier cosa que debamos saber — flexibilidad de horario, códigos de acceso, qué transportará, etc.",
+    pickupNotesPlaceholder: "Ej. Primera vez rentando un remolque — agradecería una introducción rápida",
+    pickupPastError: "La fecha de recogida no puede ser en el pasado.", returnBeforePickup: "La devolución debe ser después de la recogida.",
+    trailerAlreadyBooked: "Ese remolque ya está reservado para esas fechas.",
+    reservedDates: "Elija un rango diferente o seleccione el otro remolque.",
+    checkingAvailability: "Verificando disponibilidad…", continueCustomerInfo: "Continuar · información del cliente",
+    step2Title: "Cuéntenos sobre usted", step2Kicker: "PASO 2 · INFORMACIÓN DEL CLIENTE",
+    fullName: "Nombre completo", fullNameHint: "Tal como aparece en su licencia de conducir",
+    email: "Correo electrónico", phone: "Teléfono", address: "Dirección", addressPlaceholder: "123 Main St, Chattanooga, TN",
+    towVehicle: "Vehículo de remolque", towVehicleHint: "Año, marca, modelo — para confirmar capacidad de remolque",
+    towVehiclePlaceholder: "2021 Ford F-150",
+    hitchQuestion: "¿Tiene una bola de enganche de 2-5/16 pulgadas?", hitchHint: "Todos los remolques de TVR requieren una bola de 2-5/16 pulgadas",
+    hitchYes: "Sí — tengo la bola de enganche correcta", hitchNo: "No — usaré la de TVR",
+    brakeQuestion: "¿Tiene enchufe de 7 vías y controlador de frenos?", brakeHint: "Necesario para operar los remolques de TVR — controla los frenos",
+    brakeYes: "Sí — mi vehículo tiene ambos", brakeNo: "No — no tengo uno o ninguno",
+    tripPurpose: "Propósito del viaje (opcional)", tripPurposePlaceholder: "Mudanza · Transporte de vehículos · Equipos",
+    marketingOptIn: "Envíenme ofertas y recordatorios ocasionales de TVR", optional: "(opcional)",
+    continueUploadDocs: "Continuar · subir documentos",
+    step3Title: "Subir documentos", step3Kicker: "PASO 3 · ID Y SEGURO",
+    driverLicense: "Licencia de conducir", driverLicenseHint: "Parte frontal de la identificación.",
+    insuranceCard: "Tarjeta de seguro", insuranceCardHint: "Póliza de auto que cubre al conductor y el vehículo utilizado.",
+    uploading: "subiendo…", uploaded: "subido", replace: "Reemplazar", upload: "Subir",
+    privacyTitle: "Privacidad",
+    privacyText: "Los documentos se almacenan cifrados, visibles únicamente por el personal de TVR durante el período de alquiler, y se eliminan 90 días después de la devolución. Consulte el contrato de alquiler para más detalles.",
+    privacyTextShort: "Los documentos se almacenan cifrados, visibles únicamente por el personal de TVR durante el período de alquiler, y se eliminan 90 días después de la devolución.",
+    continueAgreement: "Continuar · contrato de alquiler",
+    step23Title: "Su información y documentos", step23Kicker: "PASO 2 · INFO DEL CLIENTE E ID",
+    returningCustomer: "¿Cliente habitual?", signInPrefill: "Iniciar sesión para pre-rellenar →",
+    signInTitle: "Inicie sesión en su cuenta TVR", emailPlaceholder: "Correo electrónico", passwordPlaceholder: "Contraseña",
+    signIn: "Iniciar sesión", signingIn: "Iniciando sesión…", cancel: "Cancelar",
+    signedIn: "Sesión iniciada.", signedInDesc: "Su información ha sido pre-rellenada — revísela abajo y suba sus documentos.",
+    invalidCredentials: "Correo o contraseña no válidos.", networkError: "Error de red. Por favor, inténtelo de nuevo.",
+    documentsSection: "Documentos",
+    step4Title: "Firmar el contrato de alquiler", step4Kicker: "PASO 4 · CONTRATO",
+    agreementIntro: "Desplace el texto completo del contrato a continuación, luego firme escribiendo su nombre completo — esto tiene validez como firma electrónica legal. Le enviaremos una copia firmada.",
+    agreementNote: "Nota: El contrato está en inglés. Llame al (321) 765-3077 si tiene preguntas antes de firmar.",
+    downloadPDF: "Descargar PDF ›", agreementTitle: "Contrato de Alquiler TVR",
+    scrollToUnlock: "Desplace el texto completo del contrato para desbloquear la firma.",
+    scrollToUnlockPay: "Desplace el texto completo del contrato para desbloquear la firma y el pago.",
+    signatureLabel: "Firma", signedBy: "FIRMADO POR (ARRENDATARIO)", dateLabel: "FECHA",
+    signaturePlaceholder: "Escriba su nombre legal completo",
+    agreementCheckbox: "He leído y acepto el Contrato de Alquiler TVR (§1–§18). Confirmo que toda la información que proporcioné es precisa. Autorizo a TVR a autorizar un depósito en mi tarjeta, que solo se cobrará una vez aprobada la reserva. Entiendo que mi nombre escrito constituye una firma electrónica legalmente vinculante.",
+    continuePayment: "Continuar · pago",
+    step6Title: "Pago", step6Kicker: "PASO 6 · PAGO",
+    step3bTitle: "Firmar y pagar", step3bKicker: "PASO 3 · CONTRATO Y PAGO",
+    step3bIntro: "Desplace el texto completo del contrato a continuación, luego firme y pague para completar su reserva.",
+    paymentSection: "Pago",
+    cardholderName: "Nombre del titular de la tarjeta", nameOnCard: "Nombre en la tarjeta", cardDetails: "Datos de la tarjeta",
+    loadingCardField: "Cargando campo de tarjeta seguro…", cardFieldHint: "Número de tarjeta, vencimiento, CVC y código postal. Powered by Stripe.",
+    haveCoupon: "▼ ¿Tiene un código de cupón?", hideCoupon: "▲ Ocultar código de cupón",
+    enterCode: "Ingrese código", apply: "Aplicar",
+    couponApplied: "Cupón aplicado — no se requiere pago. No se cobrará ninguna tarjeta.",
+    couponAppliedShort: "Cupón aplicado — no se requiere pago.",
+    codeAppliedFree: "Código aplicado — sin costo.",
+    couponMultiDayError: "Este código solo es válido para alquileres de 2+ días.",
+    couponInvalidError: "Código no válido.", couponValidateError: "No se pudo validar — intente enviar de todas formas.",
+    testModeTitle: "Modo de Prueba de Stripe",
+    testModeDesc: "No se cobrará ninguna tarjeta. Use la tarjeta de prueba",
+    processing: "Procesando…", completeFree: "Completar Reserva (Gratis)", completeFreeShort: "Completar reserva (gratis)",
+    reservationSubmitted: "RESERVA #{id} · ENVIADA",
+    youreSet: "¡Listo,", confirmationSuffix: "!",
+    bookingPendingTitle: "Su reserva está pendiente de revisión.",
+    bookingPendingDesc: "Recibirá un correo de confirmación una vez que TVR apruebe su reserva. Esto generalmente ocurre en pocas horas durante el horario comercial.",
+    pickupLabel: "Recogida", returnLabel: "Devolución", confirmationLabel: "Confirmación", sentToPhone: "Enviado al teléfono",
+    addToCalendar: "Agregar al calendario", newReservation: "Nueva reserva",
+    bookFasterTitle: "Reserve más rápido la próxima vez",
+    bookFasterDesc: "Guarde su información para no tener que ingresarla la próxima vez.",
+    choosePassword: "Elija una contraseña", createAccount: "Crear cuenta", creating: "Creando…",
+    accountCreated: "Cuenta creada.", accountCreatedDesc: "La próxima vez que reserve, inicie sesión para omitir el ingreso de datos.",
+    passwordTooShort: "La contraseña debe tener al menos 6 caracteres.", somethingWentWrong: "Algo salió mal.",
+    back: "← Atrás",
+  },
+};
+
 function useWindowWidth() {
   const [w, setW] = React.useState(() => window.innerWidth);
   React.useEffect(() => {
@@ -65,12 +236,14 @@ function calcRental(trailer, days) {
   return weeks * trailer.weekly + extra * trailer.daily;
 }
 
-function rentalLabel(trailer, days) {
+function rentalLabel(trailer, days, lang) {
+  const tr = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const rental = lang === "es" ? "Alquiler" : "Rental";
   const weeks = Math.floor(days / 7);
   const extra = days % 7;
-  if (!weeks || !trailer?.weekly) return "Rental · " + days + "d";
-  if (extra === 0) return weeks === 1 ? "Rental · 1 week" : "Rental · " + weeks + " weeks";
-  return "Rental · " + weeks + "wk + " + extra + "d";
+  if (!weeks || !trailer?.weekly) return rental + " · " + days + "d";
+  if (extra === 0) return weeks === 1 ? rental + " · 1 " + tr.rentalWeek : rental + " · " + weeks + " " + tr.rentalWeeks;
+  return rental + " · " + weeks + "wk + " + extra + "d";
 }
 
 function todayISO() { return new Date().toISOString().slice(0, 10); }
@@ -202,6 +375,8 @@ function AddressAutocomplete({ state, setState }) {
 /* ----------- Top bar + Stepper ----------- */
 function TopBar() {
   const isMobile = useWindowWidth() < 768;
+  const { lang, setLang } = useLang();
+  const tr = TRANSLATIONS[lang];
   return (
     <header style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -212,13 +387,25 @@ function TopBar() {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ width: 28, height: 2.5, background: "#b5212b" }}/>
         <span style={{ font: '800 16px/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif', fontStyle: "italic", color: "#1568be", textTransform: "uppercase", letterSpacing: "0.5px" }}>Tennessee Valley Rentals LLC</span>
-        <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 4, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>Booking</span>
+        <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "1px", textTransform: "uppercase", marginLeft: 4, paddingLeft: 12, borderLeft: "1px solid #e6e6e6" }}>{tr.bookingLabel}</span>
       </div>
-      {!isMobile && (
-        <div style={{ display: "flex", alignItems: "center", gap: 24, font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
-          <span>Need help? <span style={{ color: "#262626", fontWeight: 700 }}>(321) 765-3077</span></span>
+      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+        {!isMobile && (
+          <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
+            {tr.needHelp} <span style={{ color: "#262626", fontWeight: 700 }}>(321) 765-3077</span>
+          </span>
+        )}
+        <div style={{ display: "flex", border: "1px solid #e6e6e6", overflow: "hidden" }}>
+          {["en", "es"].map(l => (
+            <button key={l} onClick={() => setLang(l)} style={{
+              padding: "6px 12px", border: 0, cursor: "pointer",
+              font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1px",
+              background: lang === l ? "#1568be" : "#fff",
+              color: lang === l ? "#fff" : "#6b6b6b",
+            }}>{l.toUpperCase()}</button>
+          ))}
         </div>
-      )}
+      </div>
     </header>
   );
 }
@@ -261,6 +448,8 @@ function Stepper({ steps, current }) {
 
 /* ----------- Order Summary (sticky rail) ----------- */
 function OrderSummary({ state }) {
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const trailer = TRAILERS[state.trailerId];
   const days = state.days || 1;
   const rental = trailer ? calcRental(trailer, days) : 0;
@@ -274,7 +463,7 @@ function OrderSummary({ state }) {
       position: "sticky", top: 144, alignSelf: "start",
       background: "#fff", padding: 24, border: "1px solid #e6e6e6",
     }}>
-      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Reservation summary</div>
+      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>{tr.reservationSummary}</div>
       {trailer ? (
         <div style={{ background: "#f4f6f9", padding: 16, marginBottom: 16, display: "flex", alignItems: "center", gap: 14, overflow: "hidden" }}>
           <img src={trailer.photo} alt="" style={{ width: 80, height: 60, objectFit: "contain", transform: `scale(${trailer.photoScale || 1})`, transformOrigin: "center center" }}/>
@@ -284,22 +473,22 @@ function OrderSummary({ state }) {
           </div>
         </div>
       ) : (
-        <div style={{ background: "#f4f6f9", padding: 24, marginBottom: 16, font: '400 12px/1.4 "Inter", sans-serif', color: "#9a9a9a", textTransform: "uppercase", letterSpacing: "1px", textAlign: "center" }}>No trailer selected</div>
+        <div style={{ background: "#f4f6f9", padding: 24, marginBottom: 16, font: '400 12px/1.4 "Inter", sans-serif', color: "#9a9a9a", textTransform: "uppercase", letterSpacing: "1px", textAlign: "center" }}>{tr.noTrailerSelected}</div>
       )}
 
       <div style={{ display: "grid", gap: 10, paddingBottom: 16, borderBottom: "1px solid #e6e6e6" }}>
-        <SummaryRow k="Pickup" v={state.pickup ? state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") : "—"}/>
-        <SummaryRow k="Return" v={state.dropoff ? state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") : "—"}/>
-        <SummaryRow k="Duration" v={days + " day" + (days !== 1 ? "s" : "")}/>
+        <SummaryRow k={tr.pickup} v={state.pickup ? state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") : "—"}/>
+        <SummaryRow k={tr.return} v={state.dropoff ? state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") : "—"}/>
+        <SummaryRow k={tr.duration} v={days + " " + (days !== 1 ? tr.days : tr.day)}/>
       </div>
 
       <div style={{ display: "grid", gap: 8, padding: "16px 0", borderBottom: "1px solid #e6e6e6" }}>
-        <PriceRow k={rentalLabel(trailer, days)} v={rental ? "$" + rental : "—"}/>
-        <PriceRow k="Tax (9.25%)" v={subtotal ? "$" + tax : "—"}/>
-        <PriceRow k="Refundable deposit" v={"$" + deposit}/>
+        <PriceRow k={rentalLabel(trailer, days, lang)} v={rental ? "$" + rental : "—"}/>
+        <PriceRow k={tr.tax} v={subtotal ? "$" + tax : "—"}/>
+        <PriceRow k={tr.refundableDeposit} v={"$" + deposit}/>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: 16 }}>
-        <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>Charged today</span>
+        <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>{tr.chargedToday}</span>
         <span style={{ font: '700 24px/1 "Inter", sans-serif', color: "#262626" }}>${total}</span>
       </div>
     </aside>
@@ -353,6 +542,8 @@ function listTrailers() {
 function StepTrailerDates({ state, setState, onNext }) {
   const today = todayISO();
   const isMobile = useWindowWidth() < 768;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const [loadingAvail, setLoadingAvail] = React.useState(false);
 
   // When a trailer is selected, pull its booked ranges from the server and
@@ -388,7 +579,7 @@ function StepTrailerDates({ state, setState, onNext }) {
   const valid = state.trailerId && state.pickup && state.dropoff &&
                 dateOrderOk && pickupPastOk && !conflict;
   return (
-    <StepShell title="Pick a trailer and dates" kicker="STEP 1 · TRAILER & DATES">
+    <StepShell title={tr.step1Title} kicker={tr.step1Kicker}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 32 }}>
         {listTrailers().map(t => {
           const sel = state.trailerId === t.id;
@@ -420,21 +611,21 @@ function StepTrailerDates({ state, setState, onNext }) {
         <div style={{ border: "1px solid #e6e6e6", marginBottom: 12 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
             <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6", borderBottom: "1px solid #e6e6e6" }}>
-              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup date</div>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.pickupDate}</div>
               <input type="date" min={today} value={state.pickup || ""}
                 onChange={e => { const d = computeDays(e.target.value, state.pickupTime, state.dropoff, state.dropoffTime); setState({...state, pickup: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
             <div style={{ padding: "14px 16px", borderBottom: "1px solid #e6e6e6" }}>
-              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return date</div>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.returnDate}</div>
               <input type="date" min={state.pickup || today} value={state.dropoff || ""}
                 onChange={e => { const d = computeDays(state.pickup, state.pickupTime, e.target.value, state.dropoffTime); setState({...state, dropoff: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
             <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
-              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Pickup time</div>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.pickupTime}</div>
               <select value={state.pickupTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, e.target.value, state.dropoff, state.dropoffTime); setState({...state, pickupTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
@@ -443,7 +634,7 @@ function StepTrailerDates({ state, setState, onNext }) {
               </select>
             </div>
             <div style={{ padding: "14px 16px" }}>
-              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>Return time</div>
+              <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.returnTime}</div>
               <select value={state.dropoffTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, state.pickupTime, state.dropoff, e.target.value); setState({...state, dropoffTime: e.target.value, days: d}); }}
                 style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
@@ -454,31 +645,31 @@ function StepTrailerDates({ state, setState, onNext }) {
           </div>
           {(state.pickup && !pickupPastOk) || (state.pickup && state.dropoff && !dateOrderOk) ? (
             <div style={{ padding: "8px 16px", background: "#fff2f2", borderTop: "1px solid #fecaca", font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626" }}>
-              {!pickupPastOk ? "Pickup date can't be in the past." : "Return must be after pickup."}
+              {!pickupPastOk ? tr.pickupPastError : tr.returnBeforePickup}
             </div>
           ) : null}
         </div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 12 }}>
-          <Field label="Pickup date" error={state.pickup && !pickupPastOk ? "Pickup date can't be in the past." : null}>
+          <Field label={tr.pickupDate} error={state.pickup && !pickupPastOk ? tr.pickupPastError : null}>
             <Input type="date" min={today} value={state.pickup} onChange={v => {
               const d = computeDays(v, state.pickupTime, state.dropoff, state.dropoffTime);
               setState({...state, pickup: v, days: d});
             }}/>
           </Field>
-          <Field label="Return date" error={state.pickup && state.dropoff && !dateOrderOk ? "Return must be after pickup." : null}>
+          <Field label={tr.returnDate} error={state.pickup && state.dropoff && !dateOrderOk ? tr.returnBeforePickup : null}>
             <Input type="date" min={state.pickup || today} value={state.dropoff} onChange={v => {
               const d = computeDays(state.pickup, state.pickupTime, v, state.dropoffTime);
               setState({...state, dropoff: v, days: d});
             }}/>
           </Field>
-          <Field label="Pickup time">
+          <Field label={tr.pickupTime}>
             <Select value={state.pickupTime || DEFAULT_PICKUP_TIME} options={HOUR_OPTIONS} onChange={v => {
               const d = computeDays(state.pickup, v, state.dropoff, state.dropoffTime);
               setState({...state, pickupTime: v, days: d});
             }}/>
           </Field>
-          <Field label="Return time">
+          <Field label={tr.returnTime}>
             <Select value={state.dropoffTime || DEFAULT_PICKUP_TIME} options={HOUR_OPTIONS} onChange={v => {
               const d = computeDays(state.pickup, state.pickupTime, state.dropoff, v);
               setState({...state, dropoffTime: v, days: d});
@@ -491,18 +682,18 @@ function StepTrailerDates({ state, setState, onNext }) {
         <div style={{ padding: "14px 16px", background: "#fff2f2", borderLeft: "3px solid #b5212b", marginBottom: 24, display: "flex", gap: 12, alignItems: "flex-start" }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b5212b" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <div>
-            <div style={{ font: '700 13px/1.4 "Inter", sans-serif', color: "#262626", marginBottom: 4 }}>That trailer is already booked for those dates.</div>
+            <div style={{ font: '700 13px/1.4 "Inter", sans-serif', color: "#262626", marginBottom: 4 }}>{tr.trailerAlreadyBooked}</div>
             <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-              Reserved {fmtDate(conflict.pickup)} – {fmtDate(conflict.dropoff)}. Pick a different range or choose the other trailer.
+              {fmtDate(conflict.pickup)} – {fmtDate(conflict.dropoff)}. {tr.reservedDates}
             </div>
           </div>
         </div>
       )}
 
       <div style={{ marginBottom: 32 }}>
-        <Field label="Pickup notes (optional)" hint="Anything we should know — flexibility on the time above, gate codes, what you're hauling, etc.">
+        <Field label={tr.pickupNotes} hint={tr.pickupNotesHint}>
           <textarea value={state.pickupNote || ""} onChange={e => setState({...state, pickupNote: e.target.value})}
-            placeholder="e.g. First time renting a trailer — could use a quick walkthrough"
+            placeholder={tr.pickupNotesPlaceholder}
             style={{
               display: "block", width: "100%", minHeight: 80, padding: "14px 16px",
               background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
@@ -516,11 +707,11 @@ function StepTrailerDates({ state, setState, onNext }) {
 
       {loadingAvail && (
         <div style={{ font: '300 12px/1 "Inter", sans-serif', color: "#6b6b6b", marginBottom: 16, letterSpacing: "0.5px" }}>
-          Checking availability…
+          {tr.checkingAvailability}
         </div>
       )}
 
-      <StepFooter onNext={onNext} nextLabel="Continue · customer info" disabled={!valid}/>
+      <StepFooter onNext={onNext} nextLabel={tr.continueCustomerInfo} disabled={!valid}/>
     </StepShell>
   );
 }
@@ -547,54 +738,58 @@ function computeDays(p, pt, d, dt) {
 /* ---------- 2. Customer info ---------- */
 function StepCustomer({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const valid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
   return (
-    <StepShell title="Tell us about you" kicker="STEP 2 · CUSTOMER INFO">
+    <StepShell title={tr.step2Title} kicker={tr.step2Kicker}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
-        <Field label="Full name" hint="As shown on your driver's license">
+        <Field label={tr.fullName} hint={tr.fullNameHint}>
           <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd" autoComplete="name"/>
         </Field>
-        <Field label="Email">
+        <Field label={tr.email}>
           <Input type="email" value={state.email} onChange={v => setState({...state, email: v})} placeholder="you@email.com" autoComplete="email"/>
         </Field>
-        <Field label="Phone">
+        <Field label={tr.phone}>
           <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
         </Field>
-        <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
+        <Field label={tr.address} style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete state={state} setState={setState}/>
         </Field>
-        <Field label="Tow vehicle" hint="Year, make, model — used to confirm towing capacity">
-          <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
+        <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
+          <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder={tr.towVehiclePlaceholder}/>
         </Field>
-        <Field label="Do you have a 2-5/16 inch hitch ball?" hint="All TVR trailers require a 2-5/16 inch ball coupler">
+        <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
-            options={["Yes — I have the right hitch ball", "No — I will use TVR's"]}/>
+            options={[{value: "Yes — I have the right hitch ball", label: tr.hitchYes}, {value: "No — I will use TVR's", label: tr.hitchNo}]}/>
         </Field>
-        <Field label="7-way trailer plug & brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
+        <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
-            options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
+            options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
         </Field>
-        <Field label="Trip purpose (optional)">
-          <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
+        <Field label={tr.tripPurpose}>
+          <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
         </Field>
       </div>
       <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 32, cursor: "pointer" }}>
         <input type="checkbox" checked={!!state.marketingOptIn} onChange={e => setState({...state, marketingOptIn: e.target.checked})}
           style={{ marginTop: 3, flexShrink: 0, width: 16, height: 16, accentColor: "#1568be" }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>
-          Send me occasional deals and reminders from TVR <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>(optional)</em>
+          {tr.marketingOptIn} <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>{tr.optional}</em>
         </span>
       </label>
-      <StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · upload documents" disabled={!valid}/>
+      <StepFooter onBack={onBack} onNext={onNext} nextLabel={tr.continueUploadDocs} disabled={!valid}/>
     </StepShell>
   );
 }
 
 /* ---------- 3. Documents ---------- */
 function StepDocs({ state, setState, onNext, onBack }) {
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const docs = [
-    { id: "license", t: "Driver's license", s: "Front of ID." },
-    { id: "insurance", t: "Insurance card", s: "Auto policy that covers driver and vehicle used." },
+    { id: "license", t: tr.driverLicense, s: tr.driverLicenseHint },
+    { id: "insurance", t: tr.insuranceCard, s: tr.insuranceCardHint },
   ];
   const valid = docs.every(d => state.docs?.[d.id] && state.docs[d.id].status !== "uploading");
 
@@ -668,7 +863,7 @@ function StepDocs({ state, setState, onNext, onBack }) {
   }
 
   return (
-    <StepShell title="Upload documents" kicker="STEP 3 · ID & INSURANCE">
+    <StepShell title={tr.step3Title} kicker={tr.step3Kicker}>
       <div style={{ display: "grid", gap: 16, marginBottom: 32 }}>
         {docs.map(d => {
           const f = state.docs?.[d.id];
@@ -695,25 +890,25 @@ function StepDocs({ state, setState, onNext, onBack }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? "uploading…" : "uploaded"}</span></> : d.s}
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
                 </div>
               </div>
               {f ? (
-                <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>Replace</BkButton>
+                <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>{tr.replace}</BkButton>
               ) : (
-                <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>Upload</BkButton>
+                <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>{tr.upload}</BkButton>
               )}
             </div>
           );
         })}
       </div>
       <div style={{ padding: 16, background: "#f4f6f9", borderLeft: "2px solid #1568be", marginBottom: 32 }}>
-        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 8 }}>Privacy</div>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 8 }}>{tr.privacyTitle}</div>
         <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return. See the rental agreement for details.
+          {tr.privacyText}
         </div>
       </div>
-      <StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · rental agreement" disabled={!valid}/>
+      <StepFooter onBack={onBack} onNext={onNext} nextLabel={tr.continueAgreement} disabled={!valid}/>
     </StepShell>
   );
 }
@@ -721,6 +916,8 @@ function StepDocs({ state, setState, onNext, onBack }) {
 /* ---------- 2+3 combined: Customer Info & Documents ---------- */
 function StepCustomerDocs({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
 
   // ── Return customer login ──
   const [loginOpen,    setLoginOpen]    = React.useState(false);
@@ -740,18 +937,18 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
         body: JSON.stringify({ email: loginEmail, password: loginPass }),
       });
       const data = await res.json();
-      if (!res.ok) { setLoginStatus("error"); setLoginError(data.error || "Invalid email or password."); return; }
+      if (!res.ok) { setLoginStatus("error"); setLoginError(data.error || tr.invalidCredentials); return; }
       setState(s => ({ ...s, name: data.name, email: loginEmail, phone: data.phone, address: data.address, city: data.city, stateZip: data.stateZip, tow: data.tow, hitch: data.hitch, brakeController: data.brakeController }));
       setAddressKey(k => k + 1);
       setLoginStatus("success");
     } catch {
-      setLoginStatus("error"); setLoginError("Network error. Please try again.");
+      setLoginStatus("error"); setLoginError(tr.networkError);
     }
   }
 
   const docs = [
-    { id: "license",   t: "Driver's license", s: "Front of ID." },
-    { id: "insurance", t: "Insurance card",    s: "Auto policy that covers driver and vehicle used." },
+    { id: "license",   t: tr.driverLicense,  s: tr.driverLicenseHint },
+    { id: "insurance", t: tr.insuranceCard,   s: tr.insuranceCardHint },
   ];
 
   const customerValid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
@@ -808,42 +1005,42 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
   }
 
   return (
-    <StepShell title="Your info & documents" kicker="STEP 2 · CUSTOMER INFO & ID">
+    <StepShell title={tr.step23Title} kicker={tr.step23Kicker}>
       {/* ── Return customer login ── */}
       {loginStatus === "success" ? (
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", background: "#f0fdf4", borderLeft: "4px solid #22c55e", marginBottom: 28 }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
           <span style={{ font: '300 14px/1.4 "Inter", sans-serif', color: "#3c3c3c" }}>
-            <strong style={{ fontWeight: 700, color: "#262626" }}>Signed in.</strong> Your info has been pre-filled — review it below and upload your documents.
+            <strong style={{ fontWeight: 700, color: "#262626" }}>{tr.signedIn}</strong> {tr.signedInDesc}
           </span>
         </div>
       ) : (
         <div style={{ marginBottom: 28, padding: 20, background: "#f4f6f9", borderLeft: "3px solid #1568be" }}>
           {!loginOpen ? (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>Returning customer?</span>
+              <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>{tr.returningCustomer}</span>
               <button onClick={() => setLoginOpen(true)} style={{ background: "none", border: 0, padding: 0, cursor: "pointer", font: '700 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px" }}>
-                Sign in to pre-fill →
+                {tr.signInPrefill}
               </button>
             </div>
           ) : (
             <div>
-              <div style={{ font: '700 13px/1 "Inter", sans-serif', color: "#262626", marginBottom: 14, letterSpacing: "0.3px" }}>Sign in to your TVR account</div>
+              <div style={{ font: '700 13px/1 "Inter", sans-serif', color: "#262626", marginBottom: 14, letterSpacing: "0.3px" }}>{tr.signInTitle}</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                <input type="email" placeholder="Email" value={loginEmail} onChange={e => { setLoginEmail(e.target.value); setLoginError(""); }}
+                <input type="email" placeholder={tr.emailPlaceholder} value={loginEmail} onChange={e => { setLoginEmail(e.target.value); setLoginError(""); }}
                   style={{ flex: 1, minWidth: 160, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
                   onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
                   onKeyDown={e => e.key === "Enter" && handleLogin()}/>
-                <input type="password" placeholder="Password" value={loginPass} onChange={e => { setLoginPass(e.target.value); setLoginError(""); }}
+                <input type="password" placeholder={tr.passwordPlaceholder} value={loginPass} onChange={e => { setLoginPass(e.target.value); setLoginError(""); }}
                   style={{ flex: 1, minWidth: 140, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
                   onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
                   onKeyDown={e => e.key === "Enter" && handleLogin()}/>
                 <BkButton onClick={handleLogin} disabled={loginStatus === "loading"}>
-                  {loginStatus === "loading" ? "Signing in…" : "Sign in"}
+                  {loginStatus === "loading" ? tr.signingIn : tr.signIn}
                 </BkButton>
               </div>
               {loginError && <div style={{ font: '300 13px/1.4 "Inter", sans-serif', color: "#b5212b", marginTop: 8 }}>{loginError}</div>}
-              <button onClick={() => setLoginOpen(false)} style={{ background: "none", border: 0, padding: 0, marginTop: 10, cursor: "pointer", font: '300 12px/1 "Inter", sans-serif', color: "#9b9b9b" }}>Cancel</button>
+              <button onClick={() => setLoginOpen(false)} style={{ background: "none", border: 0, padding: 0, marginTop: 10, cursor: "pointer", font: '300 12px/1 "Inter", sans-serif', color: "#9b9b9b" }}>{tr.cancel}</button>
             </div>
           )}
         </div>
@@ -851,43 +1048,43 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
 
       {/* ── Customer fields ── */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
-        <Field label="Full name" hint="As shown on your driver's license">
+        <Field label={tr.fullName} hint={tr.fullNameHint}>
           <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd" autoComplete="name"/>
         </Field>
-        <Field label="Email">
+        <Field label={tr.email}>
           <Input type="email" value={state.email} onChange={v => setState({...state, email: v})} placeholder="you@email.com" autoComplete="email"/>
         </Field>
-        <Field label="Phone">
+        <Field label={tr.phone}>
           <Input type="tel" value={state.phone} onChange={v => setState({...state, phone: v})} placeholder="(423) 555-0100" autoComplete="tel"/>
         </Field>
-        <Field label="Address" style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
+        <Field label={tr.address} style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete key={addressKey} state={state} setState={setState}/>
         </Field>
-        <Field label="Tow vehicle" hint="Year, make, model — used to confirm towing capacity">
-          <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder="2021 Ford F-150"/>
+        <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
+          <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder={tr.towVehiclePlaceholder}/>
         </Field>
-        <Field label="Do you have a 2-5/16 inch hitch ball?" hint="All TVR trailers require a 2-5/16 inch ball coupler">
+        <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
-            options={["Yes — I have the right hitch ball", "No — I will use TVR's"]}/>
+            options={[{value: "Yes — I have the right hitch ball", label: tr.hitchYes}, {value: "No — I will use TVR's", label: tr.hitchNo}]}/>
         </Field>
-        <Field label="7-way trailer plug & brake controller?" hint="Required to operate TVR trailers — controls trailer brakes">
+        <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
-            options={["Yes — my vehicle has both", "No — I don't have one or both"]}/>
+            options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
         </Field>
-        <Field label="Trip purpose (optional)">
-          <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder="Moving · Vehicle transport · Equipment"/>
+        <Field label={tr.tripPurpose}>
+          <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
         </Field>
       </div>
       <label style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 32, cursor: "pointer" }}>
         <input type="checkbox" checked={!!state.marketingOptIn} onChange={e => setState({...state, marketingOptIn: e.target.checked})}
           style={{ marginTop: 3, flexShrink: 0, width: 16, height: 16, accentColor: "#1568be" }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b" }}>
-          Send me occasional deals and reminders from TVR <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>(optional)</em>
+          {tr.marketingOptIn} <em style={{ fontStyle: "normal", color: "#9b9b9b" }}>{tr.optional}</em>
         </span>
       </label>
 
       {/* ── Documents ── */}
-      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>Documents</div>
+      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>{tr.documentsSection}</div>
       <div style={{ display: "grid", gap: 16, marginBottom: 24 }}>
         {docs.map(d => {
           const f = state.docs?.[d.id];
@@ -906,25 +1103,25 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? "uploading…" : "uploaded"}</span></> : d.s}
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
                 </div>
               </div>
               {f ? (
-                <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>Replace</BkButton>
+                <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>{tr.replace}</BkButton>
               ) : (
-                <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>Upload</BkButton>
+                <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>{tr.upload}</BkButton>
               )}
             </div>
           );
         })}
       </div>
       <div style={{ padding: 16, background: "#f4f6f9", borderLeft: "2px solid #1568be", marginBottom: 32 }}>
-        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 8 }}>Privacy</div>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 8 }}>{tr.privacyTitle}</div>
         <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return.
+          {tr.privacyTextShort}
         </div>
       </div>
-      <StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · rental agreement" disabled={!valid}/>
+      <StepFooter onBack={onBack} onNext={onNext} nextLabel={tr.continueAgreement} disabled={!valid}/>
     </StepShell>
   );
 }
@@ -934,6 +1131,8 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
 /* ---------- 5. Agreement ---------- */
 function StepAgreement({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 640;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const [scrolledThrough, setScrolledThrough] = React.useState(false);
   const valid = scrolledThrough && state.signature && state.signature.trim().length > 2 && state.agreed;
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -946,20 +1145,26 @@ function StepAgreement({ state, setState, onNext, onBack }) {
   }
 
   return (
-    <StepShell title="Sign the rental agreement" kicker="STEP 4 · AGREEMENT">
+    <StepShell title={tr.step4Title} kicker={tr.step4Kicker}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, maxWidth: 480 }}>
-          Scroll through the full agreement below, then sign by typing your full name — this counts as a legal e-signature. We'll email you a signed copy.
+          {tr.agreementIntro}
         </p>
         <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Download PDF ›
+          {tr.downloadPDF}
         </a>
       </div>
 
+      {tr.agreementNote && (
+        <div style={{ padding: "12px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 16, font: '400 13px/1.5 "Inter", sans-serif', color: "#7a5500" }}>
+          {tr.agreementNote}
+        </div>
+      )}
+
       <div style={{ border: "1px solid #cccccc", marginBottom: 24, background: "#fff" }}>
         <div style={{ background: "#f4f6f9", borderBottom: "1px solid #e6e6e6", padding: "14px 24px", display: "flex", justifyContent: "space-between" }}>
-          <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>TVR Rental Agreement</span>
+          <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>{tr.agreementTitle}</span>
           <span style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>v 1.0 · {today}</span>
         </div>
         <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }} onScroll={handleAgreementScroll}>
@@ -994,16 +1199,16 @@ function StepAgreement({ state, setState, onNext, onBack }) {
       {!scrolledThrough && (
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, font: '400 13px/1.4 "Inter", sans-serif', color: "#7a5500" }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
-          Scroll through the full agreement above to unlock the signature.
+          {tr.scrollToUnlock}
         </div>
       )}
 
       {/* Signature block — contract-grade */}
       <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9", opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
-        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Signature</div>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>{tr.signatureLabel}</div>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
           <div>
-            <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || "Type your full legal name"}
+            <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || tr.signaturePlaceholder}
               style={{
                 width: "100%", height: 48, padding: "0 0 6px 0",
                 background: "transparent", color: state.signature ? "#1568be" : "#9a9a9a",
@@ -1011,12 +1216,12 @@ function StepAgreement({ state, setState, onNext, onBack }) {
                 font: state.signature ? '700 24px/1 "Brush Script MT", "Comic Sans MS", cursive' : '300 16px/1 "Inter", sans-serif',
                 outline: "none",
               }}/>
-            <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>SIGNED BY (RENTER)</div>
+            <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>{tr.signedBy}</div>
           </div>
           <div style={{ width: 32 }}/>
           <div>
             <div style={{ height: 48, display: "flex", alignItems: "flex-end", paddingBottom: 6, font: '300 16px/1 "Inter", sans-serif', color: "#262626", borderBottom: "1px solid #262626" }}>{today}</div>
-            <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>DATE</div>
+            <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>{tr.dateLabel}</div>
           </div>
         </div>
       </div>
@@ -1024,11 +1229,11 @@ function StepAgreement({ state, setState, onNext, onBack }) {
       <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 24, cursor: scrolledThrough ? "pointer" : "not-allowed", opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
         <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          I have read and agree to the TVR Rental Agreement above (§1–§18). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
+          {tr.agreementCheckbox}
         </span>
       </label>
 
-      <div style={{ marginTop: 32 }}><StepFooter onBack={onBack} onNext={onNext} nextLabel="Continue · payment" disabled={!valid}/></div>
+      <div style={{ marginTop: 32 }}><StepFooter onBack={onBack} onNext={onNext} nextLabel={tr.continuePayment} disabled={!valid}/></div>
     </StepShell>
   );
 }
@@ -1040,6 +1245,8 @@ function StepAgreement({ state, setState, onNext, onBack }) {
    For real charging, replace the simulated success in handlePay() with a
    fetch() to your backend that creates+confirms a PaymentIntent. */
 function StepPayment({ state, setState, onNext, onBack }) {
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const cardMountRef     = React.useRef(null);
   const stripeRef        = React.useRef(null);
   const cardElementRef   = React.useRef(null);
@@ -1131,11 +1338,11 @@ function StepPayment({ state, setState, onNext, onBack }) {
       if (result.valid) {
         setCoupon(result.type === "percent" ? { type: "percent", percent: result.percent } : { type: "free" });
       } else {
-        setCouponError(result.reason === "multi-day-required" ? "This code is only valid on rentals of 2+ days." : "Invalid code.");
+        setCouponError(result.reason === "multi-day-required" ? tr.couponMultiDayError : tr.couponInvalidError);
         setCoupon(null);
       }
     } catch {
-      setCouponError("Could not validate — try submitting anyway.");
+      setCouponError(tr.couponValidateError);
     } finally {
       setCouponLoading(false);
     }
@@ -1309,15 +1516,15 @@ function StepPayment({ state, setState, onNext, onBack }) {
   }
 
   return (
-    <StepShell title="Payment" kicker="STEP 6 · PAYMENT">
+    <StepShell title={tr.step6Title} kicker={tr.step6Kicker}>
       {/* TEST-MODE banner — visible whenever a pk_test_ key is in use. */}
       {window.TVR_STRIPE_KEY?.startsWith("pk_test_") && (
         <div style={{ padding: "12px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, display: "flex", gap: 12, alignItems: "flex-start" }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b88017" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div>
-            <div style={{ font: '700 12px/1.3 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase" }}>Stripe Test Mode</div>
+            <div style={{ font: '700 12px/1.3 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase" }}>{tr.testModeTitle}</div>
             <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 2 }}>
-              No card will be charged. Use test card <strong style={{ fontWeight: 700, color: "#262626" }}>4242 4242 4242 4242</strong>, any future expiry, any CVC.
+              {tr.testModeDesc} <strong style={{ fontWeight: 700, color: "#262626" }}>4242 4242 4242 4242</strong>, any future expiry, any CVC.
             </div>
           </div>
         </div>
@@ -1326,13 +1533,13 @@ function StepPayment({ state, setState, onNext, onBack }) {
       {!couponApplied && (
         <>
           <div style={{ marginBottom: 20 }}>
-            <Field label="Cardholder name">
-              <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || "Name on card"}/>
+            <Field label={tr.cardholderName}>
+              <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || tr.nameOnCard}/>
             </Field>
           </div>
 
           <div style={{ marginBottom: 8 }}>
-            <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>Card details</div>
+            <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>{tr.cardDetails}</div>
             <div style={{
               minHeight: 48, padding: "0 16px",
               background: "#fff",
@@ -1341,7 +1548,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             }}>
               <div ref={cardMountRef} style={{ width: "100%" }} />
               {!stripeReady && (
-                <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>Loading secure card field…</span>
+                <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>{tr.loadingCardField}</span>
               )}
             </div>
             {cardError && (
@@ -1349,7 +1556,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
             )}
             {!cardError && (
               <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>
-                Card number, expiry, CVC, and ZIP. Powered by Stripe.
+                {tr.cardFieldHint}
               </div>
             )}
           </div>
@@ -1359,7 +1566,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
       {couponApplied && (
         <div style={{ padding: "20px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
-          <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>Coupon applied — no payment required. No card will be charged.</span>
+          <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>{tr.couponApplied}</span>
         </div>
       )}
 
@@ -1369,7 +1576,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
           background: "none", border: 0, padding: 0, cursor: "pointer",
           font: '400 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px",
         }}>
-          {couponOpen ? "▲ Hide coupon code" : "▼ Have a coupon code?"}
+          {couponOpen ? tr.hideCoupon : tr.haveCoupon}
         </button>
         {couponOpen && (
           <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
@@ -1377,7 +1584,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
               value={couponCode}
               onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }}
               onKeyDown={e => e.key === "Enter" && applyCoupon()}
-              placeholder="Enter code"
+              placeholder={tr.enterCode}
               style={{
                 flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6",
                 borderRadius: 0, outline: "none", background: "#fff", color: "#262626",
@@ -1390,18 +1597,18 @@ function StepPayment({ state, setState, onNext, onBack }) {
               font: '700 12px/1 "Inter", sans-serif', letterSpacing: "0.5px",
               opacity: couponLoading || !couponCode.trim() ? 0.5 : 1,
             }}>
-              {couponLoading ? "…" : "Apply"}
+              {couponLoading ? "…" : tr.apply}
             </button>
           </div>
         )}
         {couponApplied && (
           <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>
-            Code applied — <strong style={{ fontWeight: 700 }}>no charge</strong>.
+            {tr.codeAppliedFree}
           </div>
         )}
         {coupon?.type === "percent" && (
           <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>
-            Code applied — <strong style={{ fontWeight: 700 }}>{coupon.percent}% off the rental rate</strong> (tax and deposit unaffected).
+            {tr.codeAppliedPercent?.replace("{percent}", coupon.percent) || `Code applied — ${coupon.percent}% off the rental rate (tax and deposit unaffected).`}
           </div>
         )}
         {couponError && (
@@ -1413,8 +1620,10 @@ function StepPayment({ state, setState, onNext, onBack }) {
         <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 32 }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-            Card data goes directly to Stripe — TVR never sees the full number.{" "}
-            Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
+            {lang === "es"
+              ? `Los datos de la tarjeta van directamente a Stripe — TVR nunca ve el número completo. El cobro de hoy de $${totalAmount} incluye $${rentalAmount} de alquiler${coupon?.type === "percent" ? ` (${coupon.percent}% dto. de $${baseRental})` : ""}, $${taxAmount} de impuesto y un depósito reembolsable de $${depositAmount}.`
+              : <>Card data goes directly to Stripe — TVR never sees the full number.{" "}Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.</>
+            }
           </span>
         </div>
       )}
@@ -1422,7 +1631,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
       <StepFooter
         onBack={processing ? null : onBack}
         onNext={couponApplied ? handleFreeBook : handlePay}
-        nextLabel={processing ? "Processing…" : couponApplied ? "Complete Booking (Free)" : `Pay $${chargeTotal} & confirm`}
+        nextLabel={processing ? tr.processing : couponApplied ? tr.completeFree : `Pay $${chargeTotal} & confirm`}
         disabled={!valid}
       />
     </StepShell>
@@ -1432,6 +1641,8 @@ function StepPayment({ state, setState, onNext, onBack }) {
 /* ---------- 3+4 combined: Agreement & Payment ---------- */
 function StepAgreementPay({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 640;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   // ── Agreement ──
@@ -1505,8 +1716,8 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
       const res = await fetch("/.netlify/functions/book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "coupon", code: couponCode.trim(), days }) });
       const result = await res.json();
       if (result.valid) { setCoupon(result.type === "percent" ? { type: "percent", percent: result.percent } : { type: "free" }); }
-      else { setCouponError(result.reason === "multi-day-required" ? "This code is only valid on rentals of 2+ days." : "Invalid code."); setCoupon(null); }
-    } catch { setCouponError("Could not validate — try submitting anyway."); }
+      else { setCouponError(result.reason === "multi-day-required" ? tr.couponMultiDayError : tr.couponInvalidError); setCoupon(null); }
+    } catch { setCouponError(tr.couponValidateError); }
     finally { setCouponLoading(false); }
   }
 
@@ -1565,21 +1776,26 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
   }
 
   return (
-    <StepShell title="Sign & pay" kicker="STEP 3 · AGREEMENT & PAYMENT">
+    <StepShell title={tr.step3bTitle} kicker={tr.step3bKicker}>
       {/* ── Agreement ── */}
+      {tr.agreementNote && (
+        <div style={{ padding: "12px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 20, font: '300 13px/1.55 "Inter", sans-serif', color: "#7a5500" }}>
+          {tr.agreementNote}
+        </div>
+      )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: 0, maxWidth: 480 }}>
-          Scroll through the full agreement below, then sign and pay to complete your booking.
+          {tr.step3bIntro}
         </p>
         <a href="assets/TVR-Rental-Agreement.pdf" target="_blank" rel="noopener" style={{ font: '700 12px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#1568be", display: "inline-flex", alignItems: "center", gap: 6 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Download PDF ›
+          {tr.downloadPDF}
         </a>
       </div>
 
       <div style={{ border: "1px solid #cccccc", marginBottom: 24, background: "#fff" }}>
         <div style={{ background: "#f4f6f9", borderBottom: "1px solid #e6e6e6", padding: "14px 24px", display: "flex", justifyContent: "space-between" }}>
-          <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>TVR Rental Agreement</span>
+          <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626" }}>{tr.agreementTitle}</span>
           <span style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>v 1.0 · {today}</span>
         </div>
         <div style={{ padding: 28, maxHeight: 360, overflowY: "auto" }} onScroll={handleAgreementScroll}>
@@ -1614,23 +1830,23 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
       {!scrolledThrough && (
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, font: '400 13px/1.4 "Inter", sans-serif', color: "#7a5500" }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
-          Scroll through the full agreement above to unlock the signature and payment.
+          {tr.scrollToUnlockPay}
         </div>
       )}
 
       <div style={{ opacity: scrolledThrough ? 1 : 0.4, pointerEvents: scrolledThrough ? "auto" : "none" }}>
         <div style={{ border: "1px solid #e6e6e6", padding: 24, background: "#f4f6f9", marginBottom: 24 }}>
-          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>Signature</div>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 16 }}>{tr.signatureLabel}</div>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr", gap: 24, alignItems: "end", paddingBottom: 8 }}>
             <div>
-              <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || "Type your full legal name"}
+              <input value={state.signature || ""} onChange={e => setState({...state, signature: e.target.value})} placeholder={state.name || tr.signaturePlaceholder}
                 style={{ width: "100%", height: 48, padding: "0 0 6px 0", background: "transparent", color: state.signature ? "#1568be" : "#9a9a9a", border: 0, borderBottom: "1px solid #262626", borderRadius: 0, font: state.signature ? '700 24px/1 "Brush Script MT", "Comic Sans MS", cursive' : '300 16px/1 "Inter", sans-serif', outline: "none" }}/>
-              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>SIGNED BY (RENTER)</div>
+              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>{tr.signedBy}</div>
             </div>
             <div style={{ width: 32 }}/>
             <div>
               <div style={{ height: 48, display: "flex", alignItems: "flex-end", paddingBottom: 6, font: '300 16px/1 "Inter", sans-serif', color: "#262626", borderBottom: "1px solid #262626" }}>{today}</div>
-              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>DATE</div>
+              <div style={{ font: '700 9px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginTop: 8 }}>{tr.dateLabel}</div>
             </div>
           </div>
         </div>
@@ -1638,21 +1854,21 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
         <label style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 40, cursor: "pointer" }}>
           <input type="checkbox" checked={!!state.agreed} onChange={e => setState({...state, agreed: e.target.checked})} style={{ width: 18, height: 18, accentColor: "#1568be", marginTop: 2 }}/>
           <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-            I have read and agree to the TVR Rental Agreement above (§1–§18). I confirm all information I provided is accurate. I authorize TVR to authorize a deposit on my card, which will only be captured upon booking approval. I understand my typed name constitutes a legally binding e-signature under the ESIGN Act.
+            {tr.agreementCheckbox}
           </span>
         </label>
       </div>
 
       {/* ── Payment ── */}
       <div style={{ opacity: agreementDone ? 1 : 0.4, pointerEvents: agreementDone ? "auto" : "none" }}>
-        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20 }}>Payment</div>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20 }}>{tr.paymentSection}</div>
 
         {window.TVR_STRIPE_KEY?.startsWith("pk_test_") && (
           <div style={{ padding: "12px 16px", background: "#fff8e6", borderLeft: "3px solid #b88017", marginBottom: 24, display: "flex", gap: 12, alignItems: "flex-start" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b88017" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             <div>
-              <div style={{ font: '700 12px/1.3 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase" }}>Stripe Test Mode</div>
-              <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 2 }}>No card will be charged. Use test card <strong style={{ fontWeight: 700, color: "#262626" }}>4242 4242 4242 4242</strong>, any future expiry, any CVC.</div>
+              <div style={{ font: '700 12px/1.3 "Inter", sans-serif', color: "#262626", letterSpacing: "0.5px", textTransform: "uppercase" }}>{tr.testModeTitle}</div>
+              <div style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 2 }}>{tr.testModeDesc} <strong style={{ fontWeight: 700, color: "#262626" }}>4242 4242 4242 4242</strong>, any future expiry, any CVC.</div>
             </div>
           </div>
         )}
@@ -1660,41 +1876,41 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
         {couponApplied ? (
           <div style={{ padding: "20px 16px", background: "#f0fdf4", border: "1px solid #bbf7d0", marginBottom: 8, display: "flex", gap: 12, alignItems: "center" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
-            <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>Coupon applied — no payment required.</span>
+            <span style={{ font: '700 14px/1.4 "Inter", sans-serif', color: "#166534" }}>{tr.couponAppliedShort}</span>
           </div>
         ) : (
           <>
             <div style={{ marginBottom: 20 }}>
-              <Field label="Cardholder name">
-                <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || "Name on card"}/>
+              <Field label={tr.cardholderName}>
+                <Input value={state.cardName} onChange={v => setState({...state, cardName: v})} placeholder={state.name || tr.nameOnCard}/>
               </Field>
             </div>
             <div style={{ marginBottom: 8 }}>
-              <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>Card details</div>
+              <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#262626", marginBottom: 10 }}>{tr.cardDetails}</div>
               <div style={{ minHeight: 48, padding: "0 16px", background: "#fff", border: cardError ? "1px solid #dc2626" : "1px solid #cccccc", display: "flex", alignItems: "center" }}>
                 <div ref={cardMountRef} style={{ width: "100%" }}/>
-                {!stripeReady && <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>Loading secure card field…</span>}
+                {!stripeReady && <span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#9a9a9a" }}>{tr.loadingCardField}</span>}
               </div>
               {cardError && <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#dc2626", marginTop: 6, letterSpacing: "0.3px" }}>{cardError}</div>}
-              {!cardError && <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>Card number, expiry, CVC, and ZIP. Powered by Stripe.</div>}
+              {!cardError && <div style={{ font: '400 11px/1.4 "Inter", sans-serif', color: "#6b6b6b", marginTop: 6, letterSpacing: "0.3px" }}>{tr.cardFieldHint}</div>}
             </div>
           </>
         )}
 
         <div style={{ marginTop: 20 }}>
           <button type="button" onClick={() => setCouponOpen(o => !o)} style={{ background: "none", border: 0, padding: 0, cursor: "pointer", font: '400 13px/1 "Inter", sans-serif', color: "#1568be", letterSpacing: "0.3px" }}>
-            {couponOpen ? "▲ Hide coupon code" : "▼ Have a coupon code?"}
+            {couponOpen ? tr.hideCoupon : tr.haveCoupon}
           </button>
           {couponOpen && (
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-              <input value={couponCode} onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }} onKeyDown={e => e.key === "Enter" && applyCoupon()} placeholder="Enter code"
+              <input value={couponCode} onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }} onKeyDown={e => e.key === "Enter" && applyCoupon()} placeholder={tr.enterCode}
                 style={{ flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", borderRadius: 0, outline: "none", background: "#fff", color: "#262626", font: '300 14px/1 "Inter", sans-serif' }}/>
               <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{ height: 40, padding: "0 16px", background: "#262626", color: "#fff", border: 0, cursor: couponLoading || !couponCode.trim() ? "not-allowed" : "pointer", font: '700 12px/1 "Inter", sans-serif', letterSpacing: "0.5px", opacity: couponLoading || !couponCode.trim() ? 0.5 : 1 }}>
-                {couponLoading ? "…" : "Apply"}
+                {couponLoading ? "…" : tr.apply}
               </button>
             </div>
           )}
-          {coupon?.type === "percent" && <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>Code applied — <strong style={{ fontWeight: 700 }}>{coupon.percent}% off the rental rate</strong> (tax and deposit unaffected).</div>}
+          {coupon?.type === "percent" && <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#22c55e" }}>{tr.codeAppliedPercent?.replace("{percent}", coupon.percent) || `Code applied — ${coupon.percent}% off the rental rate (tax and deposit unaffected).`}</div>}
           {couponError && <div style={{ marginTop: 8, font: '300 13px/1 "Inter", sans-serif', color: "#dc2626" }}>{couponError}</div>}
         </div>
 
@@ -1702,8 +1918,10 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
           <div style={{ padding: 16, background: "#f4f6f9", display: "flex", gap: 12, alignItems: "center", marginTop: 20, marginBottom: 8 }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><rect x="3" y="11" width="18" height="11"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span style={{ font: '300 13px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-              Card data goes directly to Stripe — TVR never sees the full number.{" "}
-              Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.
+              {lang === "es"
+                ? `Los datos de la tarjeta van directamente a Stripe — TVR nunca ve el número completo. El cobro de hoy de $${totalAmount} incluye $${rentalAmount} de alquiler${coupon?.type === "percent" ? ` (${coupon.percent}% dto. de $${baseRental})` : ""}, $${taxAmount} de impuesto y un depósito reembolsable de $${depositAmount}.`
+                : <>Card data goes directly to Stripe — TVR never sees the full number.{" "}Today's charge of <strong style={{ fontWeight: 700, color: "#262626" }}>${totalAmount}</strong> includes ${rentalAmount} rental{coupon?.type === "percent" ? ` (${coupon.percent}% off $${baseRental})` : ""}, ${taxAmount} tax, and a <strong style={{ fontWeight: 700, color: "#262626" }}>${depositAmount} refundable deposit</strong>.</>
+              }
             </span>
           </div>
         )}
@@ -1713,7 +1931,7 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
         <StepFooter
           onBack={processing ? null : onBack}
           onNext={couponApplied ? handleFreeBook : handlePay}
-          nextLabel={processing ? "Processing…" : couponApplied ? "Complete booking (free)" : `Pay $${chargeTotal} & confirm`}
+          nextLabel={processing ? tr.processing : couponApplied ? tr.completeFreeShort : `Pay $${chargeTotal} & confirm`}
           disabled={!valid}
         />
       </div>
@@ -1724,13 +1942,15 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
 /* ---------- 7. Confirmation ---------- */
 function StepDone({ state, onReset }) {
   const isMobile = useWindowWidth() < 640;
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   const trailer = TRAILERS[state.trailerId];
   const [password, setPassword]     = React.useState("");
   const [acctStatus, setAcctStatus] = React.useState("idle"); // idle | loading | success | error
   const [acctError, setAcctError]   = React.useState("");
 
   async function handleCreateAccount() {
-    if (password.length < 6) { setAcctError("Password must be at least 6 characters."); return; }
+    if (password.length < 6) { setAcctError(tr.passwordTooShort); return; }
     setAcctStatus("loading");
     setAcctError("");
     try {
@@ -1748,11 +1968,11 @@ function StepDone({ state, onReset }) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setAcctStatus("error"); setAcctError(data.error || "Something went wrong."); return; }
+      if (!res.ok) { setAcctStatus("error"); setAcctError(data.error || tr.somethingWentWrong); return; }
       setAcctStatus("success");
     } catch {
       setAcctStatus("error");
-      setAcctError("Network error. Please try again.");
+      setAcctError(tr.networkError);
     }
   }
   return (
@@ -1764,13 +1984,16 @@ function StepDone({ state, onReset }) {
             <span style={{ width: 32, height: 32, background: "#22c55e", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be" }}>RESERVATION #{state.bookingId || "PENDING"} · SUBMITTED</span>
+            <span style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be" }}>{tr.reservationSubmitted.replace("{id}", state.bookingId || "PENDING")}</span>
           </div>
           <h1 style={{ font: '700 48px/1.1 "Inter", sans-serif', margin: 0, color: "#262626" }}>
-            You're set, {state.name?.split(" ")[0] || "friend"}.
+            {tr.youreSet} {state.name?.split(" ")[0] || "friend"}{tr.confirmationSuffix}
           </h1>
           <p style={{ font: '300 17px/1.55 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, maxWidth: 520 }}>
-            We'll have the {trailer?.name} ready for pickup on <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}{state.pickupTime ? " at " + fmtTime(state.pickupTime) : ""}</strong>. We'll text you to confirm and send the pickup address. A confirmation has been sent to {state.email}.
+            {lang === "es"
+              ? <>Tendremos el {trailer?.name} listo para recoger el <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}{state.pickupTime ? " a las " + fmtTime(state.pickupTime) : ""}</strong>. Le enviaremos un mensaje de texto para confirmar y la dirección de recogida. Se ha enviado una confirmación a {state.email}.</>
+              : <>We'll have the {trailer?.name} ready for pickup on <strong style={{ color: "#262626", fontWeight: 700 }}>{state.pickup}{state.pickupTime ? " at " + fmtTime(state.pickupTime) : ""}</strong>. We'll text you to confirm and send the pickup address. A confirmation has been sent to {state.email}.</>
+            }
           </p>
         </div>
       </div>
@@ -1778,15 +2001,15 @@ function StepDone({ state, onReset }) {
       <div style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "14px 20px", background: "#fff8e6", borderLeft: "4px solid #b88017", marginBottom: 24 }}>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b88017" strokeWidth="2" style={{ flexShrink: 0, marginTop: 2 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-          <strong style={{ fontWeight: 700, color: "#262626" }}>Your booking is pending review.</strong> You'll receive a confirmation email once TVR approves your reservation. This typically happens within a few hours during business hours.
+          <strong style={{ fontWeight: 700, color: "#262626" }}>{tr.bookingPendingTitle}</strong> {tr.bookingPendingDesc}
         </span>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 24 }}>
         {[
-          { k: "Pickup", v: state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") },
-          { k: "Return", v: state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") },
-          { k: "Confirmation", v: "Sent to phone" },
+          { k: tr.pickupLabel, v: state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") },
+          { k: tr.returnLabel, v: state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") },
+          { k: tr.confirmationLabel, v: tr.sentToPhone },
         ].map((c, i) => (
           <div key={i} style={{ padding: 24, borderRight: !isMobile && i < 2 ? "1px solid #e6e6e6" : 0, borderBottom: isMobile && i < 2 ? "1px solid #e6e6e6" : 0 }}>
             <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 12 }}>{c.k}</div>
@@ -1796,27 +2019,27 @@ function StepDone({ state, onReset }) {
       </div>
 
       <div style={{ display: "flex", gap: 12 }}>
-        <BkButton>Add to calendar</BkButton>
-        <BkButton variant="secondary" onClick={onReset}>New reservation</BkButton>
+        <BkButton>{tr.addToCalendar}</BkButton>
+        <BkButton variant="secondary" onClick={onReset}>{tr.newReservation}</BkButton>
       </div>
 
       {acctStatus === "success" ? (
         <div style={{ marginTop: 24, display: "flex", gap: 12, alignItems: "center", padding: "16px 20px", background: "#f0fdf4", borderLeft: "4px solid #22c55e" }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="square"><polyline points="20 6 9 17 4 12"/></svg>
           <span style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c" }}>
-            <strong style={{ fontWeight: 700, color: "#262626" }}>Account created.</strong> Next time you book, sign in to skip entering your details.
+            <strong style={{ fontWeight: 700, color: "#262626" }}>{tr.accountCreated}</strong> {tr.accountCreatedDesc}
           </span>
         </div>
       ) : (
         <div style={{ marginTop: 24, padding: 24, background: "#f4f6f9", borderTop: "3px solid #1568be" }}>
-          <div style={{ font: '700 15px/1 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>Book faster next time</div>
+          <div style={{ font: '700 15px/1 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>{tr.bookFasterTitle}</div>
           <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#6b6b6b", margin: "0 0 16px" }}>
-            Save your info to {state.email} so you don't have to re-enter it next time.
+            {tr.bookFasterDesc.replace("{email}", state.email)}
           </p>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <input
               type="password"
-              placeholder="Choose a password"
+              placeholder={tr.choosePassword}
               value={password}
               onChange={e => { setPassword(e.target.value); setAcctError(""); }}
               style={{ flex: 1, minWidth: 180, height: 44, padding: "0 14px", border: "1px solid #e6e6e6",
@@ -1825,7 +2048,7 @@ function StepDone({ state, onReset }) {
               onBlur={e  => e.target.style.borderColor = "#e6e6e6"}
             />
             <BkButton onClick={handleCreateAccount} disabled={acctStatus === "loading"}>
-              {acctStatus === "loading" ? "Creating…" : "Create account"}
+              {acctStatus === "loading" ? tr.creating : tr.createAccount}
             </BkButton>
           </div>
           {acctError && (
@@ -1850,15 +2073,18 @@ function StepShell({ kicker, title, children, wide }) {
 }
 
 function StepFooter({ onBack, onNext, nextLabel, disabled }) {
+  const { lang } = useLang();
+  const tr = TRANSLATIONS[lang];
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 24, borderTop: "1px solid #e6e6e6" }}>
-      {onBack ? <BkButton variant="ghost" onClick={onBack}>← Back</BkButton> : <span/>}
+      {onBack ? <BkButton variant="ghost" onClick={onBack}>{tr.back}</BkButton> : <span/>}
       <BkButton onClick={onNext} disabled={disabled}>{nextLabel} →</BkButton>
     </div>
   );
 }
 
 window.BK = {
+  LangContext,
   TopBar, Stepper, OrderSummary,
   StepTrailerDates, StepCustomer, StepDocs, StepCustomerDocs, StepAgreement, StepPayment, StepAgreementPay, StepDone,
   Button: BkButton,
