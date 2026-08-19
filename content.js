@@ -68,7 +68,7 @@ window.TVR_CONTENT = {
       ],
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     115,
-      weekly:    600,
+      weekly:    650,
       deposit:   100,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
