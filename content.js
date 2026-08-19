@@ -95,7 +95,7 @@ window.TVR_CONTENT = {
         "assets/fleet/Liberty-car-hauler-straps-20ft.jpg",
       ],
       photoScale: 1,
-      daily:     100,
+      daily:     105,
       weekly:    550,
       deposit:   100,
       kickerLong:"Liberty",
