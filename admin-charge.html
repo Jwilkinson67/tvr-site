@@ -82,6 +82,16 @@
     table.bookings th { text-align: left; padding: 8px 12px; background: #f4f6f9; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b6b6b; border-bottom: 2px solid #e0e0e0; }
     table.bookings td { padding: 10px 12px; border-bottom: 1px solid #efefef; vertical-align: top; }
     table.bookings tr:hover td { background: #f9fafb; }
+    table.bookings td.net { font-weight: 700; color: #155a30; }
+    table.bookings tfoot td { padding: 10px 12px; font-weight: 700; font-size: 13px; background: #f4f6f9; border-top: 2px solid #e0e0e0; }
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .summary-tile { background: #f4f6f9; padding: 20px 24px; }
+    .summary-tile .s-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #6b6b6b; margin-bottom: 6px; }
+    .summary-tile .s-value { font-size: 28px; font-weight: 700; color: #262626; }
+    .summary-tile .s-sub { font-size: 12px; color: #9a9a9a; margin-top: 2px; }
+    .summary-tile.green .s-value { color: #155a30; }
+    .month-select { font-size: 13px; padding: 6px 10px; border: 1px solid #d0d0d0; background: #fff; cursor: pointer; }
+    @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
     .select-btn { background: #1568be; color: #fff; border: none; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; }
     .select-btn:hover { background: #1055a0; }
     .tag { display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -199,8 +209,33 @@
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="card-title" style="margin-bottom:0;">Recent Bookings</div>
-        <button class="btn-sm" onclick="loadBookings()">Refresh</button>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select id="month-filter" class="month-select" onchange="renderBookings()">
+            <option value="all">All time</option>
+          </select>
+          <button class="btn-sm" onclick="loadBookings()">Refresh</button>
+        </div>
       </div>
+
+      <!-- Monthly summary tiles -->
+      <div class="summary-grid" id="summary-tiles" style="display:none;">
+        <div class="summary-tile">
+          <div class="s-label">Collected</div>
+          <div class="s-value" id="tile-collected">—</div>
+          <div class="s-sub">Total charged incl. deposits</div>
+        </div>
+        <div class="summary-tile">
+          <div class="s-label">Deposits</div>
+          <div class="s-value" id="tile-deposits">—</div>
+          <div class="s-sub">Refundable · not your revenue</div>
+        </div>
+        <div class="summary-tile green">
+          <div class="s-label">Net Revenue</div>
+          <div class="s-value" id="tile-net">—</div>
+          <div class="s-sub">Collected minus deposits</div>
+        </div>
+      </div>
+
       <div id="bookings-status" class="alert alert-info" style="display:none;"></div>
       <div id="bookings-table" style="overflow-x:auto;"></div>
     </div>
@@ -275,11 +310,14 @@
   });
 
   // ── Load bookings ────────────────────────────────────────────────────────
+  let allBookings = [];
+
   async function loadBookings() {
     const statusEl = document.getElementById("bookings-status");
     const tableEl  = document.getElementById("bookings-table");
     statusEl.textContent = "Loading bookings…";
     statusEl.style.display = "block";
+    statusEl.className = "alert alert-info";
     tableEl.innerHTML = "";
     try {
       const { bookings } = await callApi({ action: "list" });
@@ -289,25 +327,94 @@
         statusEl.style.display = "block";
         return;
       }
-      const rows = bookings.map(function(b) {
-        const hasCard = !!(b.stripe_customer_id && b.stripe_payment_method_id);
-        const tagClass = { approved:"tag-approved", pending:"tag-pending", completed:"tag-completed", declined:"tag-declined" }[b.status] || "tag-pending";
-        return "<tr>" +
-          "<td><button class='select-btn'" + (hasCard ? "" : " disabled title='No saved card'") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button></td>" +
-          "<td style='font-family:monospace;font-size:12px;'>" + b.id + "</td>" +
-          "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:12px;'>" + (b.customer_email || "") + "</span></td>" +
-          "<td>" + (b.trailer_name || b.trailer_id || "—") + "</td>" +
-          "<td style='font-size:12px;'>" + (b.pickup || "—") + "<br>" + (b.dropoff || "—") + "</td>" +
-          "<td>$" + parseFloat(b.total_charged || 0).toFixed(2) + "</td>" +
-          "<td><span class='tag " + tagClass + "'>" + (b.status || "?") + "</span></td>" +
-          "</tr>";
-      }).join("");
-      tableEl.innerHTML = "<table class='bookings'><thead><tr><th></th><th>Booking ID</th><th>Customer</th><th>Trailer</th><th>Dates</th><th>Charged</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
+      allBookings = bookings;
+      populateMonthFilter(bookings);
+      renderBookings();
     } catch (e) {
       statusEl.className = "alert alert-error";
       statusEl.textContent = "Error loading bookings: " + e.message;
       statusEl.style.display = "block";
     }
+  }
+
+  function populateMonthFilter(bookings) {
+    const seen = new Set();
+    const select = document.getElementById("month-filter");
+    // Keep "All time" option, clear the rest
+    while (select.options.length > 1) select.remove(1);
+    bookings.forEach(function(b) {
+      if (!b.pickup) return;
+      const ym = b.pickup.slice(0, 7); // "2026-07"
+      if (!seen.has(ym)) {
+        seen.add(ym);
+        const d = new Date(ym + "-01");
+        const label = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+        const opt = document.createElement("option");
+        opt.value = ym;
+        opt.textContent = label;
+        select.appendChild(opt);
+      }
+    });
+  }
+
+  function renderBookings() {
+    const month    = document.getElementById("month-filter").value;
+    const tableEl  = document.getElementById("bookings-table");
+    const tilesEl  = document.getElementById("summary-tiles");
+
+    const filtered = month === "all"
+      ? allBookings
+      : allBookings.filter(function(b) { return b.pickup && b.pickup.startsWith(month); });
+
+    // Calculate totals
+    var totalCollected = 0, totalDeposits = 0;
+    filtered.forEach(function(b) {
+      totalCollected += parseFloat(b.total_charged || 0);
+      totalDeposits  += parseFloat(b.deposit_amount || 0);
+    });
+    var totalNet = totalCollected - totalDeposits;
+
+    // Update tiles
+    tilesEl.style.display = filtered.length ? "grid" : "none";
+    document.getElementById("tile-collected").textContent = "$" + totalCollected.toFixed(2);
+    document.getElementById("tile-deposits").textContent  = "$" + totalDeposits.toFixed(2);
+    document.getElementById("tile-net").textContent       = "$" + totalNet.toFixed(2);
+
+    if (!filtered.length) {
+      tableEl.innerHTML = "<p style='color:#9a9a9a;padding:12px 0;'>No bookings for this period.</p>";
+      return;
+    }
+
+    const rows = filtered.map(function(b) {
+      const hasCard   = !!(b.stripe_customer_id && b.stripe_payment_method_id);
+      const tagClass  = { approved:"tag-approved", pending:"tag-pending", completed:"tag-completed", declined:"tag-declined" }[b.status] || "tag-pending";
+      const charged   = parseFloat(b.total_charged || 0);
+      const deposit   = parseFloat(b.deposit_amount || 0);
+      const net       = charged - deposit;
+      return "<tr>" +
+        "<td><button class='select-btn'" + (hasCard ? "" : " disabled title='No saved card'") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button></td>" +
+        "<td style='font-family:monospace;font-size:12px;'>" + b.id + "</td>" +
+        "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:12px;'>" + (b.customer_email || "") + "</span></td>" +
+        "<td>" + (b.trailer_name || b.trailer_id || "—") + "</td>" +
+        "<td style='font-size:12px;'>" + (b.pickup || "—") + "<br>" + (b.dropoff || "—") + "</td>" +
+        "<td>$" + charged.toFixed(2) + "</td>" +
+        "<td style='color:#9a9a9a;font-size:12px;'>−$" + deposit.toFixed(2) + "</td>" +
+        "<td class='net'>$" + net.toFixed(2) + "</td>" +
+        "<td><span class='tag " + tagClass + "'>" + (b.status || "?") + "</span></td>" +
+        "</tr>";
+    }).join("");
+
+    tableEl.innerHTML = "<table class='bookings'>" +
+      "<thead><tr><th></th><th>Booking ID</th><th>Customer</th><th>Trailer</th><th>Dates</th><th>Collected</th><th>Deposit</th><th>Net</th><th>Status</th></tr></thead>" +
+      "<tbody>" + rows + "</tbody>" +
+      "<tfoot><tr>" +
+        "<td colspan='5' style='text-align:right;color:#6b6b6b;font-size:11px;letter-spacing:0.5px;'>TOTALS</td>" +
+        "<td>$" + totalCollected.toFixed(2) + "</td>" +
+        "<td style='color:#9a9a9a;'>−$" + totalDeposits.toFixed(2) + "</td>" +
+        "<td style='color:#155a30;'>$" + totalNet.toFixed(2) + "</td>" +
+        "<td></td>" +
+      "</tr></tfoot>" +
+      "</table>";
   }
 
   function selectBooking(id) {
