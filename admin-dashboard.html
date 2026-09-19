@@ -312,21 +312,20 @@
 
   function populateMonthFilter(bookings) {
     const seen = new Set();
+    bookings.forEach(function(b) {
+      [b.pickup, b.dropoff].forEach(function(date) {
+        if (date) seen.add(date.slice(0, 7));
+      });
+    });
     const select = document.getElementById("month-filter");
     while (select.options.length > 1) select.remove(1);
-    bookings.forEach(function(b) {
-      if (!b.pickup) return;
-      const ym = b.pickup.slice(0, 7);
-      if (!seen.has(ym)) {
-        seen.add(ym);
-        const d = new Date(ym + "-01");
-        const opt = document.createElement("option");
-        opt.value = ym;
-        opt.textContent = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
-        select.appendChild(opt);
-      }
+    Array.from(seen).sort().reverse().forEach(function(ym) {
+      const d = new Date(ym + "-02");
+      const opt = document.createElement("option");
+      opt.value = ym;
+      opt.textContent = d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+      select.appendChild(opt);
     });
-    // Default to current month if it exists in the list
     const now = new Date();
     const currentYM = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
     if (seen.has(currentYM)) select.value = currentYM;
@@ -339,7 +338,10 @@
     const isMonth = month !== "all";
 
     const filtered = isMonth
-      ? allBookings.filter(function(b) { return b.pickup && b.pickup.startsWith(month); })
+      ? allBookings.filter(function(b) {
+          if (!b.pickup) return false;
+          return b.pickup.slice(0, 7) <= month && (b.dropoff || b.pickup).slice(0, 7) >= month;
+        })
       : allBookings;
 
     var totalCollected = 0, totalDeposits = 0;
