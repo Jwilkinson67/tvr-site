@@ -285,7 +285,8 @@
   });
 
   // ── Expenses ─────────────────────────────────────────────────────────────
-  const TOTAL_EXPENSES = 452; // Loan $295 + Insurance $85 + GPS $32 + Subs $40
+  const TOTAL_EXPENSES   = 452;       // Loan $295 + Insurance $85 + GPS $32 + Subs $40
+  const EXPENSES_START   = "2026-07"; // Month monthly payments began
 
   let allBookings = [];
 
@@ -355,13 +356,24 @@
     document.getElementById("tile-collected").textContent = "$" + totalCollected.toFixed(2);
     document.getElementById("tile-deposits").textContent  = "$" + totalDeposits.toFixed(2);
     document.getElementById("tile-net").textContent       = "$" + totalNet.toFixed(2);
-    document.getElementById("tile-expenses-wrap").style.display  = isMonth ? "" : "none";
-    document.getElementById("tile-profit-wrap").style.display    = isMonth ? "" : "none";
-    document.getElementById("expenses-block").style.display      = isMonth && filtered.length ? "block" : "none";
+    // Calculate total expenses: 1 month per month from EXPENSES_START through today (or selected month)
+    var expenseMonths;
     if (isMonth) {
-      document.getElementById("tile-expenses").textContent = "$" + TOTAL_EXPENSES.toFixed(2);
-      document.getElementById("tile-profit").textContent   = "$" + (totalNet - TOTAL_EXPENSES).toFixed(2);
+      expenseMonths = 1;
+    } else {
+      var start = new Date(EXPENSES_START + "-01");
+      var now   = new Date();
+      expenseMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth()) + 1;
+      if (expenseMonths < 1) expenseMonths = 1;
     }
+    var totalExpenses = TOTAL_EXPENSES * expenseMonths;
+
+    document.getElementById("tile-expenses-wrap").style.display = "";
+    document.getElementById("tile-profit-wrap").style.display   = "";
+    document.getElementById("expenses-block").style.display     = filtered.length ? "block" : "none";
+    document.getElementById("tile-expenses").textContent = "$" + totalExpenses.toFixed(2);
+    document.getElementById("tile-expenses").nextElementSibling.textContent = isMonth ? "Fixed monthly" : expenseMonths + " months × $452";
+    document.getElementById("tile-profit").textContent   = "$" + (totalNet - totalExpenses).toFixed(2);
 
     if (!filtered.length) { tableEl.innerHTML = "<p style='color:#9a9a9a;padding:12px 0;'>No bookings for this period.</p>"; return; }
 
