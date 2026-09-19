@@ -90,6 +90,12 @@
     .summary-tile .s-value { font-size: 28px; font-weight: 700; color: #262626; }
     .summary-tile .s-sub { font-size: 12px; color: #9a9a9a; margin-top: 2px; }
     .summary-tile.green .s-value { color: #155a30; }
+    .summary-tile.red .s-value { color: #b5212b; }
+    .summary-tile.blue .s-value { color: #1568be; }
+    .expenses-block { background: #f4f6f9; border-left: 3px solid #e0e0e0; padding: 16px 20px; margin-bottom: 24px; display: none; }
+    .expenses-block .exp-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #6b6b6b; margin-bottom: 10px; }
+    .expenses-block .exp-row { display: flex; justify-content: space-between; font-size: 13px; color: #3c3c3c; padding: 3px 0; }
+    .expenses-block .exp-total { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: #262626; border-top: 1px solid #d0d0d0; margin-top: 8px; padding-top: 8px; }
     .month-select { font-size: 13px; padding: 6px 10px; border: 1px solid #d0d0d0; background: #fff; cursor: pointer; }
     @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
     .select-btn { background: #1568be; color: #fff; border: none; padding: 5px 12px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; }
@@ -234,6 +240,26 @@
           <div class="s-value" id="tile-net">—</div>
           <div class="s-sub">Collected minus deposits</div>
         </div>
+        <div class="summary-tile red">
+          <div class="s-label">Monthly Expenses</div>
+          <div class="s-value" id="tile-expenses">—</div>
+          <div class="s-sub" id="tile-expenses-note">Fixed costs</div>
+        </div>
+        <div class="summary-tile blue">
+          <div class="s-label">Net Profit</div>
+          <div class="s-value" id="tile-profit">—</div>
+          <div class="s-sub">Revenue minus expenses</div>
+        </div>
+      </div>
+
+      <!-- Expense breakdown -->
+      <div class="expenses-block" id="expenses-block">
+        <div class="exp-title">Monthly Fixed Expenses</div>
+        <div class="exp-row"><span>Loan</span><span>$295.00</span></div>
+        <div class="exp-row"><span>Insurance</span><span>$85.00</span></div>
+        <div class="exp-row"><span>GPS</span><span>$32.00</span></div>
+        <div class="exp-row"><span>Subscriptions</span><span>$40.00</span></div>
+        <div class="exp-total"><span>Total</span><span>$452.00</span></div>
       </div>
 
       <div id="bookings-status" class="alert alert-info" style="display:none;"></div>
@@ -309,7 +335,14 @@
     document.getElementById("notes-field").style.display = this.value === "Other" ? "block" : "none";
   });
 
-  // ── Load bookings ────────────────────────────────────────────────────────
+  // ── Monthly fixed expenses ───────────────────────────────────────────────
+  const MONTHLY_EXPENSES = [
+    { label: "Loan",          amount: 295 },
+    { label: "Insurance",     amount: 85  },
+    { label: "GPS",           amount: 32  },
+    { label: "Subscriptions", amount: 40  },
+  ];
+  const TOTAL_EXPENSES = MONTHLY_EXPENSES.reduce(function(s, e) { return s + e.amount; }, 0);
   let allBookings = [];
 
   async function loadBookings() {
@@ -375,10 +408,29 @@
     var totalNet = totalCollected - totalDeposits;
 
     // Update tiles
+    var isMonth = month !== "all";
     tilesEl.style.display = filtered.length ? "grid" : "none";
+    tilesEl.style.gridTemplateColumns = filtered.length ? "repeat(3, 1fr)" : "";
+    document.getElementById("expenses-block").style.display = filtered.length && isMonth ? "block" : "none";
     document.getElementById("tile-collected").textContent = "$" + totalCollected.toFixed(2);
     document.getElementById("tile-deposits").textContent  = "$" + totalDeposits.toFixed(2);
     document.getElementById("tile-net").textContent       = "$" + totalNet.toFixed(2);
+
+    // Expenses + profit only meaningful for a single month view
+    var expTile    = document.getElementById("tile-expenses");
+    var profTile   = document.getElementById("tile-profit");
+    var expNote    = document.getElementById("tile-expenses-note");
+    if (isMonth) {
+      expTile.textContent  = "$" + TOTAL_EXPENSES.toFixed(2);
+      expNote.textContent  = "Loan · Insurance · GPS · Subs";
+      profTile.textContent = "$" + (totalNet - TOTAL_EXPENSES).toFixed(2);
+      profTile.parentElement.style.display = "";
+      expTile.parentElement.style.display  = "";
+      tilesEl.style.gridTemplateColumns = "repeat(3, 1fr)";
+    } else {
+      expTile.parentElement.style.display  = "none";
+      profTile.parentElement.style.display = "none";
+    }
 
     if (!filtered.length) {
       tableEl.innerHTML = "<p style='color:#9a9a9a;padding:12px 0;'>No bookings for this period.</p>";
