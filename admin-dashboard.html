@@ -136,10 +136,15 @@
           <div class="t-value" id="tile-deposits">—</div>
           <div class="t-sub">Refundable</div>
         </div>
+        <div class="tile">
+          <div class="t-label">Tax Collected</div>
+          <div class="t-value" id="tile-tax">—</div>
+          <div class="t-sub">Remit to state</div>
+        </div>
         <div class="tile green">
           <div class="t-label">Net Revenue</div>
           <div class="t-value" id="tile-net">—</div>
-          <div class="t-sub">After deposits</div>
+          <div class="t-sub">After deposits &amp; tax</div>
         </div>
         <div class="tile red" id="tile-expenses-wrap" style="display:none;">
           <div class="t-label">Expenses</div>
@@ -345,16 +350,18 @@
         })
       : allBookings;
 
-    var totalCollected = 0, totalDeposits = 0;
+    var totalCollected = 0, totalDeposits = 0, totalTax = 0;
     filtered.forEach(function(b) {
       totalCollected += parseFloat(b.total_charged || 0);
       totalDeposits  += parseFloat(b.deposit_amount || 0);
+      totalTax       += parseFloat(b.tax_amount || 0);
     });
-    var totalNet = totalCollected - totalDeposits;
+    var totalNet = totalCollected - totalDeposits - totalTax;
 
     tilesEl.style.display = filtered.length ? "grid" : "none";
     document.getElementById("tile-collected").textContent = "$" + totalCollected.toFixed(2);
     document.getElementById("tile-deposits").textContent  = "$" + totalDeposits.toFixed(2);
+    document.getElementById("tile-tax").textContent       = "$" + totalTax.toFixed(2);
     document.getElementById("tile-net").textContent       = "$" + totalNet.toFixed(2);
     // Calculate total expenses: 1 month per month from EXPENSES_START through today (or selected month)
     var expenseMonths;
