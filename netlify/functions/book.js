@@ -48,6 +48,7 @@ function err(status, msg) { return { statusCode: status, headers: HEADERS, body:
                                    on multi-day (2+ day) rentals. */
 const PERCENT_COUPONS = {
   AMERICA250: 10,
+  AGEXEMPT: 9.25,
 };
 
 function getCoupon(code, days) {
@@ -56,7 +57,8 @@ function getCoupon(code, days) {
   const adminCode = process.env.ADMIN_COUPON_CODE;
   if (adminCode && trimmed === adminCode) return { type: "free" };
   const percent = PERCENT_COUPONS[trimmed.toUpperCase()];
-  if (percent && Number(days) >= 2) return { type: "percent", percent };
+  const noMinDays = ["AGEXEMPT"];
+  if (percent && (Number(days) >= 2 || noMinDays.includes(trimmed.toUpperCase()))) return { type: "percent", percent };
   return null;
 }
 
