@@ -216,6 +216,35 @@ exports.handler = async (event) => {
     });
   }
 
+  // ── record refund ─────────────────────────────────────────────────────────
+  if (body.action === "record-refund") {
+    const { bookingId, refundAmountDollars } = body;
+    if (!bookingId || !refundAmountDollars) {
+      return err(400, "bookingId and refundAmountDollars are required.");
+    }
+    const refund = parseFloat(refundAmountDollars);
+    if (isNaN(refund) || refund <= 0) return err(400, "Invalid refund amount.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings")
+      .select("id, total_charged")
+      .eq("id", bookingId)
+      .single();
+
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    const newTotal = Math.max(0, parseFloat(booking.total_charged || 0) - refund);
+
+    const { error: updateErr } = await supabase
+      .from("bookings")
+      .update({ total_charged: newTotal })
+      .eq("id", bookingId);
+
+    if (updateErr) { console.error("Supabase update error:", updateErr); return err(500, "Could not update booking."); }
+
+    return ok({ success: true, bookingId, newTotal });
+  }
+
   // ── upload doc (admin) ────────────────────────────────────────────────────
   if (body.action === "upload-doc") {
     const { bookingId, docId, filename, mimeType, file } = body;
