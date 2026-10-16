@@ -389,6 +389,33 @@ exports.handler = async (event) => {
     return ok({ success: true, bookingId, newTotal });
   }
 
+  // ── public: upload doc via agreement token ────────────────────────────────
+  if (body.action === "upload-doc-token") {
+    const { bookingId, token, docId, filename, mimeType, file } = body;
+    if (!bookingId || !token || !docId || !filename || !mimeType || !file) {
+      return err(400, "bookingId, token, docId, filename, mimeType, and file are required.");
+    }
+    if (token !== makeToken("agreement", bookingId)) return err(401, "Invalid or expired link.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings").select("id, session_id, doc_paths").eq("id", bookingId).single();
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    const sessionId = booking.session_id || bookingId;
+    const safeName  = filename.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
+    const path      = `docs/${sessionId}/${docId}-${safeName}`;
+    const buffer    = Buffer.from(file, "base64");
+
+    const { error: uploadErr } = await supabase.storage
+      .from("rental-docs").upload(path, buffer, { contentType: mimeType, upsert: true });
+    if (uploadErr) { console.error("Storage upload error:", uploadErr); return err(500, uploadErr.message || "Upload failed."); }
+
+    const newDocPaths = { ...(booking.doc_paths || {}), [docId]: path };
+    await supabase.from("bookings").update({ doc_paths: newDocPaths }).eq("id", bookingId);
+
+    return ok({ success: true, path });
+  }
+
   // ── upload doc (admin) ────────────────────────────────────────────────────
   if (body.action === "upload-doc") {
     const { bookingId, docId, filename, mimeType, file } = body;

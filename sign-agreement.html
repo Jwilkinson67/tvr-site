@@ -3,70 +3,121 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Rental Agreement — TVR</title>
+  <title>Rental Documents — TVR</title>
   <link rel="icon" href="assets/tvr-logo-mark.png">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:Arial,sans-serif;background:#f6f7f9;color:#262626;padding:0 0 48px;}
-    .topbar{background:#1568be;padding:16px 24px;display:flex;align-items:center;gap:12px;}
+    .topbar{background:#1568be;padding:16px 24px;}
     .topbar-logo{color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.5px;}
-    .topbar-sub{color:#a8c8f0;font-size:13px;letter-spacing:1px;text-transform:uppercase;}
+    .topbar-sub{color:#a8c8f0;font-size:13px;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
     .shell{max-width:740px;margin:0 auto;padding:0 16px;}
-    .card{background:#fff;padding:32px;margin-top:24px;}
-    h2{font-size:18px;font-weight:700;margin-bottom:16px;color:#1568be;letter-spacing:-0.3px;}
-    .booking-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+    .card{background:#fff;padding:28px 32px;margin-top:24px;}
+    .card-title{font-size:16px;font-weight:700;letter-spacing:-0.2px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+    .step-num{width:28px;height:28px;background:#1568be;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+    .step-num.done{background:#155a30;}
+    .booking-table{width:100%;border-collapse:collapse;}
     .booking-table td{padding:8px 12px;border-bottom:1px solid #e6e6e6;font-size:14px;}
-    .booking-table td:first-child{font-weight:700;width:140px;color:#6b6b6b;}
+    .booking-table td:first-child{font-weight:700;width:130px;color:#6b6b6b;}
+    .upload-area{border:2px dashed #d0d0d0;padding:28px;text-align:center;cursor:pointer;transition:border-color 0.15s;margin-top:4px;}
+    .upload-area:hover,.upload-area.drag{border-color:#1568be;background:#f4f8ff;}
+    .upload-area input[type=file]{display:none;}
+    .upload-area .icon{font-size:32px;margin-bottom:8px;}
+    .upload-area p{font-size:14px;color:#6b6b6b;margin-bottom:4px;}
+    .upload-area .hint{font-size:12px;color:#9a9a9a;}
+    .preview{display:none;margin-top:12px;text-align:left;background:#f0f9f4;border:1px solid #c3e6cb;padding:12px 16px;}
+    .preview-name{font-size:13px;font-weight:700;color:#155a30;}
+    .preview-size{font-size:11px;color:#6b6b6b;}
+    .btn-upload{display:block;width:100%;background:#1568be;color:#fff;border:none;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;}
+    .btn-upload:disabled{background:#9a9a9a;cursor:not-allowed;}
+    .btn-upload:hover:not(:disabled){background:#1055a0;}
+    .progress{display:none;margin-top:12px;background:#e6e6e6;height:6px;}
+    .progress-bar{height:6px;background:#1568be;width:0;transition:width 0.3s;}
     .clauses{margin-top:0;}
-    .clause{padding:14px 0;border-bottom:1px solid #e6e6e6;}
+    .clause{padding:12px 0;border-bottom:1px solid #e6e6e6;}
     .clause:last-child{border-bottom:none;}
-    .clause-title{font-size:13px;font-weight:700;color:#262626;margin-bottom:4px;}
+    .clause-title{font-size:13px;font-weight:700;color:#262626;margin-bottom:3px;}
     .clause-body{font-size:13px;color:#3c3c3c;line-height:1.6;}
-    .sig-card{background:#fff;padding:32px;margin-top:24px;border-top:4px solid #1568be;}
     label{display:block;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;}
     input[type=text]{width:100%;padding:12px 14px;border:1px solid #d0d0d0;font-size:16px;font-family:Georgia,serif;color:#262626;outline:none;transition:border-color 0.15s;}
     input[type=text]:focus{border-color:#1568be;}
-    .checkbox-row{display:flex;align-items:flex-start;gap:10px;margin:20px 0;}
+    .checkbox-row{display:flex;align-items:flex-start;gap:10px;margin:20px 0 0;}
     .checkbox-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:pointer;}
     .checkbox-row span{font-size:14px;color:#3c3c3c;line-height:1.5;}
-    .btn{display:block;width:100%;background:#1568be;color:#fff;border:none;padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;}
-    .btn:disabled{background:#9a9a9a;cursor:not-allowed;}
-    .btn:hover:not(:disabled){background:#1055a0;}
-    .alert{padding:14px 16px;margin-top:16px;font-size:14px;}
+    .btn-sign{display:block;width:100%;background:#155a30;color:#fff;border:none;padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;}
+    .btn-sign:disabled{background:#9a9a9a;cursor:not-allowed;}
+    .btn-sign:hover:not(:disabled){background:#0e3d20;}
+    .alert{padding:12px 16px;margin-top:12px;font-size:14px;}
     .alert-success{background:#f0f9f4;border-left:4px solid #155a30;color:#155a30;}
     .alert-error{background:#fff5f5;border-left:4px solid #b5212b;color:#b5212b;}
-    .spinner{display:none;text-align:center;padding:40px;color:#6b6b6b;}
-    .signed-badge{background:#f0f9f4;border:2px solid #155a30;padding:24px;text-align:center;margin-top:24px;}
-    .signed-badge h3{color:#155a30;font-size:20px;margin-bottom:8px;}
-    .signed-badge p{color:#3c3c3c;font-size:14px;line-height:1.6;}
-    @media(max-width:600px){.card,.sig-card{padding:20px;}.booking-table td{font-size:13px;}}
+    .done-card{background:#fff;padding:40px 32px;margin-top:24px;text-align:center;}
+    .done-icon{font-size:52px;margin-bottom:16px;}
+    .done-card h2{font-size:22px;font-weight:700;margin-bottom:12px;}
+    .done-card p{color:#3c3c3c;line-height:1.6;font-size:15px;}
+    .spinner-wrap{padding:40px;text-align:center;color:#6b6b6b;}
+    .spinner{display:inline-block;width:32px;height:32px;border:3px solid #e6e6e6;border-top-color:#1568be;border-radius:50%;animation:spin 0.8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    @media(max-width:600px){.card{padding:20px;}.card-title{font-size:15px;}}
   </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div>
-    <div class="topbar-logo">Tennessee Valley Rentals LLC</div>
-    <div class="topbar-sub">Trailer Rental Agreement</div>
-  </div>
+  <div class="topbar-logo">Tennessee Valley Rentals LLC</div>
+  <div class="topbar-sub">Rental Documents &amp; Agreement</div>
 </div>
 
 <div class="shell">
-  <div id="loading" class="spinner" style="display:block;">Loading agreement…</div>
+  <div id="loading" class="spinner-wrap"><div class="spinner"></div><p style="margin-top:12px;">Loading…</p></div>
   <div id="main" style="display:none;">
 
+    <!-- Booking summary -->
     <div class="card">
-      <h2>Rental Details</h2>
+      <div class="card-title">Rental Details</div>
       <table class="booking-table" id="booking-details"></table>
     </div>
 
-    <div class="card">
-      <h2>Rental Agreement</h2>
+    <!-- Step 1: Driver's license -->
+    <div class="card" id="step-license">
+      <div class="card-title"><span class="step-num" id="num-license">1</span>Driver's License</div>
+      <p style="font-size:14px;color:#3c3c3c;margin-bottom:16px;">Upload a photo or scan of your driver's license (front side).</p>
+      <div class="upload-area" id="drop-license" onclick="document.getElementById('file-license').click()">
+        <input type="file" id="file-license" accept="image/*,.pdf" onchange="handleFile('license',this)">
+        <div class="icon">🪪</div>
+        <p>Tap to choose a photo or file</p>
+        <div class="hint">JPG, PNG or PDF — max 10 MB</div>
+      </div>
+      <div class="preview" id="preview-license"></div>
+      <div id="alert-license" style="display:none;"></div>
+      <div class="progress" id="prog-license"><div class="progress-bar" id="progbar-license"></div></div>
+      <button class="btn-upload" id="btn-license" disabled onclick="uploadDoc('license')">Upload License</button>
+    </div>
+
+    <!-- Step 2: Insurance -->
+    <div class="card" id="step-insurance">
+      <div class="card-title"><span class="step-num" id="num-insurance">2</span>Proof of Insurance</div>
+      <p style="font-size:14px;color:#3c3c3c;margin-bottom:16px;">Upload your auto insurance card or declarations page showing your policy is active.</p>
+      <div class="upload-area" id="drop-insurance" onclick="document.getElementById('file-insurance').click()">
+        <input type="file" id="file-insurance" accept="image/*,.pdf" onchange="handleFile('insurance',this)">
+        <div class="icon">📄</div>
+        <p>Tap to choose a photo or file</p>
+        <div class="hint">JPG, PNG or PDF — max 10 MB</div>
+      </div>
+      <div class="preview" id="preview-insurance"></div>
+      <div id="alert-insurance" style="display:none;"></div>
+      <div class="progress" id="prog-insurance"><div class="progress-bar" id="progbar-insurance"></div></div>
+      <button class="btn-upload" id="btn-insurance" disabled onclick="uploadDoc('insurance')">Upload Insurance</button>
+    </div>
+
+    <!-- Step 3: Agreement -->
+    <div class="card" id="step-agreement">
+      <div class="card-title"><span class="step-num" id="num-agreement">3</span>Rental Agreement</div>
       <div class="clauses" id="clauses"></div>
     </div>
 
-    <div class="sig-card" id="sig-section">
-      <h2 style="margin-bottom:20px;">Sign Agreement</h2>
+    <!-- Step 3: Signature -->
+    <div class="card" id="sig-section">
+      <div class="card-title"><span class="step-num">✎</span>Sign</div>
       <div>
         <label for="sig-input">Type your full legal name to sign</label>
         <input type="text" id="sig-input" placeholder="Full name" autocomplete="name">
@@ -76,17 +127,18 @@
         <span>I have read and agree to all terms of this Rental Agreement. I understand that typing my name above constitutes a legally binding electronic signature.</span>
       </div>
       <div id="sig-alert" style="display:none;"></div>
-      <button class="btn" id="sig-btn" onclick="submitSignature()" disabled>Sign Agreement</button>
+      <button class="btn-sign" id="sig-btn" onclick="submitSignature()" disabled>Sign &amp; Submit</button>
     </div>
 
-    <div id="signed-wrap" style="display:none;">
-      <div class="signed-badge">
-        <h3>✓ Agreement Signed</h3>
-        <p id="signed-msg"></p>
-        <p style="margin-top:12px;color:#6b6b6b;font-size:13px;">Questions? Call or text <strong>(321) 765-3077</strong> · info@rentwithtvr.com</p>
-      </div>
-    </div>
+  </div>
 
+  <div id="done-wrap" style="display:none;">
+    <div class="done-card">
+      <div class="done-icon">✅</div>
+      <h2>All Done!</h2>
+      <p id="done-msg"></p>
+      <p style="margin-top:16px;color:#6b6b6b;font-size:13px;">Questions? Call or text <strong>(321) 765-3077</strong><br>info@rentwithtvr.com</p>
+    </div>
   </div>
 </div>
 
@@ -115,46 +167,49 @@
   const params    = new URLSearchParams(location.search);
   const bookingId = params.get("id");
   const token     = params.get("token");
+  const uploaded  = { license: false, insurance: false };
+  const files     = {};
+
+  function api(body) {
+    return fetch("/.netlify/functions/charge-extra", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then(function(r) { return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Error"); return d; }); });
+  }
 
   async function init() {
-    if (!bookingId || !token) { showError("Invalid link. Please contact TVR."); return; }
+    if (!bookingId || !token) { showFatalError("Invalid link. Please contact TVR."); return; }
 
-    // Render clauses immediately
     document.getElementById("clauses").innerHTML = CLAUSES.map(function(c) {
       return "<div class='clause'><div class='clause-title'>" + c[0] + "</div><div class='clause-body'>" + c[1] + "</div></div>";
     }).join("");
 
     try {
-      const res  = await fetch("/.netlify/functions/charge-extra", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "get-agreement", bookingId, token }),
-      });
-      const data = await res.json();
-      if (!res.ok) { showError(data.error || "Could not load agreement."); return; }
+      const data = await api({ action: "get-agreement", bookingId, token });
 
       if (data.alreadySigned) {
         document.getElementById("loading").style.display = "none";
-        document.getElementById("main").style.display = "block";
-        document.getElementById("sig-section").style.display = "none";
-        document.getElementById("signed-wrap").style.display = "block";
-        document.getElementById("signed-msg").textContent =
-          "This agreement was already signed by " + data.signedBy + " on " + new Date(data.signedAt).toLocaleString() + ".";
-        renderBookingTable(data.booking);
+        document.getElementById("done-wrap").style.display = "block";
+        document.getElementById("done-msg").textContent =
+          "This agreement was already signed by " + data.signedBy + " on " + new Date(data.signedAt).toLocaleString() + ". We have everything we need — thank you!";
         return;
       }
 
       renderBookingTable(data.booking);
+
+      // Mark already-uploaded docs
+      const dp = data.booking.doc_paths || {};
+      if (dp.license)   markUploaded("license");
+      if (dp.insurance) markUploaded("insurance");
+
+      if (data.booking.customer_name) document.getElementById("sig-input").value = data.booking.customer_name;
+      checkSigReady();
+
       document.getElementById("loading").style.display = "none";
       document.getElementById("main").style.display = "block";
-
-      // Pre-fill name if available
-      if (data.booking.customer_name) {
-        document.getElementById("sig-input").value = data.booking.customer_name;
-        checkSigReady();
-      }
     } catch (e) {
-      showError("Network error. Please try again.");
+      showFatalError(e.message || "Could not load agreement.");
     }
   }
 
@@ -168,48 +223,118 @@
       (b.deposit_amount ? "<tr><td>Deposit</td><td>$" + (+b.deposit_amount).toFixed(2) + " refundable</td></tr>" : "");
   }
 
-  function showError(msg) {
+  function showFatalError(msg) {
     document.getElementById("loading").style.display = "none";
     document.getElementById("main").style.display = "block";
-    document.getElementById("sig-section").innerHTML =
-      "<div class='alert alert-error'>" + msg + "</div>";
+    document.getElementById("step-license").innerHTML = "<div class='alert alert-error'>" + msg + "</div>";
+    document.getElementById("step-insurance").style.display = "none";
+    document.getElementById("step-agreement").style.display = "none";
+    document.getElementById("sig-section").style.display = "none";
+  }
+
+  function handleFile(docId, input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      showDocAlert(docId, "File is too large. Max 10 MB.");
+      return;
+    }
+    files[docId] = file;
+    const preview = document.getElementById("preview-" + docId);
+    preview.style.display = "block";
+    preview.innerHTML = "<div class='preview-name'>📎 " + file.name + "</div><div class='preview-size'>" + (file.size / 1024).toFixed(0) + " KB</div>";
+    document.getElementById("btn-" + docId).disabled = false;
+    document.getElementById("alert-" + docId).style.display = "none";
+  }
+
+  function showDocAlert(docId, msg, type) {
+    var el = document.getElementById("alert-" + docId);
+    el.className = "alert alert-" + (type || "error");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function markUploaded(docId) {
+    uploaded[docId] = true;
+    document.getElementById("num-" + docId).textContent = "✓";
+    document.getElementById("num-" + docId).classList.add("done");
+    document.getElementById("btn-" + docId).textContent = "✓ Uploaded";
+    document.getElementById("btn-" + docId).disabled = true;
+    document.getElementById("btn-" + docId).style.background = "#155a30";
+    showDocAlert(docId, "✓ Uploaded successfully.", "success");
+    checkSigReady();
+  }
+
+  async function uploadDoc(docId) {
+    const file = files[docId];
+    if (!file) return;
+    const btn  = document.getElementById("btn-" + docId);
+    const prog = document.getElementById("prog-" + docId);
+    const bar  = document.getElementById("progbar-" + docId);
+    btn.disabled = true; btn.textContent = "Uploading…";
+    prog.style.display = "block"; bar.style.width = "30%";
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      bar.style.width = "60%";
+      const base64 = e.target.result.split(",")[1];
+      try {
+        await api({ action: "upload-doc-token", bookingId, token, docId, filename: file.name, mimeType: file.type, file: base64 });
+        bar.style.width = "100%";
+        setTimeout(function() { prog.style.display = "none"; }, 500);
+        markUploaded(docId);
+      } catch (err) {
+        bar.style.width = "0"; prog.style.display = "none";
+        btn.disabled = false; btn.textContent = "Retry Upload";
+        showDocAlert(docId, "Upload failed: " + err.message);
+      }
+    };
+    reader.readAsDataURL(file);
   }
 
   function checkSigReady() {
     const name    = document.getElementById("sig-input").value.trim();
     const checked = document.getElementById("sig-agree").checked;
-    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked);
+    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked && uploaded.license && uploaded.insurance);
   }
 
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("sig-input").addEventListener("input", checkSigReady);
     document.getElementById("sig-agree").addEventListener("change", checkSigReady);
+
+    // Drag-and-drop
+    ["license", "insurance"].forEach(function(docId) {
+      var drop = document.getElementById("drop-" + docId);
+      drop.addEventListener("dragover", function(e) { e.preventDefault(); drop.classList.add("drag"); });
+      drop.addEventListener("dragleave", function() { drop.classList.remove("drag"); });
+      drop.addEventListener("drop", function(e) {
+        e.preventDefault(); drop.classList.remove("drag");
+        var f = e.dataTransfer.files[0];
+        if (f) { document.getElementById("file-" + docId).files = e.dataTransfer.files; handleFile(docId, { files: [f] }); }
+      });
+    });
+
     init();
   });
 
   async function submitSignature() {
     const signature = document.getElementById("sig-input").value.trim();
-    const btn       = document.getElementById("sig-btn");
-    const alertEl   = document.getElementById("sig-alert");
-    alertEl.style.display = "none";
-    btn.disabled = true; btn.textContent = "Saving…";
-
+    if (!uploaded.license || !uploaded.insurance) {
+      var el = document.getElementById("sig-alert");
+      el.className = "alert alert-error"; el.textContent = "Please upload both your driver's license and proof of insurance first."; el.style.display = "block"; return;
+    }
+    const btn   = document.getElementById("sig-btn");
+    const alert = document.getElementById("sig-alert");
+    alert.style.display = "none"; btn.disabled = true; btn.textContent = "Saving…";
     try {
-      const res  = await fetch("/.netlify/functions/charge-extra", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "sign-agreement", bookingId, token, signature }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to save signature.");
-
-      document.getElementById("sig-section").style.display = "none";
-      document.getElementById("signed-wrap").style.display = "block";
-      document.getElementById("signed-msg").textContent =
-        "Signed by "" + signature + "" on " + new Date().toLocaleString() + ". A copy has been sent to your email.";
+      await api({ action: "sign-agreement", bookingId, token, signature });
+      document.getElementById("main").style.display = "none";
+      document.getElementById("done-wrap").style.display = "block";
+      document.getElementById("done-msg").textContent =
+        "Your license, insurance, and signed agreement have been received. A confirmation has been sent to your email. We'll be in touch before your pickup!";
     } catch (e) {
-      alertEl.className = "alert alert-error"; alertEl.textContent = e.message; alertEl.style.display = "block";
-      btn.disabled = false; btn.textContent = "Sign Agreement";
+      alert.className = "alert alert-error"; alert.textContent = e.message; alert.style.display = "block";
+      btn.disabled = false; btn.textContent = "Sign & Submit";
     }
   }
 </script>
