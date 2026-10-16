@@ -135,6 +135,18 @@ exports.handler = async (event) => {
     return err(400, "Invalid JSON body.");
   }
 
+  // ── approve booking ───────────────────────────────────────────────────────
+  if (body.action === "approve-booking") {
+    const { bookingId } = body;
+    if (!bookingId) return err(400, "bookingId is required.");
+    const { error: updateErr } = await supabase
+      .from("bookings")
+      .update({ status: "approved" })
+      .eq("id", bookingId);
+    if (updateErr) { console.error("Approve error:", updateErr); return err(500, "Could not approve booking."); }
+    return ok({ success: true, bookingId });
+  }
+
   // ── list recent bookings ──────────────────────────────────────────────────
   if (body.action === "list") {
     const { data, error } = await supabase
