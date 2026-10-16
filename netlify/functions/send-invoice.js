@@ -39,7 +39,7 @@ function err(status, msg) { return { statusCode: status, headers: HEADERS, body:
 
 function makeToken(action, id) {
   const secret = process.env.BOOKING_SECRET || "dev-secret";
-  return crypto.createHmac("sha256", secret).update(`${action}:${id}`).digest("hex").slice(0, 32);
+  return crypto.createHmac("sha256", secret).update(`${action}:${id}`).digest("hex");
 }
 
 async function sendEmail({ to, subject, html }) {
