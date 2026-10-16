@@ -65,10 +65,11 @@
     .select-btn:hover { background: #1055a0; }
     .select-btn:disabled { background: #9a9a9a; cursor: not-allowed; }
     .tag { display: inline-block; padding: 2px 7px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-    .tag-approved  { background: #edfaf1; color: #22a355; }
-    .tag-pending   { background: #fff8e0; color: #b88017; }
-    .tag-completed { background: #f0f0f0; color: #888; }
-    .tag-declined  { background: #fdf0f0; color: #b5212b; }
+    .tag-approved       { background: #edfaf1; color: #22a355; }
+    .tag-pending        { background: #fff8e0; color: #b88017; }
+    .tag-manual-pending { background: #f0f4ff; color: #1568be; }
+    .tag-completed      { background: #f0f0f0; color: #888; }
+    .tag-declined       { background: #fdf0f0; color: #b5212b; }
 
     /* ── Lock screen ── */
     #lock-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
@@ -175,10 +176,10 @@
       <div id="bookings-table" style="overflow-x:auto;"></div>
     </div>
 
-    <!-- ── Send payment request ── -->
+    <!-- ── New manual booking ── -->
     <div class="card">
-      <div class="card-title">Send Payment Request</div>
-      <div class="hint" style="margin-bottom:16px;">Generates a Stripe checkout link to email a customer. Their card is saved on file after they pay.</div>
+      <div class="card-title">New Manual Booking</div>
+      <div class="hint" style="margin-bottom:16px;">Creates the booking immediately (dates blocked on site), then gives you a single link to text the customer — they upload license, insurance, sign the agreement, and pay all in one go. Card is authorized but not charged until you approve.</div>
       <div id="invoice-alert" style="display:none;margin-bottom:16px;"></div>
       <div class="row">
         <div class="field">
@@ -197,43 +198,40 @@
         </div>
         <div class="field">
           <label for="inv-trailer">Trailer</label>
-          <select id="inv-trailer">
-            <option value="Enclosed Cargo Trailer">Enclosed Cargo Trailer</option>
-            <option value="Car Hauler / Equipment Trailer">Car Hauler / Equipment Trailer</option>
-            <option value="Motorcycle Trailer">Motorcycle Trailer</option>
-            <option value="Car Trailer with Winch">Car Trailer with Winch</option>
+          <select id="inv-trailer" onchange="calcBookingAmounts()">
+            <option value="Enclosed Cargo Trailer" data-rate="120">Enclosed Cargo Trailer — $120/day</option>
+            <option value="Car Hauler / Equipment Trailer" data-rate="95">Car Hauler / Equipment Trailer — $95/day</option>
           </select>
         </div>
       </div>
       <div class="row">
         <div class="field">
           <label for="inv-pickup">Pickup date</label>
-          <input type="date" id="inv-pickup">
+          <input type="date" id="inv-pickup" onchange="calcBookingAmounts()">
         </div>
         <div class="field">
           <label for="inv-dropoff">Return date</label>
-          <input type="date" id="inv-dropoff">
+          <input type="date" id="inv-dropoff" onchange="calcBookingAmounts()">
         </div>
       </div>
-      <div class="row">
-        <div class="field">
-          <label for="inv-rental">Rental amount ($)</label>
-          <input type="number" id="inv-rental" placeholder="0.00" min="1" step="0.01">
-        </div>
-        <div class="field">
-          <label for="inv-deposit">Deposit amount ($)</label>
-          <input type="number" id="inv-deposit" placeholder="100.00" min="1" step="0.01" value="100">
-        </div>
+      <!-- Auto-calculated pricing summary -->
+      <div id="booking-calc" style="display:none;background:#f4f6f9;padding:16px;margin-bottom:16px;font-size:13px;line-height:2;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Pricing Summary</div>
+        <div style="display:flex;justify-content:space-between;"><span id="calc-days-label">Rental</span><span id="calc-rental">—</span></div>
+        <div style="display:flex;justify-content:space-between;color:#6b6b6b;"><span>TN Sales Tax (9.25%)</span><span id="calc-tax">—</span></div>
+        <div style="display:flex;justify-content:space-between;color:#6b6b6b;"><span>Refundable Deposit</span><span id="calc-deposit">$100.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #d0d0d0;margin-top:6px;padding-top:6px;"><span>Total (auth hold)</span><span id="calc-total" style="color:#1568be;">—</span></div>
       </div>
       <div id="invoice-link-wrap" style="display:none;margin-bottom:16px;">
-        <label style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;display:block;margin-bottom:6px;">Payment Link — copy and email to customer</label>
+        <label style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;display:block;margin-bottom:6px;">Customer Link — text this to the customer</label>
         <div style="display:flex;gap:8px;">
           <input type="text" id="invoice-link" readonly style="font-family:monospace;font-size:12px;background:#f4f6f9;flex:1;">
-          <button class="btn-sm" onclick="copyInvoiceLink()" style="white-space:nowrap;">Copy Link</button>
+          <button class="btn-sm" onclick="copyInvoiceLink()" style="white-space:nowrap;">Copy</button>
         </div>
+        <div id="new-booking-id" style="font-size:12px;color:#6b6b6b;margin-top:6px;"></div>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
-        <button class="btn-primary" onclick="submitInvoice()" style="width:auto;padding:12px 24px;">Generate Payment Link</button>
+        <button class="btn-primary" onclick="submitManualBooking()" style="width:auto;padding:12px 24px;">Create Booking &amp; Get Customer Link</button>
         <span id="invoice-spinner" style="display:none;color:#6b6b6b;font-size:13px;">Creating…</span>
       </div>
     </div>
@@ -470,7 +468,7 @@
 
     const rows = filtered.map(function(b) {
       const hasCard  = !!(b.stripe_customer_id && b.stripe_payment_method_id);
-      const tagClass = { approved:"tag-approved", pending:"tag-pending", completed:"tag-completed", declined:"tag-declined" }[b.status] || "tag-pending";
+      const tagClass = { approved:"tag-approved", pending:"tag-pending", "manual-pending":"tag-manual-pending", completed:"tag-completed", declined:"tag-declined" }[b.status] || "tag-pending";
       const charged  = parseFloat(b.total_charged || 0);
       const deposit  = parseFloat(b.deposit_amount || 0);
       const net      = charged - deposit;
@@ -527,36 +525,66 @@
     }
   }
 
-  async function submitInvoice() {
-    const name     = document.getElementById("inv-name").value.trim();
-    const email    = document.getElementById("inv-email").value.trim();
-    const phone    = document.getElementById("inv-phone").value.trim();
-    const trailer  = document.getElementById("inv-trailer").value;
-    const pickup   = document.getElementById("inv-pickup").value;
-    const dropoff  = document.getElementById("inv-dropoff").value;
-    const rental   = parseFloat(document.getElementById("inv-rental").value);
-    const deposit  = parseFloat(document.getElementById("inv-deposit").value);
-    const alertEl  = document.getElementById("invoice-alert");
-    const spinner  = document.getElementById("invoice-spinner");
+  const TRAILER_RATES = {
+    "Enclosed Cargo Trailer": { daily: 120, deposit: 100 },
+    "Car Hauler / Equipment Trailer": { daily: 95, deposit: 100 },
+  };
+  const TAX_RATE = 0.0925;
+
+  function calcBookingAmounts() {
+    const trailer = document.getElementById("inv-trailer").value;
+    const pickup  = document.getElementById("inv-pickup").value;
+    const dropoff = document.getElementById("inv-dropoff").value;
+    const calcEl  = document.getElementById("booking-calc");
+    if (!trailer || !pickup || !dropoff || dropoff < pickup) { calcEl.style.display = "none"; return; }
+    const rates = TRAILER_RATES[trailer] || { daily: 0, deposit: 100 };
+    const days   = Math.max(1, Math.round((new Date(dropoff + "T12:00:00") - new Date(pickup + "T12:00:00")) / 86400000) + 1);
+    const rental = rates.daily * days;
+    const tax    = Math.round(rental * TAX_RATE * 100) / 100;
+    const dep    = rates.deposit;
+    const total  = rental + tax + dep;
+    document.getElementById("calc-days-label").textContent = "Rental (" + days + " day" + (days === 1 ? "" : "s") + " × $" + rates.daily + ")";
+    document.getElementById("calc-rental").textContent  = "$" + rental.toFixed(2);
+    document.getElementById("calc-tax").textContent     = "$" + tax.toFixed(2);
+    document.getElementById("calc-deposit").textContent = "$" + dep.toFixed(2);
+    document.getElementById("calc-total").textContent   = "$" + total.toFixed(2);
+    calcEl.style.display = "block";
+  }
+
+  async function submitManualBooking() {
+    const name    = document.getElementById("inv-name").value.trim();
+    const email   = document.getElementById("inv-email").value.trim();
+    const phone   = document.getElementById("inv-phone").value.trim();
+    const trailer = document.getElementById("inv-trailer").value;
+    const pickup  = document.getElementById("inv-pickup").value;
+    const dropoff = document.getElementById("inv-dropoff").value;
+    const alertEl = document.getElementById("invoice-alert");
+    const spinner = document.getElementById("invoice-spinner");
     const linkWrap = document.getElementById("invoice-link-wrap");
     alertEl.style.display = "none"; linkWrap.style.display = "none";
 
-    if (!name || !email || !pickup || !dropoff || !rental || !deposit) {
+    if (!name || !email || !trailer || !pickup || !dropoff) {
       alertEl.className = "alert alert-error"; alertEl.textContent = "Please fill in all required fields."; alertEl.style.display = "block"; return;
     }
-    const days = Math.round((new Date(dropoff) - new Date(pickup)) / 86400000) + 1;
+    if (dropoff < pickup) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = "Return date must be on or after pickup date."; alertEl.style.display = "block"; return;
+    }
+
+    const rates  = TRAILER_RATES[trailer] || { daily: 0, deposit: 100 };
+    const days   = Math.max(1, Math.round((new Date(dropoff + "T12:00:00") - new Date(pickup + "T12:00:00")) / 86400000) + 1);
+    const rental = rates.daily * days;
+    const dep    = rates.deposit;
+
     spinner.style.display = "inline";
     try {
-      const res  = await fetch("/.netlify/functions/send-invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
-        body: JSON.stringify({ action: "create-link", customerName: name, customerEmail: email, customerPhone: phone, trailerName: trailer, pickup, dropoff, days, rentalAmount: rental, depositAmount: deposit }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create link.");
-      document.getElementById("invoice-link").value = data.url;
+      const data = await callApi({ action: "create-manual-booking", customerName: name, customerEmail: email, customerPhone: phone, trailerName: trailer, pickup, dropoff, rentalAmount: rental, depositAmount: dep });
+      document.getElementById("invoice-link").value = data.customerUrl;
+      document.getElementById("new-booking-id").textContent = "Booking ID: " + data.bookingId + " — dates are now blocked on the site.";
       linkWrap.style.display = "block";
-      alertEl.className = "alert alert-success"; alertEl.textContent = "✓ Payment link created. Copy it and email it to " + name + "."; alertEl.style.display = "block";
+      alertEl.className = "alert alert-success";
+      alertEl.textContent = "✓ Booking " + data.bookingId + " created. Text the customer link below — they'll upload docs, sign, and pay.";
+      alertEl.style.display = "block";
+      loadBookings();
     } catch (e) {
       alertEl.className = "alert alert-error"; alertEl.textContent = "Error: " + e.message; alertEl.style.display = "block";
     } finally {
@@ -568,7 +596,7 @@
     const input = document.getElementById("invoice-link");
     input.select(); input.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(input.value).catch(() => document.execCommand("copy"));
-    const btn = event.target; btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Copy Link", 2000);
+    const btn = event.target; btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Copy", 2000);
   }
 
   async function submitCharge() {

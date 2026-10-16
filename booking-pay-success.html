@@ -31,6 +31,8 @@
   (async function() {
     const params    = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
+    const bookingId = params.get("booking_id"); // present for manual booking flow
+    const token     = params.get("token");
     const el        = document.getElementById("content");
 
     if (!sessionId) {
@@ -39,21 +41,39 @@
     }
 
     try {
-      const res  = await fetch("/.netlify/functions/send-invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "confirm", sessionId }),
-      });
-      const data = await res.json();
+      let data;
 
-      if (!res.ok) throw new Error(data.error || "Confirmation failed.");
+      if (bookingId && token) {
+        // Manual booking: update existing booking with payment info
+        const res = await fetch("/.netlify/functions/charge-extra", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "confirm-manual-payment", sessionId, bookingId, token }),
+        });
+        data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Confirmation failed.");
+      } else {
+        // Invoice flow: create new booking from Stripe session
+        const res = await fetch("/.netlify/functions/send-invoice", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "confirm", sessionId }),
+        });
+        data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Confirmation failed.");
+      }
+
+      const id = data.bookingId || bookingId || "";
+      const isManual = !!(bookingId && token);
 
       el.innerHTML =
         '<div class="icon">✅</div>' +
-        '<h1>Payment Received!</h1>' +
-        '<p>Thank you — your payment has been processed and your booking is being reviewed.</p>' +
-        '<div class="booking-id">' + (data.bookingId || "") + '</div>' +
-        '<p>You\'ll receive an email once your booking is approved. Questions? Call or text <strong>(321) 765-3077</strong>.</p>' +
+        '<h1>Payment Authorized!</h1>' +
+        (isManual
+          ? '<p>All done — your documents, agreement, and payment have been submitted. Your card is authorized but <strong>will not be charged</strong> until your booking is approved.</p>'
+          : '<p>Thank you — your payment has been processed and your booking is being reviewed.</p>') +
+        (id ? '<div class="booking-id">' + id + '</div>' : '') +
+        "<p>You'll receive a confirmation email once your booking is approved. Questions? Call or text <strong>(321) 765-3077</strong>.</p>" +
         '<div class="footer">Tennessee Valley Rentals LLC · Ooltewah, TN · info@rentwithtvr.com</div>';
     } catch (e) {
       el.innerHTML =

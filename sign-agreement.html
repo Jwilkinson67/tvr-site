@@ -47,6 +47,9 @@
     .btn-sign{display:block;width:100%;background:#155a30;color:#fff;border:none;padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;}
     .btn-sign:disabled{background:#9a9a9a;cursor:not-allowed;}
     .btn-sign:hover:not(:disabled){background:#0e3d20;}
+    .btn-pay{display:block;width:100%;background:#1568be;color:#fff;border:none;padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:16px;}
+    .btn-pay:disabled{background:#9a9a9a;cursor:not-allowed;}
+    .btn-pay:hover:not(:disabled){background:#1055a0;}
     .alert{padding:12px 16px;margin-top:12px;font-size:14px;}
     .alert-success{background:#f0f9f4;border-left:4px solid #155a30;color:#155a30;}
     .alert-error{background:#fff5f5;border-left:4px solid #b5212b;color:#b5212b;}
@@ -54,6 +57,9 @@
     .done-icon{font-size:52px;margin-bottom:16px;}
     .done-card h2{font-size:22px;font-weight:700;margin-bottom:12px;}
     .done-card p{color:#3c3c3c;line-height:1.6;font-size:15px;}
+    .pay-summary{background:#f4f6f9;padding:16px;margin-bottom:16px;font-size:14px;line-height:1.8;}
+    .pay-summary .total{font-weight:700;font-size:16px;border-top:1px solid #d0d0d0;margin-top:8px;padding-top:8px;}
+    .pay-note{font-size:13px;color:#6b6b6b;background:#fff8e0;border-left:3px solid #f0c040;padding:12px 14px;margin-bottom:16px;}
     .spinner-wrap{padding:40px;text-align:center;color:#6b6b6b;}
     .spinner{display:inline-block;width:32px;height:32px;border:3px solid #e6e6e6;border-top-color:#1568be;border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
@@ -127,9 +133,20 @@
         <span>I have read and agree to all terms of this Rental Agreement. I understand that typing my name above constitutes a legally binding electronic signature.</span>
       </div>
       <div id="sig-alert" style="display:none;"></div>
-      <button class="btn-sign" id="sig-btn" onclick="submitSignature()" disabled>Sign &amp; Submit</button>
+      <button class="btn-sign" id="sig-btn" onclick="submitSignature()" disabled>Sign &amp; Continue</button>
     </div>
 
+  </div>
+
+  <!-- Step 4: Payment (manual bookings only) -->
+  <div id="payment-wrap" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="step-num" id="num-payment">4</span>Payment</div>
+      <div class="pay-note">Your card will be <strong>authorized but not charged</strong> until your booking is reviewed and approved — usually within a few hours.</div>
+      <div class="pay-summary" id="pay-summary"></div>
+      <div id="pay-alert" style="display:none;"></div>
+      <button class="btn-pay" id="pay-btn" onclick="startPayment()">Proceed to Secure Payment &rarr;</button>
+    </div>
   </div>
 
   <div id="done-wrap" style="display:none;">
@@ -169,6 +186,7 @@
   const token     = params.get("token");
   const uploaded  = { license: false, insurance: false };
   const files     = {};
+  let   booking   = null;
 
   function api(body) {
     return fetch("/.netlify/functions/charge-extra", {
@@ -187,23 +205,26 @@
 
     try {
       const data = await api({ action: "get-agreement", bookingId, token });
+      booking = data.booking;
 
       if (data.alreadySigned) {
         document.getElementById("loading").style.display = "none";
-        document.getElementById("done-wrap").style.display = "block";
-        document.getElementById("done-msg").textContent =
-          "This agreement was already signed by " + data.signedBy + " on " + new Date(data.signedAt).toLocaleString() + ". We have everything we need — thank you!";
+        // If manual booking still needs payment, show payment step
+        if (booking && !booking.payment_intent_id && booking.status === "manual-pending") {
+          showPaymentStep();
+          return;
+        }
+        showDone("This agreement was already signed by " + data.signedBy + " on " + new Date(data.signedAt).toLocaleString() + ". We have everything we need — thank you!");
         return;
       }
 
-      renderBookingTable(data.booking);
+      renderBookingTable(booking);
 
-      // Mark already-uploaded docs
-      const dp = data.booking.doc_paths || {};
+      const dp = booking.doc_paths || {};
       if (dp.license)   markUploaded("license");
       if (dp.insurance) markUploaded("insurance");
 
-      if (data.booking.customer_name) document.getElementById("sig-input").value = data.booking.customer_name;
+      if (booking.customer_name) document.getElementById("sig-input").value = booking.customer_name;
       checkSigReady();
 
       document.getElementById("loading").style.display = "none";
@@ -214,13 +235,21 @@
   }
 
   function renderBookingTable(b) {
-    document.getElementById("booking-details").innerHTML =
+    const tax    = parseFloat(b.tax_amount || 0);
+    const rental = parseFloat(b.rental_amount || 0);
+    const dep    = parseFloat(b.deposit_amount || 0);
+    const total  = parseFloat(b.total_charged || (rental + tax + dep));
+    let rows =
       "<tr><td>Booking ID</td><td style='font-family:monospace;color:#1568be;'>" + b.id + "</td></tr>" +
       "<tr><td>Customer</td><td>" + (b.customer_name || "—") + "</td></tr>" +
       "<tr><td>Trailer</td><td>" + (b.trailer_name || "—") + "</td></tr>" +
       "<tr><td>Pickup</td><td>" + (b.pickup || "—") + "</td></tr>" +
-      "<tr><td>Return</td><td>" + (b.dropoff || "—") + "</td></tr>" +
-      (b.deposit_amount ? "<tr><td>Deposit</td><td>$" + (+b.deposit_amount).toFixed(2) + " refundable</td></tr>" : "");
+      "<tr><td>Return</td><td>" + (b.dropoff || "—") + "</td></tr>";
+    if (rental) rows += "<tr><td>Rental</td><td>$" + rental.toFixed(2) + "</td></tr>";
+    if (tax)    rows += "<tr><td>Tax (9.25%)</td><td>$" + tax.toFixed(2) + "</td></tr>";
+    if (dep)    rows += "<tr><td>Deposit</td><td>$" + dep.toFixed(2) + " refundable</td></tr>";
+    if (total)  rows += "<tr><td style='font-weight:700;color:#262626;'>Total</td><td style='font-weight:700;'>$" + total.toFixed(2) + "</td></tr>";
+    document.getElementById("booking-details").innerHTML = rows;
   }
 
   function showFatalError(msg) {
@@ -235,10 +264,7 @@
   function handleFile(docId, input) {
     const file = input.files && input.files[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      showDocAlert(docId, "File is too large. Max 10 MB.");
-      return;
-    }
+    if (file.size > 10 * 1024 * 1024) { showDocAlert(docId, "File is too large. Max 10 MB."); return; }
     files[docId] = file;
     const preview = document.getElementById("preview-" + docId);
     preview.style.display = "block";
@@ -302,7 +328,6 @@
     document.getElementById("sig-input").addEventListener("input", checkSigReady);
     document.getElementById("sig-agree").addEventListener("change", checkSigReady);
 
-    // Drag-and-drop
     ["license", "insurance"].forEach(function(docId) {
       var drop = document.getElementById("drop-" + docId);
       drop.addEventListener("dragover", function(e) { e.preventDefault(); drop.classList.add("drag"); });
@@ -327,15 +352,58 @@
     const alert = document.getElementById("sig-alert");
     alert.style.display = "none"; btn.disabled = true; btn.textContent = "Saving…";
     try {
-      await api({ action: "sign-agreement", bookingId, token, signature });
+      const result = await api({ action: "sign-agreement", bookingId, token, signature });
       document.getElementById("main").style.display = "none";
-      document.getElementById("done-wrap").style.display = "block";
-      document.getElementById("done-msg").textContent =
-        "Your license, insurance, and signed agreement have been received. A confirmation has been sent to your email. We'll be in touch before your pickup!";
+      if (result.needsPayment) {
+        showPaymentStep();
+      } else {
+        showDone("Your license, insurance, and signed agreement have been received. A confirmation has been sent to your email. We'll be in touch before your pickup!");
+      }
     } catch (e) {
       alert.className = "alert alert-error"; alert.textContent = e.message; alert.style.display = "block";
-      btn.disabled = false; btn.textContent = "Sign & Submit";
+      btn.disabled = false; btn.textContent = "Sign & Continue";
     }
+  }
+
+  function showPaymentStep() {
+    document.getElementById("payment-wrap").style.display = "block";
+    if (booking) {
+      const rental = parseFloat(booking.rental_amount || 0);
+      const tax    = parseFloat(booking.tax_amount || 0);
+      const dep    = parseFloat(booking.deposit_amount || 0);
+      const total  = parseFloat(booking.total_charged || (rental + tax + dep));
+      let html = "<strong>" + (booking.trailer_name || "") + "</strong> · " + (booking.pickup || "") + " → " + (booking.dropoff || "");
+      if (rental) html += "<br>Rental: $" + rental.toFixed(2);
+      if (tax)    html += "<br>Tax (9.25%): $" + tax.toFixed(2);
+      if (dep)    html += "<br>Deposit (refundable): $" + dep.toFixed(2);
+      html += "<div class='total'>Total authorization: $" + total.toFixed(2) + "</div>";
+      document.getElementById("pay-summary").innerHTML = html;
+    }
+  }
+
+  async function startPayment() {
+    const btn     = document.getElementById("pay-btn");
+    const alertEl = document.getElementById("pay-alert");
+    btn.disabled = true; btn.textContent = "Preparing checkout…";
+    alertEl.style.display = "none";
+    try {
+      const data = await api({ action: "create-payment-link", bookingId, token });
+      if (data.alreadyPaid) {
+        showDone("Your payment has already been received. We'll be in touch before your pickup!");
+        return;
+      }
+      location.href = data.url;
+    } catch (e) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = e.message; alertEl.style.display = "block";
+      btn.disabled = false; btn.textContent = "Proceed to Secure Payment →";
+    }
+  }
+
+  function showDone(msg) {
+    document.getElementById("main").style.display = "none";
+    document.getElementById("payment-wrap").style.display = "none";
+    document.getElementById("done-wrap").style.display = "block";
+    document.getElementById("done-msg").textContent = msg;
   }
 </script>
 </body>
