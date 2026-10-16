@@ -98,8 +98,8 @@
             <input type="email" id="contact-email" placeholder="your@email.com" autocomplete="email" oninput="checkSigReady()">
           </div>
           <div class="cf-field">
-            <label for="contact-phone">Phone number</label>
-            <input type="tel" id="contact-phone" placeholder="(555) 000-0000" autocomplete="tel">
+            <label for="contact-phone">Phone number *</label>
+            <input type="tel" id="contact-phone" placeholder="(555) 000-0000" autocomplete="tel" oninput="checkSigReady()">
           </div>
         </div>
         <div id="contact-alert" style="display:none;margin-top:10px;"></div>
@@ -348,8 +348,10 @@
     const checked = document.getElementById("sig-agree").checked;
     const needsEmail = document.getElementById("contact-fields").style.display !== "none";
     const email   = needsEmail ? document.getElementById("contact-email").value.trim() : "ok";
+    const phone   = needsEmail ? document.getElementById("contact-phone").value.trim() : "ok";
     const emailOk = !needsEmail || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked && uploaded.license && uploaded.insurance && emailOk);
+    const phoneOk = !needsEmail || phone.length >= 7;
+    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked && uploaded.license && uploaded.insurance && emailOk && phoneOk);
   }
 
   document.addEventListener("DOMContentLoaded", function() {

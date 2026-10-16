@@ -236,6 +236,9 @@ exports.handler = async (event) => {
     if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail.trim())) {
       return err(400, "A valid email address is required.");
     }
+    if (!customerPhone || customerPhone.trim().length < 7) {
+      return err(400, "A phone number is required.");
+    }
 
     const { data: booking } = await supabase.from("bookings").select("id").eq("id", bookingId).maybeSingle();
     if (!booking) return err(404, "Booking not found.");
