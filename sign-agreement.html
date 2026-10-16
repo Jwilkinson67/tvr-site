@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rental Agreement — TVR</title>
+  <link rel="icon" href="assets/tvr-logo-mark.png">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,sans-serif;background:#f6f7f9;color:#262626;padding:0 0 48px;}
+    .topbar{background:#1568be;padding:16px 24px;display:flex;align-items:center;gap:12px;}
+    .topbar-logo{color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.5px;}
+    .topbar-sub{color:#a8c8f0;font-size:13px;letter-spacing:1px;text-transform:uppercase;}
+    .shell{max-width:740px;margin:0 auto;padding:0 16px;}
+    .card{background:#fff;padding:32px;margin-top:24px;}
+    h2{font-size:18px;font-weight:700;margin-bottom:16px;color:#1568be;letter-spacing:-0.3px;}
+    .booking-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+    .booking-table td{padding:8px 12px;border-bottom:1px solid #e6e6e6;font-size:14px;}
+    .booking-table td:first-child{font-weight:700;width:140px;color:#6b6b6b;}
+    .clauses{margin-top:0;}
+    .clause{padding:14px 0;border-bottom:1px solid #e6e6e6;}
+    .clause:last-child{border-bottom:none;}
+    .clause-title{font-size:13px;font-weight:700;color:#262626;margin-bottom:4px;}
+    .clause-body{font-size:13px;color:#3c3c3c;line-height:1.6;}
+    .sig-card{background:#fff;padding:32px;margin-top:24px;border-top:4px solid #1568be;}
+    label{display:block;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;}
+    input[type=text]{width:100%;padding:12px 14px;border:1px solid #d0d0d0;font-size:16px;font-family:Georgia,serif;color:#262626;outline:none;transition:border-color 0.15s;}
+    input[type=text]:focus{border-color:#1568be;}
+    .checkbox-row{display:flex;align-items:flex-start;gap:10px;margin:20px 0;}
+    .checkbox-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:pointer;}
+    .checkbox-row span{font-size:14px;color:#3c3c3c;line-height:1.5;}
+    .btn{display:block;width:100%;background:#1568be;color:#fff;border:none;padding:16px;font-size:16px;font-weight:700;cursor:pointer;margin-top:20px;}
+    .btn:disabled{background:#9a9a9a;cursor:not-allowed;}
+    .btn:hover:not(:disabled){background:#1055a0;}
+    .alert{padding:14px 16px;margin-top:16px;font-size:14px;}
+    .alert-success{background:#f0f9f4;border-left:4px solid #155a30;color:#155a30;}
+    .alert-error{background:#fff5f5;border-left:4px solid #b5212b;color:#b5212b;}
+    .spinner{display:none;text-align:center;padding:40px;color:#6b6b6b;}
+    .signed-badge{background:#f0f9f4;border:2px solid #155a30;padding:24px;text-align:center;margin-top:24px;}
+    .signed-badge h3{color:#155a30;font-size:20px;margin-bottom:8px;}
+    .signed-badge p{color:#3c3c3c;font-size:14px;line-height:1.6;}
+    @media(max-width:600px){.card,.sig-card{padding:20px;}.booking-table td{font-size:13px;}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-logo">Tennessee Valley Rentals LLC</div>
+    <div class="topbar-sub">Trailer Rental Agreement</div>
+  </div>
+</div>
+
+<div class="shell">
+  <div id="loading" class="spinner" style="display:block;">Loading agreement…</div>
+  <div id="main" style="display:none;">
+
+    <div class="card">
+      <h2>Rental Details</h2>
+      <table class="booking-table" id="booking-details"></table>
+    </div>
+
+    <div class="card">
+      <h2>Rental Agreement</h2>
+      <div class="clauses" id="clauses"></div>
+    </div>
+
+    <div class="sig-card" id="sig-section">
+      <h2 style="margin-bottom:20px;">Sign Agreement</h2>
+      <div>
+        <label for="sig-input">Type your full legal name to sign</label>
+        <input type="text" id="sig-input" placeholder="Full name" autocomplete="name">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="sig-agree">
+        <span>I have read and agree to all terms of this Rental Agreement. I understand that typing my name above constitutes a legally binding electronic signature.</span>
+      </div>
+      <div id="sig-alert" style="display:none;"></div>
+      <button class="btn" id="sig-btn" onclick="submitSignature()" disabled>Sign Agreement</button>
+    </div>
+
+    <div id="signed-wrap" style="display:none;">
+      <div class="signed-badge">
+        <h3>✓ Agreement Signed</h3>
+        <p id="signed-msg"></p>
+        <p style="margin-top:12px;color:#6b6b6b;font-size:13px;">Questions? Call or text <strong>(321) 765-3077</strong> · info@rentwithtvr.com</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const CLAUSES = [
+    ["§1. Definitions", "Agreement means this form and all rental documents. You/your/renter means the customer, authorized renter, and anyone responsible for charges. We/us/our means Tennessee Valley Rentals LLC. Authorized Driver means only drivers approved on this Agreement. Loss of Use means our lost rental time during repair or replacement, calculated at the daily rental rate. Diminished Value means any reduction in value after damage or loss."],
+    ["§2. Rental, Indemnity and Warranties", "This is a trailer rental contract. We may repossess the trailer at any time without prior notice if it is abandoned, overdue, or used in violation of law or this Agreement. You agree to indemnify and hold us harmless from claims, liability, costs, and attorney fees arising from this rental or your use of the trailer. The trailer is rented as-is, with no express, implied, or apparent warranties."],
+    ["§3. Condition and Return", "You must return the trailer to the agreed location by the agreed date and time, in the same condition received except ordinary wear. It is your responsibility before departure to inspect the trailer for its safety and condition."],
+    ["§4. Damage, Loss, Theft and Reporting", "You are responsible for all loss, theft, damage, destruction, or total loss of the trailer and any included equipment during the rental period, whether or not you are at fault. If insurance applies, you remain responsible for the insurance deductible, any uncovered damages, Loss of Use, Diminished Value, towing, recovery, storage, administrative costs, and any amount not paid by insurance. You acknowledge that you may be liable for up to the full replacement value of the trailer if insurance denies or does not fully cover the claim. You must report all accidents, theft, damage, or loss to us and police within 24 hours."],
+    ["§5. Equipment / Replacement Cost", "You acknowledge the following replacement values: Enclosed Cargo Trailer (Spartan 7×14) — $7,000; Car Hauler / Equipment Trailer (Liberty 7×20) — $5,000. If the rented trailer or any included equipment is lost, stolen, damaged, or not returned, you agree to pay the listed replacement value or the cost of actual repair, whichever is greater. These values represent the minimum liability and do not limit recovery of additional documented losses."],
+    ["§6. Tow Vehicle and Cargo Responsibility", "You are solely responsible for confirming that your tow vehicle is legally and mechanically capable of towing the trailer and load, and for safe loading, weight distribution, balancing, and securing all cargo."],
+    ["§7. Prohibited Uses", "Prohibited uses include: transporting hazardous or illegal materials; transporting people; driving under the influence; use by anyone not listed as an Authorized Driver; use outside the continental United States; overloading; continued use when damage is likely; or intent to criminally conceal, confiscate, or modify the trailer without written permission."],
+    ["§8. Charges", "You agree to pay on demand all amounts due, including rental time, taxes, citations, towing, storage, recovery, collection costs, attorney fees, and a cleaning fee up to $500 if returned substantially less clean than rented. Early returns do not create a refund unless agreed in writing."],
+    ["§9. Deposit and Payment Authorization", "We may apply your deposit to any amounts owed. You authorize us to charge your payment method on file for amounts owed under this Agreement, including charges discovered after return."],
+    ["§10. Late Return", "Late returns are charged at the daily rental rate for each additional day or partial day, plus documented loss, expense, or reservation impact."],
+    ["§11. Cancellation, Rescheduling, No-Show", "Cancellations, rescheduling, and no-shows are governed by the booking terms provided at reservation. Unless different written terms apply, deposits or prepaid amounts may be applied to late cancellation or rescheduling fees rather than another customer. Cancellations made less than 24 hours before the scheduled rental start time may be subject to a $25 late cancellation fee. No-shows may result in forfeiture of any deposit or prepaid amounts."],
+    ["§12. GPS Tracking", "The trailer may have GPS or other tracking technology. You consent to tracking during the rental period and agree not to remove, tamper with, disable, or obscure any device."],
+    ["§13. Insurance", "You represent that you have valid automobile liability insurance and any required coverage for towing and using the trailer. Providing insurance information does not mean we verified coverage or accepted responsibility for any loss."],
+    ["§14. Modifications / Entire Agreement", "No item can be waived or modified except in writing signed by both parties. This Agreement is the entire agreement between you and us regarding this rental."],
+    ["§15. Waiver and Severability", "Our waiver of any breach is not a waiver of any additional breach or future performance. Accepting payment or not exercising a right does not waive any provision. You release us from consequential, special, or punitive damages related to this rental or reservation. If any provision is void or unenforceable, the remaining provisions stay valid and enforceable."],
+    ["§16. Governing Law and Venue", "This Agreement is governed by Tennessee law. Any dispute shall be handled in the appropriate Tennessee court in the county where Tennessee Valley Rentals LLC principally operates."],
+    ["§17. Required Photos", "The renter is responsible for submitting clear before-rental and after-rental photos of the trailer and included equipment as requested by TVR. Photos should show the trailer's general condition, tires, lights, coupler, safety chains, jack, ramps/doors/gate, straps, tools, spare tire, and any existing damage. Failure to submit required before and after photos may delay deposit return and may result in partial or full forfeiture of the deposit if TVR cannot reasonably verify the trailer's condition at check-out or return."],
+    ["§18. Acknowledgment", "By signing, you confirm that the information provided is accurate, you have read and reviewed this Agreement, you had the opportunity to ask questions before signing, and you agree to be bound by its terms."],
+  ];
+
+  const params    = new URLSearchParams(location.search);
+  const bookingId = params.get("id");
+  const token     = params.get("token");
+
+  async function init() {
+    if (!bookingId || !token) { showError("Invalid link. Please contact TVR."); return; }
+
+    // Render clauses immediately
+    document.getElementById("clauses").innerHTML = CLAUSES.map(function(c) {
+      return "<div class='clause'><div class='clause-title'>" + c[0] + "</div><div class='clause-body'>" + c[1] + "</div></div>";
+    }).join("");
+
+    try {
+      const res  = await fetch("/.netlify/functions/charge-extra", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "get-agreement", bookingId, token }),
+      });
+      const data = await res.json();
+      if (!res.ok) { showError(data.error || "Could not load agreement."); return; }
+
+      if (data.alreadySigned) {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("main").style.display = "block";
+        document.getElementById("sig-section").style.display = "none";
+        document.getElementById("signed-wrap").style.display = "block";
+        document.getElementById("signed-msg").textContent =
+          "This agreement was already signed by " + data.signedBy + " on " + new Date(data.signedAt).toLocaleString() + ".";
+        renderBookingTable(data.booking);
+        return;
+      }
+
+      renderBookingTable(data.booking);
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("main").style.display = "block";
+
+      // Pre-fill name if available
+      if (data.booking.customer_name) {
+        document.getElementById("sig-input").value = data.booking.customer_name;
+        checkSigReady();
+      }
+    } catch (e) {
+      showError("Network error. Please try again.");
+    }
+  }
+
+  function renderBookingTable(b) {
+    document.getElementById("booking-details").innerHTML =
+      "<tr><td>Booking ID</td><td style='font-family:monospace;color:#1568be;'>" + b.id + "</td></tr>" +
+      "<tr><td>Customer</td><td>" + (b.customer_name || "—") + "</td></tr>" +
+      "<tr><td>Trailer</td><td>" + (b.trailer_name || "—") + "</td></tr>" +
+      "<tr><td>Pickup</td><td>" + (b.pickup || "—") + "</td></tr>" +
+      "<tr><td>Return</td><td>" + (b.dropoff || "—") + "</td></tr>" +
+      (b.deposit_amount ? "<tr><td>Deposit</td><td>$" + (+b.deposit_amount).toFixed(2) + " refundable</td></tr>" : "");
+  }
+
+  function showError(msg) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("main").style.display = "block";
+    document.getElementById("sig-section").innerHTML =
+      "<div class='alert alert-error'>" + msg + "</div>";
+  }
+
+  function checkSigReady() {
+    const name    = document.getElementById("sig-input").value.trim();
+    const checked = document.getElementById("sig-agree").checked;
+    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked);
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("sig-input").addEventListener("input", checkSigReady);
+    document.getElementById("sig-agree").addEventListener("change", checkSigReady);
+    init();
+  });
+
+  async function submitSignature() {
+    const signature = document.getElementById("sig-input").value.trim();
+    const btn       = document.getElementById("sig-btn");
+    const alertEl   = document.getElementById("sig-alert");
+    alertEl.style.display = "none";
+    btn.disabled = true; btn.textContent = "Saving…";
+
+    try {
+      const res  = await fetch("/.netlify/functions/charge-extra", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "sign-agreement", bookingId, token, signature }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to save signature.");
+
+      document.getElementById("sig-section").style.display = "none";
+      document.getElementById("signed-wrap").style.display = "block";
+      document.getElementById("signed-msg").textContent =
+        "Signed by "" + signature + "" on " + new Date().toLocaleString() + ". A copy has been sent to your email.";
+    } catch (e) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = e.message; alertEl.style.display = "block";
+      btn.disabled = false; btn.textContent = "Sign Agreement";
+    }
+  }
+</script>
+</body>
+</html>

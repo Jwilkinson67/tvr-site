@@ -477,8 +477,9 @@
       const approveBtn = b.status === "pending"
         ? "<button class='select-btn' style='background:#155a30;margin-top:4px;' onclick=\"approveBooking('" + b.id + "')\">Approve</button>"
         : "";
+      const agreementBtn = "<button class='select-btn' style='background:#6b3fa0;margin-top:4px;' onclick=\"sendAgreement('" + b.id + "')\">Agreement</button>";
       return "<tr>" +
-        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + "</td>" +
+        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + agreementBtn + "</td>" +
         "<td style='font-family:monospace;font-size:11px;'>" + b.id + "</td>" +
         "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:11px;'>" + (b.customer_email || "") + "</span></td>" +
         "<td style='font-size:12px;'>" + (b.trailer_name || "—") + "</td>" +
@@ -511,6 +512,16 @@
     try {
       await callApi({ action: "approve-booking", bookingId: id });
       loadBookings();
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  async function sendAgreement(id) {
+    try {
+      const result = await callApi({ action: "agreement-link", bookingId: id });
+      await navigator.clipboard.writeText(result.url);
+      alert("Agreement link copied to clipboard!\n\nPaste it into an email or text to the customer:\n\n" + result.url);
     } catch (e) {
       alert("Error: " + e.message);
     }

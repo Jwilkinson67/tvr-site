@@ -141,6 +141,72 @@ exports.handler = async (event) => {
     return err(400, "Invalid JSON body.");
   }
 
+  let body;
+  try { body = JSON.parse(event.body || "{}"); } catch {
+    return err(400, "Invalid JSON body.");
+  }
+
+  // ── public: get agreement data (validates signed token) ───────────────────
+  if (body.action === "get-agreement") {
+    const { bookingId, token } = body;
+    if (!bookingId || !token) return err(400, "bookingId and token are required.");
+    if (token !== makeToken("agreement", bookingId)) return err(401, "Invalid or expired link.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings").select("id, customer_name, customer_email, trailer_name, pickup, dropoff, deposit_amount, renter_signature, signed_at").eq("id", bookingId).single();
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    if (booking.renter_signature) {
+      return ok({ alreadySigned: true, signedBy: booking.renter_signature, signedAt: booking.signed_at, booking });
+    }
+    return ok({ booking });
+  }
+
+  // ── public: save signature ────────────────────────────────────────────────
+  if (body.action === "sign-agreement") {
+    const { bookingId, token, signature } = body;
+    if (!bookingId || !token || !signature) return err(400, "bookingId, token, and signature are required.");
+    if (token !== makeToken("agreement", bookingId)) return err(401, "Invalid or expired link.");
+    if (signature.trim().length < 2) return err(400, "Please enter your full name.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings").select("id, customer_name, customer_email, trailer_name, pickup, dropoff").eq("id", bookingId).single();
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    const signedAt = new Date().toISOString();
+    await supabase.from("bookings").update({ renter_signature: signature.trim(), signed_at: signedAt }).eq("id", bookingId);
+
+    try {
+      const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: `Tennessee Valley Rentals LLC <${from}>`,
+          to: booking.customer_email,
+          subject: `Rental agreement signed — ${booking.trailer_name}, ${booking.pickup}`,
+          html: `<p style="font-family:Arial,sans-serif;color:#262626;">Hi ${(booking.customer_name||"").split(" ")[0]||"there"},</p>
+<p style="font-family:Arial,sans-serif;color:#3c3c3c;margin-top:12px;">This confirms your rental agreement for <strong>${booking.trailer_name}</strong> (${booking.pickup} → ${booking.dropoff}) has been signed electronically.</p>
+<p style="font-family:Arial,sans-serif;color:#3c3c3c;margin-top:12px;"><strong>Signed by:</strong> ${signature.trim()}<br><strong>Date:</strong> ${new Date(signedAt).toLocaleString("en-US", { dateStyle: "long", timeStyle: "short" })}<br><strong>Booking ID:</strong> ${bookingId}</p>
+<p style="font-family:Arial,sans-serif;color:#6b6b6b;font-size:12px;margin-top:24px;">Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077</p>`,
+        }),
+      });
+    } catch (e) { console.error("Signature confirmation email failed:", e); }
+
+    return ok({ success: true, signedAt });
+  }
+
+  // ── admin: generate agreement link ────────────────────────────────────────
+  if (body.action === "agreement-link") {
+    const secret = (event.headers["x-admin-secret"] || "").trim();
+    if (!secret || secret !== (process.env.BOOKING_SECRET || "dev-secret")) return err(401, "Unauthorized.");
+    const { bookingId } = body;
+    if (!bookingId) return err(400, "bookingId is required.");
+    const siteUrl = (process.env.SITE_URL || "https://rentwithtvr.com").replace(/\/$/, "");
+    const token   = makeToken("agreement", bookingId);
+    return ok({ url: `${siteUrl}/sign-agreement.html?id=${bookingId}&token=${token}` });
+  }
+
   // ── approve booking ───────────────────────────────────────────────────────
   if (body.action === "approve-booking") {
     const { bookingId } = body;
