@@ -15,6 +15,7 @@
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require("@supabase/supabase-js");
+const crypto = require("crypto");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -29,6 +30,11 @@ const HEADERS = {
 
 function ok(body)         { return { statusCode: 200, headers: HEADERS, body: JSON.stringify(body) }; }
 function err(status, msg) { return { statusCode: status, headers: HEADERS, body: JSON.stringify({ error: msg }) }; }
+
+function makeToken(action, id) {
+  return crypto.createHmac("sha256", process.env.BOOKING_SECRET || "dev-secret")
+    .update(`${action}:${id}`).digest("hex");
+}
 
 async function sendEmail({ to, subject, html }) {
   const from = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
@@ -139,12 +145,72 @@ exports.handler = async (event) => {
   if (body.action === "approve-booking") {
     const { bookingId } = body;
     if (!bookingId) return err(400, "bookingId is required.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings").select("*").eq("id", bookingId).single();
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    // Capture payment if it's a manual-capture PaymentIntent
+    if (booking.payment_intent_id && !booking.payment_intent_id.startsWith("COUPON-")) {
+      try { await stripe.paymentIntents.capture(booking.payment_intent_id); } catch (_) { /* already captured or Checkout — ignore */ }
+    }
+
     const { error: updateErr } = await supabase
-      .from("bookings")
-      .update({ status: "approved" })
-      .eq("id", bookingId);
+      .from("bookings").update({ status: "approved" }).eq("id", bookingId);
     if (updateErr) { console.error("Approve error:", updateErr); return err(500, "Could not approve booking."); }
-    return ok({ success: true, bookingId });
+
+    const siteUrl = (process.env.SITE_URL || "https://rentwithtvr.com").replace(/\/$/, "");
+    const pickupPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=pickup&id=${bookingId}&token=${makeToken("photos-pickup", bookingId)}`;
+    const returnPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=return&id=${bookingId}&token=${makeToken("photos-return", bookingId)}`;
+    const refundUrl      = `${siteUrl}/.netlify/functions/refund?id=${bookingId}&token=${makeToken("refund", bookingId)}`;
+
+    const firstName = (booking.customer_name || "").split(" ")[0] || "there";
+    try {
+      await sendEmail({
+        to: booking.customer_email,
+        subject: `Your TVR rental is confirmed — ${booking.trailer_name}, ${booking.pickup}`,
+        html: `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;color:#262626;">
+<div style="max-width:620px;margin:0 auto;background:#fff;">
+  <div style="background:#1568be;padding:24px 32px;">
+    <div style="color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;">Tennessee Valley Rentals LLC</div>
+    <div style="color:#a8c8f0;font-size:13px;margin-top:4px;letter-spacing:1px;text-transform:uppercase;">Booking Confirmed</div>
+  </div>
+  <div style="background:#f0f9f4;border-left:6px solid #155a30;padding:28px 32px;">
+    <div style="font-size:22px;font-weight:700;">Hi ${firstName},</div>
+    <div style="font-size:15px;color:#3c3c3c;margin-top:8px;">Your rental is confirmed! See details below and use the links to upload your required photos.</div>
+  </div>
+  <div style="padding:32px;">
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+      <tr style="background:#f4f6f9;"><td colspan="2" style="padding:10px 14px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;">Rental Details</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;width:160px;">Booking ID</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-family:monospace;color:#1568be;">${bookingId}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Trailer</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.trailer_name}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Pickup</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.pickup}</td></tr>
+      <tr><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-weight:700;">Return</td><td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;">${booking.dropoff}</td></tr>
+      <tr><td style="padding:10px 14px;font-weight:700;">Deposit</td><td style="padding:10px 14px;">$${(+booking.deposit_amount).toFixed(2)} refundable after inspection</td></tr>
+    </table>
+    <div style="background:#f4f6f9;border:1px solid #e6e6e6;padding:20px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;">Required Photos</div>
+      <p style="font-size:14px;color:#3c3c3c;margin:0 0 16px;line-height:1.5;">Please photograph the trailer at pickup and again when you return it.</p>
+      <a href="${pickupPhotoUrl}" style="display:block;background:#1568be;color:#fff;padding:14px 20px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;margin-bottom:8px;">Upload Pickup Photos &rarr;</a>
+      <a href="${returnPhotoUrl}" style="display:block;background:#6b7280;color:#fff;padding:14px 20px;text-decoration:none;font-weight:700;font-size:14px;text-align:center;">Upload Return Photos &rarr;</a>
+    </div>
+    <div style="background:#f4f6f9;padding:20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions?</div>
+      <div style="font-size:16px;font-weight:700;">Call or text (321) 765-3077</div>
+      <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">info@rentwithtvr.com</div>
+    </div>
+  </div>
+  <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
+    <div style="font-size:12px;color:#6b6b6b;">Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077</div>
+  </div>
+</div></body></html>`,
+      });
+    } catch (emailErr) {
+      console.error("Approval email failed:", emailErr);
+    }
+
+    return ok({ success: true, bookingId, refundUrl });
   }
 
   // ── list recent bookings ──────────────────────────────────────────────────
