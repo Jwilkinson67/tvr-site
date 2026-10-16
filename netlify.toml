@@ -9,7 +9,8 @@
 [[redirects]]
   from = "/b/:id"
   to   = "/.netlify/functions/go?id=:id"
-  status = 200
+  status = 301
+  force = true
 
 [[headers]]
   for = "/*"
