@@ -60,6 +60,13 @@
     .pay-summary{background:#f4f6f9;padding:16px;margin-bottom:16px;font-size:14px;line-height:1.8;}
     .pay-summary .total{font-weight:700;font-size:16px;border-top:1px solid #d0d0d0;margin-top:8px;padding-top:8px;}
     .pay-note{font-size:13px;color:#6b6b6b;background:#fff8e0;border-left:3px solid #f0c040;padding:12px 14px;margin-bottom:16px;}
+    .btn-continue{display:block;width:100%;background:#1568be;color:#fff;border:none;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:16px;}
+    .btn-continue:disabled{background:#9a9a9a;cursor:not-allowed;}
+    .btn-continue:hover:not(:disabled){background:#1055a0;}
+    .field{margin-bottom:14px;}
+    .field label{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;margin-bottom:6px;display:block;}
+    .field input{width:100%;padding:12px 14px;border:1px solid #d0d0d0;font-size:15px;font-family:Arial,sans-serif;color:#262626;outline:none;transition:border-color 0.15s;}
+    .field input:focus{border-color:#1568be;}
     .spinner-wrap{padding:40px;text-align:center;color:#6b6b6b;}
     .spinner{display:inline-block;width:32px;height:32px;border:3px solid #e6e6e6;border-top-color:#1568be;border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
@@ -75,6 +82,25 @@
 
 <div class="shell">
   <div id="loading" class="spinner-wrap"><div class="spinner"></div><p style="margin-top:12px;">Loading…</p></div>
+
+  <!-- Step 0: Contact info (shown when no email on file) -->
+  <div id="contact-wrap" style="display:none;">
+    <div class="card" style="margin-top:24px;">
+      <div class="card-title">Your Contact Information</div>
+      <p style="font-size:14px;color:#3c3c3c;margin-bottom:20px;">Please provide your contact info so we can send your booking confirmation.</p>
+      <div class="field">
+        <label for="contact-email">Email address</label>
+        <input type="email" id="contact-email" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="contact-phone">Phone number</label>
+        <input type="tel" id="contact-phone" placeholder="(555) 000-0000" autocomplete="tel">
+      </div>
+      <div id="contact-alert" style="display:none;"></div>
+      <button class="btn-continue" id="contact-btn" onclick="saveContactInfo()">Continue &rarr;</button>
+    </div>
+  </div>
+
   <div id="main" style="display:none;">
 
     <!-- Booking summary -->
@@ -209,8 +235,8 @@
 
       if (data.alreadySigned) {
         document.getElementById("loading").style.display = "none";
-        // If manual booking still needs payment, show payment step
         if (booking && !booking.payment_intent_id && booking.status === "manual-pending") {
+          if (!booking.customer_email) { showContactStep(); return; }
           showPaymentStep();
           return;
         }
@@ -218,19 +244,57 @@
         return;
       }
 
-      renderBookingTable(booking);
-
-      const dp = booking.doc_paths || {};
-      if (dp.license)   markUploaded("license");
-      if (dp.insurance) markUploaded("insurance");
-
-      if (booking.customer_name) document.getElementById("sig-input").value = booking.customer_name;
-      checkSigReady();
-
       document.getElementById("loading").style.display = "none";
-      document.getElementById("main").style.display = "block";
+
+      // If no email yet, collect contact info first
+      if (!booking.customer_email) {
+        showContactStep();
+        return;
+      }
+
+      showMainSteps();
     } catch (e) {
       showFatalError(e.message || "Could not load agreement.");
+    }
+  }
+
+  function showContactStep() {
+    document.getElementById("contact-wrap").style.display = "block";
+  }
+
+  function showMainSteps() {
+    renderBookingTable(booking);
+    const dp = booking.doc_paths || {};
+    if (dp.license)   markUploaded("license");
+    if (dp.insurance) markUploaded("insurance");
+    if (booking.customer_name) document.getElementById("sig-input").value = booking.customer_name;
+    checkSigReady();
+    document.getElementById("main").style.display = "block";
+  }
+
+  async function saveContactInfo() {
+    const email = document.getElementById("contact-email").value.trim();
+    const phone = document.getElementById("contact-phone").value.trim();
+    const alertEl = document.getElementById("contact-alert");
+    const btn = document.getElementById("contact-btn");
+    alertEl.style.display = "none";
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = "Please enter a valid email address."; alertEl.style.display = "block"; return;
+    }
+    btn.disabled = true; btn.textContent = "Saving…";
+    try {
+      await api({ action: "save-contact-info", bookingId, token, customerEmail: email, customerPhone: phone });
+      booking.customer_email = email;
+      booking.customer_phone = phone;
+      document.getElementById("contact-wrap").style.display = "none";
+      if (booking.renter_signature && !booking.payment_intent_id && booking.status === "manual-pending") {
+        showPaymentStep();
+      } else {
+        showMainSteps();
+      }
+    } catch (e) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = e.message; alertEl.style.display = "block";
+      btn.disabled = false; btn.textContent = "Continue →";
     }
   }
 
@@ -325,6 +389,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("contact-phone").addEventListener("keydown", function(e) { if (e.key === "Enter") saveContactInfo(); });
     document.getElementById("sig-input").addEventListener("input", checkSigReady);
     document.getElementById("sig-agree").addEventListener("change", checkSigReady);
 

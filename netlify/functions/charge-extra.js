@@ -228,6 +228,26 @@ exports.handler = async (event) => {
     return ok({ success: true, path });
   }
 
+  // save customer contact info (collected on the sign-agreement page)
+  if (body.action === "save-contact-info") {
+    const { bookingId, token, customerEmail, customerPhone } = body;
+    if (!bookingId || !token) return err(400, "bookingId and token are required.");
+    if (token !== makeToken("agreement", bookingId)) return err(401, "Invalid or expired link.");
+    if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail.trim())) {
+      return err(400, "A valid email address is required.");
+    }
+
+    const { data: booking } = await supabase.from("bookings").select("id").eq("id", bookingId).maybeSingle();
+    if (!booking) return err(404, "Booking not found.");
+
+    await supabase.from("bookings").update({
+      customer_email: customerEmail.trim(),
+      customer_phone: (customerPhone || "").trim(),
+    }).eq("id", bookingId);
+
+    return ok({ success: true });
+  }
+
   // create Stripe Checkout session with manual capture (card authorized, not charged)
   if (body.action === "create-payment-link") {
     const { bookingId, token } = body;
@@ -278,11 +298,15 @@ exports.handler = async (event) => {
       quantity: 1,
     });
 
-    const session = await stripe.checkout.sessions.create({
+    const checkoutParams = {
       mode: "payment",
       customer_creation: "always",
-      customer_email: booking.customer_email,
       line_items: lineItems,
+    };
+    if (booking.customer_email) checkoutParams.customer_email = booking.customer_email;
+
+    const session = await stripe.checkout.sessions.create({
+      ...checkoutParams,
       payment_intent_data: {
         capture_method: "manual",
         description: `TVR manual booking — ${booking.trailer_name} — ${booking.pickup}`,
@@ -453,8 +477,8 @@ exports.handler = async (event) => {
   // create a manual booking (dates blocked immediately, customer gets a link)
   if (body.action === "create-manual-booking") {
     const { customerName, customerEmail, customerPhone, trailerName, pickup, dropoff, rentalAmount, depositAmount } = body;
-    if (!customerName || !customerEmail || !trailerName || !pickup || !dropoff || !rentalAmount || !depositAmount) {
-      return err(400, "All fields are required.");
+    if (!customerName || !trailerName || !pickup || !dropoff || !rentalAmount || !depositAmount) {
+      return err(400, "customerName, trailerName, pickup, dropoff, rentalAmount, and depositAmount are required.");
     }
     const rental  = parseFloat(rentalAmount);
     const deposit = parseFloat(depositAmount);
