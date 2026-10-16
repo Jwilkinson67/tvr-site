@@ -175,6 +175,69 @@
       <div id="bookings-table" style="overflow-x:auto;"></div>
     </div>
 
+    <!-- ── Send payment request ── -->
+    <div class="card">
+      <div class="card-title">Send Payment Request</div>
+      <div class="hint" style="margin-bottom:16px;">Generates a Stripe checkout link to email a customer. Their card is saved on file after they pay.</div>
+      <div id="invoice-alert" style="display:none;margin-bottom:16px;"></div>
+      <div class="row">
+        <div class="field">
+          <label for="inv-name">Customer name</label>
+          <input type="text" id="inv-name" placeholder="Full name">
+        </div>
+        <div class="field">
+          <label for="inv-email">Customer email</label>
+          <input type="email" id="inv-email" placeholder="email@example.com">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="inv-phone">Phone (optional)</label>
+          <input type="tel" id="inv-phone" placeholder="(555) 000-0000">
+        </div>
+        <div class="field">
+          <label for="inv-trailer">Trailer</label>
+          <select id="inv-trailer">
+            <option value="Enclosed Cargo Trailer">Enclosed Cargo Trailer</option>
+            <option value="Car Hauler / Equipment Trailer">Car Hauler / Equipment Trailer</option>
+            <option value="Motorcycle Trailer">Motorcycle Trailer</option>
+            <option value="Car Trailer with Winch">Car Trailer with Winch</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="inv-pickup">Pickup date</label>
+          <input type="date" id="inv-pickup">
+        </div>
+        <div class="field">
+          <label for="inv-dropoff">Return date</label>
+          <input type="date" id="inv-dropoff">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="inv-rental">Rental amount ($)</label>
+          <input type="number" id="inv-rental" placeholder="0.00" min="1" step="0.01">
+        </div>
+        <div class="field">
+          <label for="inv-deposit">Deposit amount ($)</label>
+          <input type="number" id="inv-deposit" placeholder="100.00" min="1" step="0.01" value="100">
+        </div>
+      </div>
+      <div id="invoice-link-wrap" style="display:none;margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b6b6b;display:block;margin-bottom:6px;">Payment Link — copy and email to customer</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="invoice-link" readonly style="font-family:monospace;font-size:12px;background:#f4f6f9;flex:1;">
+          <button class="btn-sm" onclick="copyInvoiceLink()" style="white-space:nowrap;">Copy Link</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="btn-primary" onclick="submitInvoice()" style="width:auto;padding:12px 24px;">Generate Payment Link</button>
+        <span id="invoice-spinner" style="display:none;color:#6b6b6b;font-size:13px;">Creating…</span>
+      </div>
+    </div>
+
     <!-- ── Charge customer ── -->
     <div class="card">
       <div class="card-title">Charge Customer</div>
@@ -438,6 +501,50 @@
     document.getElementById("booking-id").value = id;
     document.getElementById("booking-id").scrollIntoView({ behavior: "smooth", block: "center" });
     document.getElementById("amount").focus();
+  }
+
+  async function submitInvoice() {
+    const name     = document.getElementById("inv-name").value.trim();
+    const email    = document.getElementById("inv-email").value.trim();
+    const phone    = document.getElementById("inv-phone").value.trim();
+    const trailer  = document.getElementById("inv-trailer").value;
+    const pickup   = document.getElementById("inv-pickup").value;
+    const dropoff  = document.getElementById("inv-dropoff").value;
+    const rental   = parseFloat(document.getElementById("inv-rental").value);
+    const deposit  = parseFloat(document.getElementById("inv-deposit").value);
+    const alertEl  = document.getElementById("invoice-alert");
+    const spinner  = document.getElementById("invoice-spinner");
+    const linkWrap = document.getElementById("invoice-link-wrap");
+    alertEl.style.display = "none"; linkWrap.style.display = "none";
+
+    if (!name || !email || !pickup || !dropoff || !rental || !deposit) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = "Please fill in all required fields."; alertEl.style.display = "block"; return;
+    }
+    const days = Math.round((new Date(dropoff) - new Date(pickup)) / 86400000) + 1;
+    spinner.style.display = "inline";
+    try {
+      const res  = await fetch("/.netlify/functions/send-invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+        body: JSON.stringify({ action: "create-link", customerName: name, customerEmail: email, customerPhone: phone, trailerName: trailer, pickup, dropoff, days, rentalAmount: rental, depositAmount: deposit }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create link.");
+      document.getElementById("invoice-link").value = data.url;
+      linkWrap.style.display = "block";
+      alertEl.className = "alert alert-success"; alertEl.textContent = "✓ Payment link created. Copy it and email it to " + name + "."; alertEl.style.display = "block";
+    } catch (e) {
+      alertEl.className = "alert alert-error"; alertEl.textContent = "Error: " + e.message; alertEl.style.display = "block";
+    } finally {
+      spinner.style.display = "none";
+    }
+  }
+
+  function copyInvoiceLink() {
+    const input = document.getElementById("invoice-link");
+    input.select(); input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).catch(() => document.execCommand("copy"));
+    const btn = event.target; btn.textContent = "Copied!"; setTimeout(() => btn.textContent = "Copy Link", 2000);
   }
 
   async function submitCharge() {
