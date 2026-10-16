@@ -395,8 +395,7 @@ exports.handler = async (event) => {
     const { bookingId } = body;
     if (!bookingId) return err(400, "bookingId is required.");
     const siteUrl = (process.env.SITE_URL || "https://rentwithtvr.com").replace(/\/$/, "");
-    const token   = makeToken("agreement", bookingId);
-    return ok({ url: `${siteUrl}/sign-agreement.html?id=${bookingId}&token=${token}` });
+    return ok({ url: `${siteUrl}/b/${bookingId}` });
   }
 
   // approve booking and capture payment
@@ -516,8 +515,7 @@ exports.handler = async (event) => {
     if (insertErr) { console.error("create-manual-booking error:", insertErr); return err(500, "Could not create booking."); }
 
     const siteUrl = (process.env.SITE_URL || "https://rentwithtvr.com").replace(/\/$/, "");
-    const token = makeToken("agreement", bookingId);
-    const customerUrl = `${siteUrl}/sign-agreement.html?id=${bookingId}&token=${token}`;
+    const customerUrl = `${siteUrl}/b/${bookingId}`;
 
     return ok({ bookingId, customerUrl });
   }

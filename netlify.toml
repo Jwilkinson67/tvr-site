@@ -6,6 +6,11 @@
 [functions]
   node_bundler = "esbuild"
 
+[[redirects]]
+  from = "/b/:id"
+  to   = "/.netlify/functions/go?id=:id"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
