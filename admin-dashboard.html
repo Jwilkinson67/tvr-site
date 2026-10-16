@@ -475,9 +475,12 @@
       const approveBtn = b.status === "pending"
         ? "<button class='select-btn' style='background:#155a30;margin-top:4px;' onclick=\"approveBooking('" + b.id + "')\">Approve</button>"
         : "";
+      const cancelBtn = (b.status === "pending" || b.status === "manual-pending")
+        ? "<button class='select-btn' style='background:#b5212b;margin-top:4px;' onclick=\"cancelBooking('" + b.id + "')\">Cancel</button>"
+        : "";
       const agreementBtn = "<button class='select-btn' style='background:#6b3fa0;margin-top:4px;' onclick=\"sendAgreement('" + b.id + "')\">Agreement</button>";
       return "<tr>" +
-        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + agreementBtn + "</td>" +
+        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + cancelBtn + agreementBtn + "</td>" +
         "<td style='font-family:monospace;font-size:11px;'>" + b.id + "</td>" +
         "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:11px;'>" + (b.customer_email || "") + "</span></td>" +
         "<td style='font-size:12px;'>" + (b.trailer_name || "—") + "</td>" +
@@ -509,6 +512,16 @@
     if (!confirm("Approve booking " + id + "?")) return;
     try {
       await callApi({ action: "approve-booking", bookingId: id });
+      loadBookings();
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  async function cancelBooking(id) {
+    if (!confirm("Cancel booking " + id + "? This will release any card authorization and cannot be undone.")) return;
+    try {
+      await callApi({ action: "cancel-booking", bookingId: id });
       loadBookings();
     } catch (e) {
       alert("Error: " + e.message);

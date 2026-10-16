@@ -495,6 +495,30 @@ exports.handler = async (event) => {
     return ok({ bookingId, customerUrl });
   }
 
+  // cancel a booking and release any Stripe authorization
+  if (body.action === "cancel-booking") {
+    const { bookingId } = body;
+    if (!bookingId) return err(400, "bookingId is required.");
+
+    const { data: booking, error: lookupErr } = await supabase
+      .from("bookings").select("*").eq("id", bookingId).single();
+    if (lookupErr || !booking) return err(404, "Booking not found.");
+
+    if (booking.payment_intent_id && !booking.payment_intent_id.startsWith("COUPON-")) {
+      try {
+        await stripe.paymentIntents.cancel(booking.payment_intent_id);
+      } catch (cancelErr) {
+        console.warn("PI cancel note:", cancelErr.code, cancelErr.message);
+      }
+    }
+
+    const { error: updateErr } = await supabase
+      .from("bookings").update({ status: "declined" }).eq("id", bookingId);
+    if (updateErr) return err(500, "Could not cancel booking.");
+
+    return ok({ success: true, bookingId });
+  }
+
   // list recent bookings
   if (body.action === "list") {
     const { data, error } = await supabase
