@@ -115,6 +115,7 @@ exports.handler = async (event) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      customer_creation: "always",
       customer_email: customerEmail,
       line_items: [
         {
@@ -187,6 +188,18 @@ exports.handler = async (event) => {
     const pi   = session.payment_intent;
     const pm   = pi?.payment_method;
 
+    // Resolve stripe_customer_id and stripe_payment_method_id
+    const stripeCustomerId = session.customer || "";
+    let stripePaymentMethodId = typeof pm === "string" ? pm : (pm?.id || "");
+
+    // If payment method isn't on the PI, look it up from the customer
+    if (stripeCustomerId && !stripePaymentMethodId) {
+      try {
+        const methods = await stripe.paymentMethods.list({ customer: stripeCustomerId, type: "card", limit: 1 });
+        if (methods.data.length) stripePaymentMethodId = methods.data[0].id;
+      } catch (_) {}
+    }
+
     const bookingId = "TVR-" + Date.now().toString(36).toUpperCase();
     const bookingRow = {
       id: bookingId,
@@ -205,8 +218,8 @@ exports.handler = async (event) => {
       deposit_amount: parseFloat(meta.deposit_amount || 0),
       total_charged:  (session.amount_total || 0) / 100,
       payment_intent_id:        pi?.id || "",
-      stripe_customer_id:       session.customer || (typeof pm?.customer === "string" ? pm.customer : null) || "",
-      stripe_payment_method_id: typeof pm === "string" ? pm : pm?.id || "",
+      stripe_customer_id:       stripeCustomerId,
+      stripe_payment_method_id: stripePaymentMethodId,
     };
 
     const { error: insertErr } = await supabase.from("bookings").insert(bookingRow);
