@@ -398,6 +398,17 @@ exports.handler = async (event) => {
     return ok({ url: `${siteUrl}/b/${bookingId}` });
   }
 
+  // generate pickup or return photo link
+  if (body.action === "photo-link") {
+    const { bookingId, type } = body;
+    if (!bookingId) return err(400, "bookingId is required.");
+    if (!["pickup", "return"].includes(type)) return err(400, "type must be pickup or return.");
+    const secret = process.env.BOOKING_SECRET || "dev-secret";
+    const token = crypto.createHmac("sha256", secret).update(`photos-${type}:${bookingId}`).digest("hex");
+    const siteUrl = (process.env.SITE_URL || "https://rentwithtvr.com").replace(/\/$/, "");
+    return ok({ url: `${siteUrl}/.netlify/functions/photos?type=${type}&id=${bookingId}&token=${token}` });
+  }
+
   // approve booking and capture payment
   if (body.action === "approve-booking") {
     const { bookingId } = body;

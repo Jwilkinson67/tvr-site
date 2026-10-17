@@ -469,8 +469,10 @@
         ? "<button class='select-btn' style='background:#b5212b;margin-top:4px;' onclick=\"cancelBooking('" + b.id + "')\">Cancel</button>"
         : "";
       const agreementBtn = "<button class='select-btn' style='background:#6b3fa0;margin-top:4px;' onclick=\"sendAgreement('" + b.id + "')\">Agreement</button>";
+      const pickupPhotosBtn = "<button class='select-btn' style='background:#0e7490;margin-top:4px;' onclick=\"sendPhotoLink('" + b.id + "','pickup')\">Pickup Photos</button>";
+      const returnPhotosBtn = "<button class='select-btn' style='background:#065f46;margin-top:4px;' onclick=\"sendPhotoLink('" + b.id + "','return')\">Return Photos</button>";
       return "<tr>" +
-        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + cancelBtn + agreementBtn + "</td>" +
+        "<td style='white-space:nowrap;'><button class='select-btn'" + (hasCard ? "" : " disabled") + " onclick=\"selectBooking('" + b.id + "')\">" + (hasCard ? "Select" : "No card") + "</button>" + approveBtn + cancelBtn + agreementBtn + pickupPhotosBtn + returnPhotosBtn + "</td>" +
         "<td style='font-family:monospace;font-size:11px;'>" + b.id + "</td>" +
         "<td><strong>" + (b.customer_name || "—") + "</strong><br><span style='color:#6b6b6b;font-size:11px;'>" + (b.customer_email || "") + "</span></td>" +
         "<td style='font-size:12px;'>" + (b.trailer_name || "—") + "</td>" +
@@ -523,6 +525,17 @@
       const result = await callApi({ action: "agreement-link", bookingId: id });
       await navigator.clipboard.writeText(result.url);
       alert("Agreement link copied to clipboard!\n\nPaste it into an email or text to the customer:\n\n" + result.url);
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
+  }
+
+  async function sendPhotoLink(id, type) {
+    try {
+      const result = await callApi({ action: "photo-link", bookingId: id, type });
+      await navigator.clipboard.writeText(result.url);
+      const label = type === "pickup" ? "Pickup" : "Return";
+      alert(label + " photo link copied to clipboard!\n\nSend this to the customer to capture " + label.toLowerCase() + " photos:\n\n" + result.url);
     } catch (e) {
       alert("Error: " + e.message);
     }
