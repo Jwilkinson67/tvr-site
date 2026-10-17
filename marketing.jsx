@@ -180,7 +180,9 @@ function HeroDark({ setRoute }) {
           <p style={{ font: '300 15px/1.6 "Inter", sans-serif', color: "#3c3c3c", marginTop: 16, marginBottom: 28 }}>
             {h.body}
           </p>
-          <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <MkButton onClick={() => setRoute("booking")}>{h.primaryCta}</MkButton>
+          </div>
         </div>
       </section>
     );
