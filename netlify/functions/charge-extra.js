@@ -151,7 +151,7 @@ exports.handler = async (event) => {
 
     const { data: booking, error: lookupErr } = await supabase
       .from("bookings")
-      .select("id, customer_name, customer_email, trailer_name, pickup, dropoff, deposit_amount, rental_amount, total_charged, status, renter_signature, signed_at, doc_paths, payment_intent_id")
+      .select("id, customer_name, customer_email, trailer_name, pickup, dropoff, deposit_amount, rental_amount, tax_amount, total_charged, status, renter_signature, signed_at, doc_paths, payment_intent_id")
       .eq("id", bookingId).single();
     if (lookupErr || !booking) return err(404, "Booking not found.");
 
