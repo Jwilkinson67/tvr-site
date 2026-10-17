@@ -205,10 +205,11 @@ window.TVR_CONTENT = {
       photo: "assets/ryan-holloway.png",
     },
     {
-      name: "Ryan Holloway",
-      date: "July 5, 2026",
+      name: "Garrett Davis",
+      date: "September 17, 2026",
       stars: 5,
-      text: "Great option for trailer rental. Has a number to call if you have any issues. Answered immediately and helped us with the issue we were having. We rented the open car trailer and it comes with a nice winch for pulling the car onto the trailer which helped out a lot. Also a toolbox full of straps and everything else you would need. DEFINITELY RECOMMEND OVER U HAUL. Definitely will be back for future rentals.",
+      text: "Julian was exceptional to work and communicate with. The trailer was very nice and kept clean, and also came with every accessory that you could need. 10/10 will definitely use their services again.",
+      photo: "assets/garrett-davis.jpg",
     },
     {
       name: "David Myers",
