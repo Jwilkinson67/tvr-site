@@ -191,11 +191,11 @@ window.TVR_CONTENT = {
   /* ---------- Reviews ---------- */
   reviews: [
     {
-      name: "Aaron N.",
-      date: "June 5, 2026",
+      name: "Jeff Bohannon",
+      date: "September 17, 2026",
       stars: 5,
-      text: "Professional good communication very nice trailer all the right equipment. Would rent many times from this company.",
-      photo: "assets/aaron-n.jpg",
+      text: "Rented a car hauler had a perfect setup for hauling a car winch and straps made it easy.",
+      photo: "assets/jeff-bohannon.png",
     },
     {
       name: "Michael Dill",
