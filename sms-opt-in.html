@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SMS Opt-In · Tennessee Valley Rentals</title>
+<link rel="canonical" href="https://rentwithtvr.com/sms-opt-in.html">
+<link rel="icon" href="assets/tvr-logo-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#f4f6f9;font-family:"Inter",Arial,sans-serif;font-size:14px;color:#262626}
+body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;background:#b5212b;z-index:999}
+.topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;height:64px;padding:0 20px}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
+.topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
+.shell{max-width:680px;margin:0 auto;padding:32px 16px 64px}
+.intro{background:#fff;border:1px solid #e6e6e6;padding:20px 24px;margin-bottom:24px}
+.intro-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px}
+.intro p{font-size:14px;color:#3c3c3c;line-height:1.6;margin:0}
+.card{background:#fff;border:1px solid #e6e6e6;padding:24px;margin-bottom:16px}
+.card-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:16px}
+.field{margin-bottom:14px}
+label{display:block;font-weight:600;font-size:13px;margin-bottom:5px;color:#444}
+input[type=text],input[type=email],input[type=tel]{width:100%;padding:10px 12px;border:1px solid #d0d0d0;font-size:14px;font-family:inherit;color:#262626;background:#fff}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.row{grid-template-columns:1fr}}
+.sms-box{display:flex;align-items:flex-start;gap:10px;background:#f4f6f9;padding:14px;border:1px solid #e6e6e6;margin-top:4px}
+.sms-box input[type=checkbox]{margin-top:3px;flex-shrink:0;width:16px;height:16px}
+.sms-box label{font-size:13px;color:#3c3c3c;line-height:1.6;font-weight:400;cursor:default}
+.sms-box a{color:#1568be;text-decoration:underline}
+.note{font-size:12px;color:#9a9a9a;margin-top:16px;line-height:1.5;border-top:1px solid #e6e6e6;padding-top:16px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-dash"></div>
+    <span class="topbar-name">Tennessee Valley Rentals LLC</span>
+  </div>
+</div>
+
+<div class="shell">
+
+  <div class="intro">
+    <div class="intro-label">SMS Opt-In — How It Works</div>
+    <p>When customers complete a trailer rental booking at <strong>rentwithtvr.com</strong>, they are required to provide their phone number and check the SMS consent checkbox below before signing the rental agreement. This page shows the exact opt-in language displayed to every customer.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Your Contact Info</div>
+    <div class="row">
+      <div class="field">
+        <label>Email address *</label>
+        <input type="email" placeholder="your@email.com" disabled>
+      </div>
+      <div class="field">
+        <label>Phone number *</label>
+        <input type="tel" placeholder="(555) 000-0000" disabled>
+      </div>
+    </div>
+
+    <!-- ── SMS OPT-IN — this is the consent language Twilio reviewers need to see ── -->
+    <div class="sms-box">
+      <input type="checkbox" id="sms-demo" checked disabled>
+      <label for="sms-demo">
+        I agree to receive transactional SMS messages from Tennessee Valley Rentals (423) 395-1377 regarding my booking confirmation, approval status, and pickup details. Message frequency varies per booking. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.
+        <a href="/sms-terms.html" target="_blank">SMS Terms</a>
+      </label>
+    </div>
+
+    <div class="note">
+      This checkbox is <strong>required</strong> — customers cannot proceed to sign the rental agreement without checking it. The opt-in is collected at the time of booking on <a href="https://rentwithtvr.com" target="_blank">rentwithtvr.com</a>.<br><br>
+      Business number: <strong>(423) 395-1377</strong> &nbsp;·&nbsp; Full SMS terms: <a href="/sms-terms.html">rentwithtvr.com/sms-terms.html</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
