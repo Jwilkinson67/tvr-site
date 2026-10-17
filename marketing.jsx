@@ -130,7 +130,7 @@ function TopNav({ route, setRoute }) {
             style={{ height: isMobile ? 26 : 32, width: "auto", display: "block", flexShrink: 0, overflow: "visible" }} />
           <span style={{ width: isMobile ? 12 : 22, height: 2.5, background: "#b5212b", flexShrink: 0 }} />
           <span style={{
-            font: `800 ${isMobile ? "13px" : "26px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
+            font: `800 ${isMobile ? "15px" : "30px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
             fontStyle: "italic", color: "#1568be", letterSpacing: "0.5px", textTransform: "uppercase", whiteSpace: "nowrap",
           }}>{isMobile ? "Tennessee Valley Rentals" : "Tennessee Valley Rentals LLC"}</span>
         </a>
