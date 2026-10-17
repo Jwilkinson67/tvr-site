@@ -15,7 +15,7 @@ window.TVR_CONTENT = {
 
   /* ---------- Brand ---------- */
   brand: {
-    phone:    "(321) 765-3077",
+    phone:    "(423) 395-1377",
     city:     "Chattanooga, TN",
     yearFooter: "© 2026 Tennessee Valley Rentals, LLC",
   },

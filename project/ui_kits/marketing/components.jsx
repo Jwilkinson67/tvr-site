@@ -60,7 +60,7 @@ function TopNav({ route, setRoute }) {
         </nav>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>(321) 765-3077</span>
+        <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>(423) 395-1377</span>
         <Button onClick={() => setRoute("booking")}>Reserve</Button>
       </div>
     </header>
