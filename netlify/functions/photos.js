@@ -42,9 +42,22 @@ function simplePage(title, body) {
     body: `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title} - TVR</title></head>
-<body style="margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;">
-<div style="max-width:520px;width:100%;background:#fff;padding:48px;">${body}</div>
+<title>${title} - TVR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:0;background:#f4f6f9;font-family:Arial,sans-serif}
+body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;background:#b5212b;z-index:999}
+.topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;height:64px;padding:0 20px}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
+.topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-brand"><div class="topbar-dash"></div><span class="topbar-name">Tennessee Valley Rentals LLC</span></div></div>
+<div style="max-width:520px;width:100%;margin:48px auto;background:#fff;padding:40px;">${body}</div>
 </body></html>`,
   };
 }
@@ -76,12 +89,20 @@ function uploadPage({ booking, type, typeLabel, id, token }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Upload ${typeLabel} Photos - TVR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="/assets/tvr-apple-touch-icon.png">
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
+body{margin:0;padding:0;background:#f4f6f9;font-family:Arial,sans-serif}
+body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;background:#b5212b;z-index:999}
+.topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;height:64px;padding:0 20px}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
+.topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
 .wrap{max-width:540px;margin:0 auto;padding:0 0 40px}
-.hdr{background:#1568be;padding:20px 20px 18px}
 .inner{padding:20px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin:0 0 12px}
 .card{background:#fff;border:2px solid #e6e6e6;margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
 .card.done{border-color:#1568be}
 .card-row{display:flex;align-items:center;gap:14px;padding:14px}
@@ -94,18 +115,26 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 .btn{width:100%;height:52px;background:#1568be;color:#fff;border:0;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;margin-top:8px}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 #status{text-align:center;font-size:13px;color:#6b6b6b;min-height:20px;margin-top:12px}
+.page-footer{max-width:540px;margin:32px auto 0;padding:0 20px 48px}
+.footer-logo-wrap{background:#fff;padding:16px;margin-bottom:24px;text-align:center;border:1px solid #e6e6e6}
+.footer-logo-wrap img{width:80%;max-width:340px;height:auto}
+.footer-contact{display:flex;gap:20px;flex-wrap:wrap}
+.footer-contact-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#3c3c3c}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="hdr">
-    <div style="color:#fff;font-size:18px;font-weight:700;">Tennessee Valley Rentals LLC</div>
-    <div style="color:#a8c8f0;font-size:12px;margin-top:2px;text-transform:uppercase;letter-spacing:1px;">Upload ${typeLabel} Photos</div>
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-dash"></div>
+    <span class="topbar-name">Tennessee Valley Rentals LLC</span>
   </div>
+</div>
+<div class="wrap">
   <div class="inner">
-    <div style="background:#fff;padding:14px;margin-bottom:14px;border:1px solid #e6e6e6;font-size:13px;color:#6b6b6b;">
-      ${booking.trailer_name || booking.trailer_id} &middot; ${booking.pickup} &rarr; ${booking.dropoff}
-      <span style="display:block;font-size:11px;color:#9a9a9a;margin-top:2px;">${id}</span>
+    <div style="background:#fff;border:1px solid #e6e6e6;padding:16px;margin-bottom:16px;">
+      <div class="section-label">Upload ${typeLabel} Photos</div>
+      <div style="font-size:14px;color:#262626;font-weight:700;">${booking.trailer_name || booking.trailer_id}</div>
+      <div style="font-size:13px;color:#6b6b6b;margin-top:2px;">${booking.pickup} &rarr; ${booking.dropoff} &middot; <span style="color:#9a9a9a;">${id}</span></div>
     </div>
     <p style="font-size:14px;color:#3c3c3c;margin:0 0 14px;line-height:1.6;">
       Tap each card to take a photo. All ${SLOTS.length} are required before submitting.
@@ -130,6 +159,21 @@ body{margin:0;padding:0;background:#f6f7f9;font-family:Arial,sans-serif}
 
     <button id="submit-btn" class="btn" disabled onclick="handleSubmit()">Submit All Photos</button>
     <div id="status"></div>
+  </div>
+</div>
+<div class="page-footer">
+  <div class="footer-logo-wrap">
+    <img src="/assets/tvr-logo-footer.png" alt="Tennessee Valley Rentals LLC">
+  </div>
+  <div class="footer-contact">
+    <div class="footer-contact-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2.5" stroke-linecap="square"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16z"/></svg>
+      (321) 765-3077
+    </div>
+    <div class="footer-contact-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2.5" stroke-linecap="square"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      info@rentwithtvr.com
+    </div>
   </div>
 </div>
 
@@ -262,11 +306,11 @@ async function handleSubmit() {
   });
   if (cr.ok) {
     document.querySelector(".wrap").innerHTML =
-      '<div style="text-align:center;padding:60px 24px;">' +
+      '<div style="background:#fff;border:1px solid #e6e6e6;margin:20px;padding:40px 24px;text-align:center;">' +
       '<div style="width:56px;height:56px;background:#22c55e;display:inline-flex;align-items:center;justify-content:center;margin-bottom:24px;">' +
       '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="square"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-      '<h2 style="color:#262626;margin:0 0 12px;font-size:24px;">Photos submitted!</h2>' +
-      '<p style="color:#3c3c3c;line-height:1.6;">Your ' + TYPE + ' photos have been received.<br>' +
+      '<h2 style="color:#262626;margin:0 0 12px;font-size:22px;font-weight:700;">Photos submitted!</h2>' +
+      '<p style="color:#3c3c3c;line-height:1.6;font-size:14px;">Your ' + TYPE + ' photos have been received.<br>' +
       '<span style="font-size:12px;color:#9a9a9a;">' + ID + '</span></p></div>';
   } else {
     setStatus("Could not finalize. Please try again.", "#b5212b");
