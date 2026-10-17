@@ -117,6 +117,13 @@
             <input type="tel" id="contact-phone" placeholder="(555) 000-0000" autocomplete="tel" oninput="checkSigReady()">
           </div>
         </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;background:#f4f6f9;padding:14px;border:1px solid #e6e6e6;">
+          <input type="checkbox" id="sms-opt-in" style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;" onchange="checkSigReady()">
+          <label for="sms-opt-in" style="font-size:13px;color:#3c3c3c;line-height:1.5;cursor:pointer;font-weight:400;">
+            I agree to receive SMS messages from Tennessee Valley Rentals regarding my booking, pickup details, and rental updates. Message and data rates may apply. Reply STOP to unsubscribe.
+            <a href="/sms-terms.html" target="_blank" style="color:#1568be;text-decoration:underline;white-space:nowrap;">SMS Terms</a>
+          </label>
+        </div>
         <div id="contact-alert" style="display:none;margin-top:10px;"></div>
       </div>
     </div>
@@ -373,12 +380,13 @@
   function checkSigReady() {
     const name    = document.getElementById("sig-input").value.trim();
     const checked = document.getElementById("sig-agree").checked;
-    const needsEmail = document.getElementById("contact-fields").style.display !== "none";
-    const email   = needsEmail ? document.getElementById("contact-email").value.trim() : "ok";
-    const phone   = needsEmail ? document.getElementById("contact-phone").value.trim() : "ok";
-    const emailOk = !needsEmail || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const phoneOk = !needsEmail || phone.length >= 7;
-    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked && uploaded.license && uploaded.insurance && emailOk && phoneOk);
+    const needsContact = document.getElementById("contact-fields").style.display !== "none";
+    const email   = needsContact ? document.getElementById("contact-email").value.trim() : "ok";
+    const phone   = needsContact ? document.getElementById("contact-phone").value.trim() : "ok";
+    const smsOpt  = needsContact ? document.getElementById("sms-opt-in").checked : true;
+    const emailOk = !needsContact || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const phoneOk = !needsContact || phone.length >= 7;
+    document.getElementById("sig-btn").disabled = !(name.length >= 2 && checked && uploaded.license && uploaded.insurance && emailOk && phoneOk && smsOpt);
   }
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -412,11 +420,12 @@
       // Save contact info first if it was collected here
       const needsEmail = document.getElementById("contact-fields").style.display !== "none";
       if (needsEmail) {
-        const email = document.getElementById("contact-email").value.trim();
-        const phone = document.getElementById("contact-phone").value.trim();
+        const email  = document.getElementById("contact-email").value.trim();
+        const phone  = document.getElementById("contact-phone").value.trim();
+        const smsOpt = document.getElementById("sms-opt-in").checked;
         const alertEl = document.getElementById("contact-alert");
         try {
-          await api({ action: "save-contact-info", bookingId, token, customerEmail: email, customerPhone: phone });
+          await api({ action: "save-contact-info", bookingId, token, customerEmail: email, customerPhone: phone, smsOptIn: smsOpt });
           booking.customer_email = email;
           alertEl.style.display = "none";
         } catch (ce) {
