@@ -12,6 +12,18 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/p/:id/pickup"
+  to   = "/.netlify/functions/gophoto?id=:id&type=pickup"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/p/:id/return"
+  to   = "/.netlify/functions/gophoto?id=:id&type=return"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
