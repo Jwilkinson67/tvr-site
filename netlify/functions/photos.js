@@ -116,10 +116,10 @@ body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;backgr
 .btn:disabled{opacity:.4;cursor:not-allowed}
 #status{text-align:center;font-size:13px;color:#6b6b6b;min-height:20px;margin-top:12px}
 .page-footer{max-width:540px;margin:32px auto 0;padding:0 20px 48px}
-.footer-logo-wrap{background:#fff;padding:16px;margin-bottom:24px;text-align:center;border:1px solid #e6e6e6}
-.footer-logo-wrap img{width:80%;max-width:340px;height:auto}
-.footer-contact{display:flex;gap:20px;flex-wrap:wrap}
-.footer-contact-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#3c3c3c}
+.footer-logo-wrap{background:#fff;padding:16px;margin-bottom:24px;text-align:center}
+.footer-logo-wrap img{width:88%;max-width:420px;height:auto}
+.footer-contact-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px}
+.footer-contact-item{display:flex;align-items:center;gap:14px;background:#fff;padding:18px 20px;margin-bottom:10px;font-size:15px;color:#262626;text-decoration:none}
 </style>
 </head>
 <body>
@@ -165,16 +165,15 @@ body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;backgr
   <div class="footer-logo-wrap">
     <img src="/assets/tvr-logo-footer.png" alt="Tennessee Valley Rentals LLC">
   </div>
-  <div class="footer-contact">
-    <div class="footer-contact-item">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2.5" stroke-linecap="square"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.5 16z"/></svg>
-      (321) 765-3077
-    </div>
-    <div class="footer-contact-item">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2.5" stroke-linecap="square"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      info@rentwithtvr.com
-    </div>
-  </div>
+  <div class="footer-contact-label">Contact</div>
+  <a href="tel:+13217653077" class="footer-contact-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.51-1.51a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    (321) 765-3077
+  </a>
+  <a href="mailto:info@rentwithtvr.com" class="footer-contact-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+    info@rentwithtvr.com
+  </a>
 </div>
 
 <script>
