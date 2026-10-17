@@ -72,12 +72,12 @@ function customerChargeEmail(booking, amountDollars, reason, paymentIntentId) {
     </table>
     <div style="background:#f4f6f9;padding:20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions about this charge?</div>
-      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (423) 395-1377</div>
       <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">info@rentwithtvr.com</div>
     </div>
   </div>
   <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
-    <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077<br>Stripe ref: ${paymentIntentId}</div>
+    <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">Tennessee Valley Rentals LLC · Ooltewah, TN · (423) 395-1377<br>Stripe ref: ${paymentIntentId}</div>
   </div>
 </div>
 </body>
@@ -192,7 +192,7 @@ exports.handler = async (event) => {
             html: `<p style="font-family:Arial,sans-serif;color:#262626;">Hi ${(booking.customer_name||"").split(" ")[0]||"there"},</p>
 <p style="font-family:Arial,sans-serif;color:#3c3c3c;margin-top:12px;">This confirms your rental agreement for <strong>${booking.trailer_name}</strong> (${booking.pickup} → ${booking.dropoff}) has been signed electronically.</p>
 <p style="font-family:Arial,sans-serif;color:#3c3c3c;margin-top:12px;"><strong>Signed by:</strong> ${signature.trim()}<br><strong>Date:</strong> ${new Date(signedAt).toLocaleString("en-US", { dateStyle: "long", timeStyle: "short" })}<br><strong>Booking ID:</strong> ${bookingId}</p>
-<p style="font-family:Arial,sans-serif;color:#6b6b6b;font-size:12px;margin-top:24px;">Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077</p>`,
+<p style="font-family:Arial,sans-serif;color:#6b6b6b;font-size:12px;margin-top:24px;">Tennessee Valley Rentals LLC · Ooltewah, TN · (423) 395-1377</p>`,
           }),
         });
       } catch (e) { console.error("Signature confirmation email failed:", e); }
@@ -469,12 +469,12 @@ exports.handler = async (event) => {
     </div>
     <div style="background:#f4f6f9;padding:20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions?</div>
-      <div style="font-size:16px;font-weight:700;">Call or text (321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;">Call or text (423) 395-1377</div>
       <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">info@rentwithtvr.com</div>
     </div>
   </div>
   <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
-    <div style="font-size:12px;color:#6b6b6b;">Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077</div>
+    <div style="font-size:12px;color:#6b6b6b;">Tennessee Valley Rentals LLC · Ooltewah, TN · (423) 395-1377</div>
   </div>
 </div></body></html>`,
       });

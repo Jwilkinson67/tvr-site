@@ -151,14 +151,14 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
 
     <div style="background:#f4f6f9;padding:20px;margin-bottom:32px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions?</div>
-      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (423) 395-1377</div>
     </div>
 
     <!-- EXECUTED RENTAL AGREEMENT -->
     <div style="border:2px solid #262626;margin-bottom:32px;">
       <div style="background:#262626;padding:14px 20px;text-align:center;">
         <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:1px;">TENNESSEE VALLEY RENTALS LLC</div>
-        <div style="color:#a8c8f0;font-size:12px;margin-top:4px;">4217 Shady Oak Dr, Ooltewah, TN 37363 · 321-765-3077 · info@rentwithtvr.com</div>
+        <div style="color:#a8c8f0;font-size:12px;margin-top:4px;">4217 Shady Oak Dr, Ooltewah, TN 37363 · 423-395-1377 · info@rentwithtvr.com</div>
         <div style="color:#fff;font-size:13px;font-weight:700;margin-top:8px;letter-spacing:2px;text-transform:uppercase;">TRAILER RENTAL AGREEMENT — EXECUTED COPY</div>
       </div>
 
@@ -253,7 +253,7 @@ function customerConfirmationEmail(booking, approvedAt, photoUrls) {
 
   <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
     <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">
-      Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077<br>
+      Tennessee Valley Rentals LLC · Ooltewah, TN · (423) 395-1377<br>
       Booking ID: ${booking.id}
     </div>
   </div>
@@ -280,7 +280,7 @@ function customerCancellationEmail(booking) {
     <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">Your reservation for the <strong>${booking.trailer_name || booking.trailer_id}</strong> on <strong>${booking.pickup}</strong> has been cancelled.</p>
     <p style="color:#3c3c3c;line-height:1.6;margin:0 0 24px;">A full refund of <strong>$${total.toFixed ? total.toFixed(2) : total}</strong> has been issued to your card. Depending on your bank, funds typically appear within 5–10 business days.</p>
     <div style="background:#f4f6f9;padding:20px;margin-bottom:24px;">
-      <div style="font-size:16px;font-weight:700;color:#262626;">Questions? Call or text (321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">Questions? Call or text (423) 395-1377</div>
       <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">We'd love to get you rescheduled when the time is right.</div>
     </div>
     <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals LLC &middot; Ooltewah, TN<br>Booking ID: ${booking.id}</p>
@@ -321,7 +321,7 @@ function customerDeclineEmail(booking) {
     <p style="color:#3c3c3c;line-height:1.6;margin:0 0 16px;">We'd love to help get you on the road — give us a call or text and we can work through any of the above together.</p>
 
     <div style="background:#f4f6f9;padding:20px;margin-bottom:24px;">
-      <div style="font-size:16px;font-weight:700;color:#262626;">(321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">(423) 395-1377</div>
       <div style="font-size:13px;color:#6b6b6b;">Call or text anytime</div>
     </div>
     <p style="color:#6b6b6b;font-size:13px;">Tennessee Valley Rentals LLC · Ooltewah, TN</p>

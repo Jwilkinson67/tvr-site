@@ -15,7 +15,7 @@ window.TVR_CONTENT = {
 
   /* ---------- Brand ---------- */
   brand: {
-    phone:    "(321) 765-3077",
+    phone:    "(423) 395-1377",
     email:    "info@rentwithtvr.com",
     city:     "Chattanooga, TN",
     yearFooter: "© 2026 Tennessee Valley Rentals, LLC",
@@ -144,7 +144,7 @@ window.TVR_CONTENT = {
       { q: "How far in advance do I need to book?",
         a:  "Same-day bookings are available — we typically approve requests within minutes. Reserve online anytime." },
       { q: "What if I need the trailer longer than planned?",
-        a:  "Call or text us at (321) 765-3077. Additional days are charged at the daily rate." },
+        a:  "Call or text us at (423) 395-1377. Additional days are charged at the daily rate." },
       { q: "Do you deliver?",
         a:  "Yes, delivery is available in the Chattanooga area for an additional fee. Contact us to arrange." },
     ],

@@ -73,14 +73,14 @@
           ? '<p>All done — your documents, agreement, and payment have been submitted. Your card is authorized but <strong>will not be charged</strong> until your booking is approved.</p>'
           : '<p>Thank you — your payment has been processed and your booking is being reviewed.</p>') +
         (id ? '<div class="booking-id">' + id + '</div>' : '') +
-        "<p>You'll receive a confirmation email once your booking is approved. Questions? Call or text <strong>(321) 765-3077</strong>.</p>" +
+        "<p>You'll receive a confirmation email once your booking is approved. Questions? Call or text <strong>(423) 395-1377</strong>.</p>" +
         '<div class="footer">Tennessee Valley Rentals LLC · Ooltewah, TN · info@rentwithtvr.com</div>';
     } catch (e) {
       el.innerHTML =
         '<div class="icon">⚠️</div>' +
         '<h1>Something went wrong</h1>' +
         '<p>Your payment went through but we couldn\'t confirm the booking automatically. Please contact us and we\'ll sort it out right away.</p>' +
-        '<p style="margin-top:12px;"><strong>(321) 765-3077</strong></p>' +
+        '<p style="margin-top:12px;"><strong>(423) 395-1377</strong></p>' +
         '<div class="footer">' + e.message + '</div>';
     }
   })();

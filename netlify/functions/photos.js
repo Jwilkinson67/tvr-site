@@ -166,9 +166,9 @@ body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;backgr
     <img src="/assets/tvr-logo-footer.png" alt="Tennessee Valley Rentals LLC">
   </div>
   <div class="footer-contact-label">Contact</div>
-  <a href="tel:+13217653077" class="footer-contact-item">
+  <a href="tel:+14233951377" class="footer-contact-item">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.51-1.51a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-    (321) 765-3077
+    (423) 395-1377
   </a>
   <a href="mailto:info@rentwithtvr.com" class="footer-contact-item">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>

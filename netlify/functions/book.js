@@ -147,7 +147,7 @@ function customerRequestEmail(booking) {
 
     <div style="background:#f4f6f9;padding:20px;margin-bottom:8px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px;">Questions?</div>
-      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (321) 765-3077</div>
+      <div style="font-size:16px;font-weight:700;color:#262626;">Call or text (423) 395-1377</div>
       <div style="font-size:13px;color:#6b6b6b;margin-top:4px;">info@rentwithtvr.com</div>
     </div>
 
@@ -155,7 +155,7 @@ function customerRequestEmail(booking) {
 
   <div style="background:#f6f7f9;padding:20px 32px;border-top:1px solid #e6e6e6;">
     <div style="font-size:12px;color:#6b6b6b;line-height:1.6;">
-      Tennessee Valley Rentals LLC · Ooltewah, TN · (321) 765-3077<br>
+      Tennessee Valley Rentals LLC · Ooltewah, TN · (423) 395-1377<br>
       Booking ID: ${booking.id} · Your card has been authorized but <strong>not yet charged</strong> — that happens only when we approve.
     </div>
   </div>

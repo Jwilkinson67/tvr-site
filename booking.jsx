@@ -179,7 +179,7 @@ const TRANSLATIONS = {
     documentsSection: "Documentos",
     step4Title: "Firmar el contrato de alquiler", step4Kicker: "PASO 4 · CONTRATO",
     agreementIntro: "Desplace el texto completo del contrato a continuación, luego firme escribiendo su nombre completo — esto tiene validez como firma electrónica legal. Le enviaremos una copia firmada.",
-    agreementNote: "Nota: El contrato está en inglés. Llame al (321) 765-3077 si tiene preguntas antes de firmar.",
+    agreementNote: "Nota: El contrato está en inglés. Llame al (423) 395-1377 si tiene preguntas antes de firmar.",
     downloadPDF: "Descargar PDF ›", agreementTitle: "Contrato de Alquiler TVR",
     scrollToUnlock: "Desplace el texto completo del contrato para desbloquear la firma.",
     scrollToUnlockPay: "Desplace el texto completo del contrato para desbloquear la firma y el pago.",
@@ -392,7 +392,7 @@ function TopBar() {
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {!isMobile && (
           <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
-            {tr.needHelp} <span style={{ color: "#262626", fontWeight: 700 }}>(321) 765-3077</span>
+            {tr.needHelp} <span style={{ color: "#262626", fontWeight: 700 }}>(423) 395-1377</span>
           </span>
         )}
         <div style={{ display: "flex", border: "1px solid #e6e6e6", overflow: "hidden" }}>
