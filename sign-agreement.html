@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Complete Your Booking — TVR</title>
   <link rel="icon" href="assets/tvr-logo-mark.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:Arial,sans-serif;background:#f6f7f9;color:#262626;padding:0 0 48px;}
-    .topbar{background:#fff;padding:14px 24px;border-bottom:3px solid #1568be;display:flex;align-items:center;gap:16px;}
-    .topbar img{height:48px;width:auto;}
-    .topbar-text{display:flex;flex-direction:column;}
-    .topbar-sub{color:#6b6b6b;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+    .topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 24px;}
+    .topbar-brand{display:flex;align-items:center;gap:10px;}
+    .topbar-dash{width:28px;height:2.5px;background:#b5212b;flex-shrink:0;}
+    .topbar-name{font:800 15px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase;}
+    .topbar-tag{font-size:11px;color:#6b6b6b;letter-spacing:0.8px;text-transform:uppercase;}
     .shell{max-width:740px;margin:0 auto;padding:0 16px;}
     .card{background:#fff;padding:28px 32px;margin-top:24px;}
     .card-title{font-size:16px;font-weight:700;letter-spacing:-0.2px;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
@@ -77,10 +81,11 @@
 <body>
 
 <div class="topbar">
-  <img src="assets/tvr-logo-primary-transparent.png" alt="Tennessee Valley Rentals">
-  <div class="topbar-text">
-    <div class="topbar-sub">Rental Documents &amp; Agreement</div>
+  <div class="topbar-brand">
+    <span class="topbar-dash"></span>
+    <span class="topbar-name">Tennessee Valley Rentals LLC</span>
   </div>
+  <span class="topbar-tag">Rental Documents &amp; Agreement</span>
 </div>
 
 <div class="shell">
