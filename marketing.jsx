@@ -728,9 +728,9 @@ function Footer() {
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr 1fr 1fr 1fr", gap: isMobile ? 40 : 40, alignItems: "start" }}>
 
         {/* Logo */}
-        <div>
-          <img src="assets/tvr-logo-transparent.png" alt="Tennessee Valley Rentals LLC"
-            style={{ height: 138, width: "auto", display: "block" }} />
+        <div style={{ background: "#fff", padding: 16, textAlign: "center" }}>
+          <img src="assets/tvr-logo-footer.png" alt="Tennessee Valley Rentals LLC"
+            style={{ width: "88%", maxWidth: 420, height: "auto", display: "inline-block" }} />
         </div>
 
         {/* Contact — first column */}
