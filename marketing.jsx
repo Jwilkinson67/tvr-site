@@ -127,7 +127,7 @@ function TopNav({ route, setRoute }) {
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", cursor: "pointer", textDecoration: "none" }}>
           <img src="assets/tvr-logo-nav.png" alt="Tennessee Valley Rentals LLC"
-            style={{ height: isMobile ? 32 : 40, width: "auto", display: "block" }} />
+            style={{ height: isMobile ? 44 : 56, width: "auto", display: "block" }} />
         </a>
         {!isMobile && (
           <nav style={{ display: "flex", gap: 32 }}>
