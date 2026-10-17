@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SMS Opt-In · Tennessee Valley Rentals</title>
+<title>SMS Consent · Tennessee Valley Rentals</title>
 <link rel="canonical" href="https://rentwithtvr.com/sms-opt-in.html">
 <link rel="icon" href="assets/tvr-logo-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,22 +16,30 @@ body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;backgr
 .topbar-brand{display:flex;align-items:center;gap:10px}
 .topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
 .topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
-.shell{max-width:680px;margin:0 auto;padding:32px 16px 64px}
-.intro{background:#fff;border:1px solid #e6e6e6;padding:20px 24px;margin-bottom:24px}
-.intro-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:8px}
-.intro p{font-size:14px;color:#3c3c3c;line-height:1.6;margin:0}
-.card{background:#fff;border:1px solid #e6e6e6;padding:24px;margin-bottom:16px}
-.card-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:16px}
-.field{margin-bottom:14px}
-label{display:block;font-weight:600;font-size:13px;margin-bottom:5px;color:#444}
-input[type=text],input[type=email],input[type=tel]{width:100%;padding:10px 12px;border:1px solid #d0d0d0;font-size:14px;font-family:inherit;color:#262626;background:#fff}
+.shell{max-width:620px;margin:0 auto;padding:32px 16px 64px}
+.card{background:#fff;border:1px solid #e6e6e6;padding:28px 24px;margin-bottom:16px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6b6b6b;margin-bottom:16px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;font-size:13px;margin-bottom:5px;color:#444}
+.field input{width:100%;padding:10px 12px;border:1px solid #d0d0d0;font-size:14px;font-family:inherit;color:#262626;background:#fff}
+.field input:focus{outline:none;border-color:#1568be}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:500px){.row{grid-template-columns:1fr}}
-.sms-box{display:flex;align-items:flex-start;gap:10px;background:#f4f6f9;padding:14px;border:1px solid #e6e6e6;margin-top:4px}
-.sms-box input[type=checkbox]{margin-top:3px;flex-shrink:0;width:16px;height:16px}
-.sms-box label{font-size:13px;color:#3c3c3c;line-height:1.6;font-weight:400;cursor:default}
-.sms-box a{color:#1568be;text-decoration:underline}
-.note{font-size:12px;color:#9a9a9a;margin-top:16px;line-height:1.5;border-top:1px solid #e6e6e6;padding-top:16px}
+
+/* SMS consent box */
+.sms-consent-box{border:2px solid #1568be;padding:18px;margin:20px 0 0;background:#f0f5ff}
+.sms-consent-heading{font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#1568be;margin-bottom:12px}
+.sms-consent-row{display:flex;align-items:flex-start;gap:12px}
+.sms-consent-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;cursor:pointer;accent-color:#1568be}
+.sms-consent-row label{font-size:13px;color:#1a1a1a;line-height:1.6;cursor:pointer;font-weight:500}
+.sms-consent-row a{color:#1568be;text-decoration:underline}
+.disclosures{margin-top:12px;padding-top:12px;border-top:1px solid #c8d8f0;font-size:12px;color:#3c3c3c;line-height:1.7}
+.disclosures strong{color:#262626}
+
+.btn{width:100%;height:52px;background:#1568be;color:#fff;border:0;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.3px;margin-top:16px;font-family:inherit}
+.btn:hover{background:#1055a0}
+.btn:disabled{background:#9ab8d8;cursor:not-allowed}
+#success{display:none;background:#edfaf1;border:1px solid #22a355;padding:16px;margin-top:16px;font-size:14px;color:#155a30;font-weight:600;text-align:center}
 </style>
 </head>
 <body>
@@ -45,39 +53,58 @@ input[type=text],input[type=email],input[type=tel]{width:100%;padding:10px 12px;
 
 <div class="shell">
 
-  <div class="intro">
-    <div class="intro-label">SMS Opt-In — How It Works</div>
-    <p>When customers complete a trailer rental booking at <strong>rentwithtvr.com</strong>, they are required to provide their phone number and check the SMS consent checkbox below before signing the rental agreement. This page shows the exact opt-in language displayed to every customer.</p>
-  </div>
-
   <div class="card">
-    <div class="card-title">Your Contact Info</div>
+    <div class="section-label">Booking Opt-In — Contact Information</div>
+    <p style="font-size:13px;color:#3c3c3c;margin:0 0 20px;line-height:1.6;">
+      Customers provide their contact information and SMS consent when completing a trailer rental booking. The form below is representative of the opt-in customers see on our booking page.
+    </p>
+
     <div class="row">
       <div class="field">
-        <label>Email address *</label>
-        <input type="email" placeholder="your@email.com" disabled>
+        <label for="demo-email">Email address *</label>
+        <input type="email" id="demo-email" placeholder="your@email.com" autocomplete="email">
       </div>
       <div class="field">
-        <label>Phone number *</label>
-        <input type="tel" placeholder="(555) 000-0000" disabled>
+        <label for="demo-phone">Phone number *</label>
+        <input type="tel" id="demo-phone" placeholder="(555) 000-0000" autocomplete="tel" oninput="check()">
       </div>
     </div>
 
-    <!-- ── SMS OPT-IN — this is the consent language Twilio reviewers need to see ── -->
-    <div class="sms-box">
-      <input type="checkbox" id="sms-demo" checked disabled>
-      <label for="sms-demo">
-        I agree to receive transactional SMS messages from Tennessee Valley Rentals (423) 395-1377 regarding my booking confirmation, approval status, and pickup details. Message frequency varies per booking. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help.
-        <a href="/sms-terms.html" target="_blank">SMS Terms</a>
-      </label>
+    <!-- SMS CONSENT — required disclosures per CTIA / Twilio guidelines -->
+    <div class="sms-consent-box">
+      <div class="sms-consent-heading">SMS Consent</div>
+      <div class="sms-consent-row">
+        <input type="checkbox" id="sms-consent" onchange="check()">
+        <label for="sms-consent">
+          By checking this box, I agree to receive <strong>transactional SMS messages</strong> from <strong>Tennessee Valley Rentals</strong> at the phone number provided, including booking confirmations, approval notifications, and pickup details.
+        </label>
+      </div>
+      <div class="disclosures">
+        <strong>Message frequency:</strong> Varies per booking — typically 2–4 messages per rental.<br>
+        <strong>Msg &amp; data rates may apply.</strong><br>
+        Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for help.<br>
+        Sender: Tennessee Valley Rentals, (423) 395-1377<br>
+        <a href="/sms-terms.html" target="_blank">SMS Terms &amp; Conditions</a> &nbsp;·&nbsp; <a href="/privacy-policy.html" target="_blank">Privacy Policy</a>
+      </div>
     </div>
 
-    <div class="note">
-      This checkbox is <strong>required</strong> — customers cannot proceed to sign the rental agreement without checking it. The opt-in is collected at the time of booking on <a href="https://rentwithtvr.com" target="_blank">rentwithtvr.com</a>.<br><br>
-      Business number: <strong>(423) 395-1377</strong> &nbsp;·&nbsp; Full SMS terms: <a href="/sms-terms.html">rentwithtvr.com/sms-terms.html</a>
-    </div>
+    <button class="btn" id="submit-btn" disabled onclick="submit()">Confirm &amp; Continue</button>
+    <div id="success">✓ Thank you — your SMS consent has been recorded.</div>
   </div>
 
 </div>
+
+<script>
+function check() {
+  var phone   = document.getElementById("demo-phone").value.trim();
+  var consent = document.getElementById("sms-consent").checked;
+  document.getElementById("submit-btn").disabled = !(phone.length >= 7 && consent);
+}
+function submit() {
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("success").style.display = "block";
+}
+</script>
+
 </body>
 </html>
