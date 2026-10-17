@@ -126,7 +126,7 @@ function TopNav({ route, setRoute }) {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", gap: isMobile ? 8 : 12, cursor: "pointer", textDecoration: "none" }}>
-          <img src="assets/tvr-logo-mark-transparent.png" alt="TVR"
+          <img src="assets/tvr-logo-mark.png" alt="TVR"
             style={{ height: isMobile ? 26 : 32, width: "auto", display: "block", flexShrink: 0, overflow: "visible" }} />
           <span style={{ width: isMobile ? 12 : 22, height: 2.5, background: "#b5212b", flexShrink: 0 }} />
           <span style={{
