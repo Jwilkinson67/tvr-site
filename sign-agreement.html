@@ -76,6 +76,12 @@
     .spinner{display:inline-block;width:32px;height:32px;border:3px solid #e6e6e6;border-top-color:#1568be;border-radius:50%;animation:spin 0.8s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
     @media(max-width:600px){.card{padding:20px;}.card-title{font-size:15px;}}
+    .page-footer{max-width:740px;margin:48px auto 0;padding:0 16px 48px;}
+    .footer-logo-wrap{background:#fff;padding:28px 32px;margin-bottom:32px;}
+    .footer-logo-wrap img{height:56px;width:auto;}
+    .footer-contact-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6b6b6b;margin-bottom:12px;}
+    .footer-contact-item{display:flex;align-items:center;gap:14px;background:#fff;padding:18px 20px;margin-bottom:10px;font-size:15px;color:#262626;text-decoration:none;}
+    .footer-contact-item svg{flex-shrink:0;color:#1568be;}
   </style>
 </head>
 <body>
@@ -460,5 +466,20 @@
     document.getElementById("done-msg").textContent = msg;
   }
 </script>
+
+<div class="page-footer">
+  <div class="footer-logo-wrap">
+    <img src="assets/tvr-logo-primary-transparent.png" alt="Tennessee Valley Rentals">
+  </div>
+  <div class="footer-contact-label">Contact</div>
+  <a href="tel:+13217653077" class="footer-contact-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.15a16 16 0 006.94 6.94l1.51-1.51a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    (321) 765-3077
+  </a>
+  <a href="mailto:info@rentwithtvr.com" class="footer-contact-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+    info@rentwithtvr.com
+  </a>
+</div>
 </body>
 </html>
