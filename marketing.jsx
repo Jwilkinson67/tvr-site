@@ -127,10 +127,10 @@ function TopNav({ route, setRoute }) {
       <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
         <a onClick={() => setRoute("home")} style={{ display: "flex", alignItems: "center", gap: isMobile ? 8 : 12, cursor: "pointer", textDecoration: "none" }}>
           <img src="assets/tvr-logo-mark.png" alt="TVR"
-            style={{ height: isMobile ? 38 : 46, width: "auto", display: "block", flexShrink: 0 }} />
-          <span style={{ width: isMobile ? 14 : 24, height: 2.5, background: "#b5212b", flexShrink: 0 }} />
+            style={{ height: isMobile ? 36 : 44, width: "auto", display: "block", flexShrink: 0, overflow: "visible" }} />
+          <span style={{ width: isMobile ? 12 : 22, height: 2.5, background: "#b5212b", flexShrink: 0 }} />
           <span style={{
-            font: `800 ${isMobile ? "19px" : "40px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
+            font: `800 ${isMobile ? "16px" : "34px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
             fontStyle: "italic", color: "#1568be", letterSpacing: "0.5px", textTransform: "uppercase", whiteSpace: "nowrap",
           }}>{isMobile ? "Tennessee Valley Rentals" : "Tennessee Valley Rentals LLC"}</span>
         </a>
