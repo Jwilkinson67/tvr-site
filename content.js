@@ -202,14 +202,13 @@ window.TVR_CONTENT = {
       date: "October 10, 2026",
       stars: 5,
       text: "Was a great trailer to haul my tractor. They even helped me get hooked up in the rain! Thank you!",
-      photo: "assets/michael-dill.jpg",
+      photo: "assets/ryan-holloway.png",
     },
     {
       name: "Ryan Holloway",
       date: "July 5, 2026",
       stars: 5,
       text: "Great option for trailer rental. Has a number to call if you have any issues. Answered immediately and helped us with the issue we were having. We rented the open car trailer and it comes with a nice winch for pulling the car onto the trailer which helped out a lot. Also a toolbox full of straps and everything else you would need. DEFINITELY RECOMMEND OVER U HAUL. Definitely will be back for future rentals.",
-      photo: "assets/ryan-holloway.png",
     },
     {
       name: "David Myers",
