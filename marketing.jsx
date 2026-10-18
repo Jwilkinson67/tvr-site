@@ -195,10 +195,10 @@ function HeroDark({ setRoute }) {
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <div style={{
         padding: "56px 80px 56px 96px",
-        display: "grid", gridTemplateColumns: "1.1fr 1fr",
-        gap: 48, alignItems: "center"
+        display: "grid", gridTemplateColumns: "1fr 1.3fr",
+        gap: 0, alignItems: "center"
       }}>
-        <div>
+        <div style={{ padding: "0 48px 0 0" }}>
           <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20, display: "inline-flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             {h.kicker}
@@ -217,7 +217,7 @@ function HeroDark({ setRoute }) {
           fit="contain"
           position="center center"
           plateStyle={{ background: "#f4f6f9", padding: 0, width: "100%" }}
-          style={{ width: "100%", height: 300 }} />
+          style={{ width: "100%", height: 460 }} />
       </div>
     </section>
   );
