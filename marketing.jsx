@@ -116,9 +116,9 @@ function MobileMenu({ onBook, phone }) {
   const close = () => setOpen(false);
 
   const dropItems = [
-    { label: "Book", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><path d="M5 3V2m6 1V2M2 7h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>, primary: true, action: () => { onBook(); close(); } },
-    { label: "FAQ", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 11v-1M8 5.5c0-.8.6-1.5 1.5-1C10.7 5 11 5.7 11 6.3c0 1-1.2 1.4-1.7 2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>, action: () => { document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" }); close(); } },
-    { label: "Call Us", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 10.5c0 .3-.1.6-.2.9-.2.3-.4.6-.7.8-.5.4-1 .6-1.6.6-.4 0-.9-.1-1.4-.3-.5-.2-1-.5-1.5-.9-.5-.4-1-.9-1.4-1.4-.4-.5-.7-1-.9-1.5-.2-.5-.3-1-.3-1.4 0-.5.1-1 .5-1.5.4-.5.8-.7 1.4-.7.2 0 .4 0 .6.1.2.1.4.2.5.4L9.5 6.6c.1.2.2.4.2.5 0 .2-.1.4-.2.6l-.3.4c-.1.1-.1.2-.1.3 0 .1 0 .2.1.3.2.3.4.6.7.9.3.3.6.5.9.7.1.1.2.1.3.1.1 0 .2 0 .3-.1l.4-.3c.2-.1.3-.2.6-.2.2 0 .3 0 .5.1l1.5.9c.2.1.4.3.4.5z" stroke="currentColor" strokeWidth="1.4"/></svg>, sub: phone, action: () => { window.location.href = `tel:${phone}`; close(); } },
+    { label: "Book", primary: true, action: () => { onBook(); close(); } },
+    { label: "FAQ", action: () => { document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" }); close(); } },
+    { label: "Call Us", sub: phone, action: () => { window.location.href = `tel:${phone}`; close(); } },
   ];
 
   return (
@@ -151,7 +151,6 @@ function MobileMenu({ onBook, phone }) {
               borderBottom: i < dropItems.length - 1 ? "1px solid #e6e6e6" : "none",
               cursor: "pointer", textAlign: "left",
             }}>
-              <span style={{ color: item.primary ? "#1568be" : "#6b6b6b", display: "flex", flexShrink: 0 }}>{item.icon}</span>
               <span style={{ minWidth: 0 }}>
                 <div style={{ font: `${item.primary ? 700 : 600} 14px/1 "Inter", sans-serif`, color: item.primary ? "#1568be" : "#262626" }}>{item.label}</div>
                 {item.sub && <div style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", marginTop: 3 }}>{item.sub}</div>}
