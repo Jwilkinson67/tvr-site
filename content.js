@@ -29,7 +29,7 @@ window.TVR_CONTENT = {
 
   /* ---------- Marketing · hero ---------- */
   hero: {
-    kicker:        "TRAILER RENTALS IN CHATTANOOGA TN",
+    kicker:        "TRAILER RENTALS · CHATTANOOGA TN",
     titleLine1:    "Your Cargo,",
     titleLine2:    "Our Equipment.",
     body:          "Reserve online and pick up today. Support local with simple trailer rentals, no upsells or hassle.",
