@@ -300,7 +300,7 @@ function FleetGrid({ setRoute }) {
 
 /* ----------- Fleet Request ----------- */
 function FleetRequest({ isMobile }) {
-  const OPTIONS = ["Utility Trailer", "14k Deckover", "20ft Enclosed", "8.5ft Wide Car Hauler", "Tilt Trailer", "Dump Trailer"];
+  const OPTIONS = ["Utility Trailer", "Deckover Trailer", "20ft Enclosed", "8.5ft Wide Car Hauler", "Tilt Trailer", "Dump Trailer"];
   const [selected, setSelected] = React.useState(new Set());
   const [other, setOther] = React.useState("");
   const [status, setStatus] = React.useState("idle"); // idle | sending | done
