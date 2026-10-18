@@ -51,12 +51,11 @@ body{margin:0;padding:0;background:#f4f6f9;font-family:Arial,sans-serif}
 body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;background:#b5212b;z-index:999}
 .topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;height:64px;padding:0 20px}
 .topbar-brand{display:flex;align-items:center;gap:10px}
-.topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
 .topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
 </style>
 </head>
 <body>
-<div class="topbar"><div class="topbar-brand"><div class="topbar-dash"></div><span class="topbar-name">Tennessee Valley Rentals LLC</span></div></div>
+<div class="topbar"><div class="topbar-brand"><img src="/assets/tvr-logo-mark.png" alt="TVR" style="height:32px;width:auto;display:block;flex-shrink:0"><span class="topbar-name">Tennessee Valley Rentals LLC</span></div></div>
 <div style="max-width:520px;width:100%;margin:48px auto;background:#fff;padding:40px;">${body}</div>
 </body></html>`,
   };
@@ -98,7 +97,6 @@ body{margin:0;padding:0;background:#f4f6f9;font-family:Arial,sans-serif}
 body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;background:#b5212b;z-index:999}
 .topbar{background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;height:64px;padding:0 20px}
 .topbar-brand{display:flex;align-items:center;gap:10px}
-.topbar-dash{width:36px;height:2.5px;background:#b5212b;flex-shrink:0}
 .topbar-name{font:800 19px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;font-style:italic;color:#1568be;letter-spacing:0.5px;text-transform:uppercase}
 .wrap{max-width:540px;margin:0 auto;padding:0 0 40px}
 .inner{padding:20px}
@@ -125,7 +123,7 @@ body::before{content:"";position:fixed;top:0;left:0;width:6px;height:100%;backgr
 <body>
 <div class="topbar">
   <div class="topbar-brand">
-    <div class="topbar-dash"></div>
+    <img src="/assets/tvr-logo-mark.png" alt="TVR" style="height:32px;width:auto;display:block;flex-shrink:0">
     <span class="topbar-name">Tennessee Valley Rentals LLC</span>
   </div>
 </div>
