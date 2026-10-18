@@ -388,10 +388,10 @@ function FleetRequest({ isMobile }) {
           ✓ Got it — thanks! We'll consider this for our next fleet addition.
         </div>
       ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, maxWidth: 420 }}>
           <button onClick={handleSubmit} disabled={status === "sending"} style={{
-            padding: "12px 24px", background: "#1568be", color: "#fff", border: "none", borderRadius: 4,
-            font: '700 14px/1 "Inter", sans-serif', cursor: "pointer", opacity: status === "sending" ? 0.7 : 1,
+            padding: "13px 24px", background: "#1568be", color: "#fff", border: "none", borderRadius: 4,
+            font: '700 14px/1 "Inter", sans-serif', cursor: "pointer", opacity: status === "sending" ? 0.7 : 1, width: "100%",
           }}>
             {status === "sending" ? "Sending…" : "Send request"}
           </button>
