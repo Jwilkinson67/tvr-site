@@ -131,7 +131,7 @@ function TopNav({ route, setRoute }) {
 <span style={{
             font: `800 ${isMobile ? "15px" : "22px"}/1 "Barlow Condensed", "Arial Narrow", Arial, sans-serif`,
             fontStyle: "italic", color: "#1568be", letterSpacing: "0.5px", textTransform: "uppercase", whiteSpace: "nowrap",
-            marginTop: isMobile ? 4 : 6,
+            marginTop: isMobile ? 4 : 0,
           }}>{isMobile ? "Tennessee Valley Rentals" : "Tennessee Valley Rentals LLC"}</span>
         </a>
         {!isMobile && (
