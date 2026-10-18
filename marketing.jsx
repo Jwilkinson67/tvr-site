@@ -111,7 +111,7 @@ function PromoPopup({ setRoute }) {
 }
 
 /* ----------- Mobile menu ----------- */
-function MobileMenu({ onBook, phone }) {
+function MobileMenu({ onBook, phone, isMobile }) {
   const [open, setOpen] = React.useState(false);
   const close = () => setOpen(false);
 
@@ -138,7 +138,7 @@ function MobileMenu({ onBook, phone }) {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 8px)", right: 0,
-          width: 200, background: "#fff",
+          width: isMobile ? 200 : 220, background: "#fff",
           border: "1px solid #e6e6e6", borderRadius: 8,
           boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
           zIndex: 50, overflow: "hidden",
@@ -187,25 +187,8 @@ function TopNav({ route, setRoute }) {
             marginTop: isMobile ? 4 : 0,
           }}>{isMobile ? "Tennessee Valley Rentals" : "Tennessee Valley Rentals LLC"}</span>
         </a>
-        {!isMobile && (
-          <nav style={{ display: "flex", gap: 32 }}>
-            {items.map((i) =>
-            <a key={i.id} onClick={() => setRoute(i.id)} style={{
-              cursor: "pointer",
-              font: '400 14px/1.4 "Inter", sans-serif',
-              letterSpacing: "0.3px",
-              color: route === i.id ? "#1568be" : "#262626",
-              fontWeight: route === i.id ? 700 : 400
-            }}>{i.label}</a>
-            )}
-          </nav>
-        )}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-        {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
-        {!isMobile && <MkButton onClick={() => setRoute("booking")} style={{ background: "#1568be", color: "#fff", border: 0, height: 44, padding: "0 28px", fontSize: "15px", fontWeight: 800, letterSpacing: "0.8px" }}>{c.nav.reserveLabel}</MkButton>}
-        {isMobile && <MobileMenu onBook={() => setRoute("booking")} phone={c.brand.phone} />}
-      </div>
+      <MobileMenu onBook={() => setRoute("booking")} phone={c.brand.phone} isMobile={isMobile} />
     </header>);
 
 }
