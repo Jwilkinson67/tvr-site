@@ -194,7 +194,7 @@ function HeroDark({ setRoute }) {
     <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <div style={{
-        padding: "56px 80px 56px 96px",
+        padding: "40px 48px 40px 96px",
         display: "grid", gridTemplateColumns: "0.75fr 1.6fr",
         gap: 0, alignItems: "center"
       }}>
@@ -217,7 +217,7 @@ function HeroDark({ setRoute }) {
           fit="contain"
           position="center 40%"
           plateStyle={{ background: "#f4f6f9", padding: 0, width: "100%", marginLeft: -60 }}
-          style={{ width: "calc(100% + 60px)", height: 520 }} />
+          style={{ width: "calc(100% + 60px)", height: 380 }} />
       </div>
     </section>
   );
