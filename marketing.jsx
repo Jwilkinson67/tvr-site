@@ -216,8 +216,8 @@ function HeroDark({ setRoute }) {
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
           fit="contain"
           position="center center"
-          plateStyle={{ background: "#f4f6f9", padding: 0, width: "100%" }}
-          style={{ width: "100%", height: 460 }} />
+          plateStyle={{ background: "#f4f6f9", padding: 0, width: "100%", marginLeft: -60 }}
+          style={{ width: "calc(100% + 60px)", height: 520 }} />
       </div>
     </section>
   );
