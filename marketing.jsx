@@ -195,7 +195,7 @@ function HeroDark({ setRoute }) {
       <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b" }} />
       <div style={{
         padding: "40px 48px 40px 96px",
-        display: "grid", gridTemplateColumns: "0.75fr 1.6fr",
+        display: "grid", gridTemplateColumns: "1fr 1.4fr",
         gap: 0, alignItems: "center"
       }}>
         <div style={{ padding: "0 48px 0 0" }}>
@@ -203,7 +203,7 @@ function HeroDark({ setRoute }) {
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             {h.kicker}
           </div>
-          <h1 style={{ font: '700 72px/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>
+          <h1 style={{ font: '700 72px/1.05 "Inter", sans-serif', margin: 0, color: "#262626", whiteSpace: "nowrap" }}>
             {h.titleLine1}<br />{h.titleLine2}
           </h1>
           <p style={{ font: '300 18px/1.55 "Inter", sans-serif', color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
