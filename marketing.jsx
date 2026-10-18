@@ -675,7 +675,7 @@ function ReviewsBand() {
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b" }}>
               <GoogleLogo size={16} />
-              Google &middot; {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+              Google &middot; {c.totalReviews || reviews.length} review{(c.totalReviews || reviews.length) !== 1 ? "s" : ""}
             </div>
           </div>
         </div>

@@ -220,5 +220,6 @@ window.TVR_CONTENT = {
     },
   ],
   googleReviewUrl: "https://g.page/r/CWniJIMNhoVzEAI/review",
+  totalReviews: 11,
 
 };
