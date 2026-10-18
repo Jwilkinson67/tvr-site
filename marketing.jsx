@@ -110,6 +110,61 @@ function PromoPopup({ setRoute }) {
   );
 }
 
+/* ----------- Mobile menu ----------- */
+function MobileMenu({ onBook, phone }) {
+  const [open, setOpen] = React.useState(false);
+  const close = () => setOpen(false);
+
+  const dropItems = [
+    { label: "Book", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/><path d="M5 3V2m6 1V2M2 7h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>, primary: true, action: () => { onBook(); close(); } },
+    { label: "Contact", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 10.5c0 .3-.1.6-.2.9-.2.3-.4.6-.7.8-.5.4-1 .6-1.6.6-.4 0-.9-.1-1.4-.3-.5-.2-1-.5-1.5-.9-.5-.4-1-.9-1.4-1.4-.4-.5-.7-1-.9-1.5-.2-.5-.3-1-.3-1.4 0-.5.1-1 .5-1.5.4-.5.8-.7 1.4-.7.2 0 .4 0 .6.1.2.1.4.2.5.4L9.5 6.6c.1.2.2.4.2.5 0 .2-.1.4-.2.6l-.3.4c-.1.1-.1.2-.1.3 0 .1 0 .2.1.3.2.3.4.6.7.9.3.3.6.5.9.7.1.1.2.1.3.1.1 0 .2 0 .3-.1l.4-.3c.2-.1.3-.2.6-.2.2 0 .3 0 .5.1l1.5.9c.2.1.4.3.4.5z" stroke="currentColor" strokeWidth="1.4"/></svg>, action: () => { window.location.href = `tel:${phone}`; close(); } },
+    { label: "FAQ", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M8 11v-1M8 5.5c0-.8.6-1.5 1.5-1C10.7 5 11 5.7 11 6.3c0 1-1.2 1.4-1.7 2.2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>, action: () => { document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" }); close(); } },
+    { label: "Call Us", icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 10.5c0 .3-.1.6-.2.9-.2.3-.4.6-.7.8-.5.4-1 .6-1.6.6-.4 0-.9-.1-1.4-.3-.5-.2-1-.5-1.5-.9-.5-.4-1-.9-1.4-1.4-.4-.5-.7-1-.9-1.5-.2-.5-.3-1-.3-1.4 0-.5.1-1 .5-1.5.4-.5.8-.7 1.4-.7.2 0 .4 0 .6.1.2.1.4.2.5.4L9.5 6.6c.1.2.2.4.2.5 0 .2-.1.4-.2.6l-.3.4c-.1.1-.1.2-.1.3 0 .1 0 .2.1.3.2.3.4.6.7.9.3.3.6.5.9.7.1.1.2.1.3.1.1 0 .2 0 .3-.1l.4-.3c.2-.1.3-.2.6-.2.2 0 .3 0 .5.1l1.5.9c.2.1.4.3.4.5z" stroke="currentColor" strokeWidth="1.4"/></svg>, sub: phone, action: () => { window.location.href = `tel:${phone}`; close(); } },
+  ];
+
+  return (
+    <div style={{ position: "relative" }}>
+      {open && <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 49 }} />}
+      <button onClick={() => setOpen(o => !o)} aria-label="Menu" style={{
+        display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 5,
+        width: 40, height: 40, background: "none",
+        border: `1.5px solid ${open ? "#1568be" : "#e6e6e6"}`,
+        borderRadius: 6, cursor: "pointer", flexShrink: 0,
+      }}>
+        {open
+          ? <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="#262626" strokeWidth="1.8" strokeLinecap="round"/></svg>
+          : [0,1,2].map(i => <div key={i} style={{ width: 18, height: 2, background: "#262626", borderRadius: 2 }} />)
+        }
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 8px)", right: 0,
+          width: 200, background: "#fff",
+          border: "1px solid #e6e6e6", borderRadius: 8,
+          boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+          zIndex: 50, overflow: "hidden",
+        }}>
+          {dropItems.map((item, i) => (
+            <button key={i} onClick={item.action} style={{
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "14px 16px", width: "100%",
+              background: "none", border: "none",
+              borderBottom: i < dropItems.length - 1 ? "1px solid #e6e6e6" : "none",
+              cursor: "pointer", textAlign: "left",
+            }}>
+              <span style={{ color: item.primary ? "#1568be" : "#6b6b6b", display: "flex", flexShrink: 0 }}>{item.icon}</span>
+              <span style={{ minWidth: 0 }}>
+                <div style={{ font: `${item.primary ? 700 : 600} 14px/1 "Inter", sans-serif`, color: item.primary ? "#1568be" : "#262626" }}>{item.label}</div>
+                {item.sub && <div style={{ font: '400 11px/1 "Inter", sans-serif', color: "#6b6b6b", marginTop: 3 }}>{item.sub}</div>}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ----------- Top nav ----------- */
 function TopNav({ route, setRoute }) {
   const c = C();
@@ -151,6 +206,7 @@ function TopNav({ route, setRoute }) {
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {!isMobile && <span style={{ font: '400 12px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px" }}>{c.brand.phone}</span>}
         {!isMobile && <MkButton onClick={() => setRoute("booking")} style={{ background: "#1568be", color: "#fff", border: 0, height: 44, padding: "0 28px", fontSize: "15px", fontWeight: 800, letterSpacing: "0.8px" }}>{c.nav.reserveLabel}</MkButton>}
+        {isMobile && <MobileMenu onBook={() => setRoute("booking")} phone={c.brand.phone} />}
       </div>
     </header>);
 
