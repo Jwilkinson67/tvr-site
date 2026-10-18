@@ -369,6 +369,7 @@ function FleetRequest({ isMobile }) {
       marginTop: isMobile ? 40 : 56,
       paddingTop: isMobile ? 32 : 48,
     }}>
+      <div style={{ maxWidth: 540, margin: "0 auto" }}>
       <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 12, display: "inline-flex", alignItems: "center", gap: 10 }}>
         <span style={{ width: 24, height: 1, background: "#b5212b" }} />
         Fleet Request
@@ -435,6 +436,7 @@ function FleetRequest({ isMobile }) {
           <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>No account needed · takes 5 seconds</span>
         </div>
       )}
+      </div>
     </div>
   );
 }
