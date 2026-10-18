@@ -341,13 +341,13 @@ function FleetRequest({ isMobile }) {
         Select any trailer types you'd like to see on our lot. We track demand to decide what to add to the fleet next.
       </p>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16, maxWidth: 420 }}>
         {OPTIONS.map(opt => {
           const on = selected.has(opt);
           return (
             <button key={opt} onClick={() => toggle(opt)} style={{
               display: "flex", alignItems: "center", gap: 8,
-              padding: "12px 16px",
+              padding: "12px 16px", width: "100%",
               background: on ? "#e8f0fb" : "#fff",
               border: `1.5px solid ${on ? "#1568be" : "#e6e6e6"}`,
               borderRadius: 4, cursor: "pointer",
