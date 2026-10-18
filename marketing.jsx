@@ -293,8 +293,113 @@ function FleetGrid({ setRoute }) {
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: isMobile ? 16 : 32 }}>
         {c.fleet.map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} onReserve={() => setRoute("booking:" + t.id)} />)}
       </div>
+      <FleetRequest isMobile={isMobile} />
     </section>);
 
+}
+
+/* ----------- Fleet Request ----------- */
+function FleetRequest({ isMobile }) {
+  const OPTIONS = ["Utility Trailer", "14k Deckover", "20ft Enclosed", "8.5ft Wide Car Hauler"];
+  const [selected, setSelected] = React.useState(new Set());
+  const [other, setOther] = React.useState("");
+  const [status, setStatus] = React.useState("idle"); // idle | sending | done
+
+  function toggle(label) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(label) ? next.delete(label) : next.add(label);
+      return next;
+    });
+  }
+
+  async function handleSubmit() {
+    if (selected.size === 0 && !other.trim()) return;
+    setStatus("sending");
+    try {
+      await fetch("/.netlify/functions/fleet-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trailers: [...selected], other: other.trim() }),
+      });
+    } catch(e) { /* fail silently — still show success */ }
+    setStatus("done");
+  }
+
+  return (
+    <div style={{
+      borderTop: "1px solid #e6e6e6",
+      marginTop: isMobile ? 40 : 56,
+      paddingTop: isMobile ? 32 : 48,
+    }}>
+      <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 12, display: "inline-flex", alignItems: "center", gap: 10 }}>
+        <span style={{ width: 24, height: 1, background: "#b5212b" }} />
+        Fleet Request
+      </div>
+      <h3 style={{ font: `700 ${isMobile ? "22px" : "28px"}/1.1 "Inter", sans-serif`, color: "#262626", margin: "0 0 8px" }}>Not finding what you need?</h3>
+      <p style={{ font: '400 15px/1.5 "Inter", sans-serif', color: "#6b6b6b", margin: "0 0 24px", maxWidth: 480 }}>
+        Select any trailer types you'd like to see on our lot. We track demand to decide what to add to the fleet next.
+      </p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+        {OPTIONS.map(opt => {
+          const on = selected.has(opt);
+          return (
+            <button key={opt} onClick={() => toggle(opt)} style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "12px 16px",
+              background: on ? "#e8f0fb" : "#fff",
+              border: `1.5px solid ${on ? "#1568be" : "#e6e6e6"}`,
+              borderRadius: 4, cursor: "pointer",
+              font: '600 13px/1 "Inter", sans-serif',
+              color: on ? "#1568be" : "#262626",
+              transition: "border-color .12s, background .12s",
+            }}>
+              <span style={{
+                width: 16, height: 16, borderRadius: 3, flexShrink: 0,
+                border: `1.5px solid ${on ? "#1568be" : "#c0c0c0"}`,
+                background: on ? "#1568be" : "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                {on && <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5L8 1" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              </span>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ font: '600 11px/1 "Inter", sans-serif', letterSpacing: "0.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 6 }}>Something else?</div>
+        <input
+          type="text" value={other} onChange={e => setOther(e.target.value)} maxLength={200}
+          placeholder="Describe what you're looking for…"
+          style={{
+            width: "100%", maxWidth: 420, padding: "10px 12px",
+            background: "#fff", border: "1.5px solid #e6e6e6", borderRadius: 4,
+            font: '400 14px/1.4 "Inter", sans-serif', color: "#262626", outline: "none",
+            boxSizing: "border-box",
+          }}
+        />
+      </div>
+
+      {status === "done" ? (
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 18px", background: "#e6f4ea", border: "1.5px solid #4caf50", borderRadius: 4, font: '600 14px/1 "Inter", sans-serif', color: "#2e7d32" }}>
+          ✓ Got it — thanks! We'll consider this for our next fleet addition.
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <button onClick={handleSubmit} disabled={status === "sending"} style={{
+            padding: "12px 24px", background: "#1568be", color: "#fff", border: "none", borderRadius: 4,
+            font: '700 14px/1 "Inter", sans-serif', cursor: "pointer", opacity: status === "sending" ? 0.7 : 1,
+          }}>
+            {status === "sending" ? "Sending…" : "Send request"}
+          </button>
+          <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>No account needed · takes 5 seconds</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 /* ----------- Spec grid ----------- */
