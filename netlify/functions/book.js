@@ -40,6 +40,14 @@ const HEADERS = {
 function ok(body)         { return { statusCode: 200, headers: HEADERS, body: JSON.stringify(body) }; }
 function err(status, msg) { return { statusCode: status, headers: HEADERS, body: JSON.stringify({ error: msg }) }; }
 
+// Products that share a physical asset — booking any one must block the others.
+// "cargo" and "bundle" both use the same enclosed trailer.
+const SHARED_UNIT = {
+  cargo:  ["cargo", "bundle"],
+  bundle: ["cargo", "bundle"],
+};
+function linkedIds(trailerId) { return SHARED_UNIT[trailerId] || [trailerId]; }
+
 /* ── Coupons ─────────────────────────────────────────────────────────────
    ADMIN_COUPON_CODE (env var)  → full comp, $0 charged, skips Stripe.
                                    Owner's test code — not day-restricted.
@@ -261,7 +269,7 @@ exports.handler = async (event) => {
     const { data, error } = await supabase
       .from("bookings")
       .select("id, pickup, dropoff")
-      .eq("trailer_id", trailerId)
+      .in("trailer_id", linkedIds(trailerId))
       .gte("dropoff", today)
       .not("status", "in", '("cancelled","declined","completed")');
     if (error) { console.error("Supabase availability error:", error); return err(500, "Could not load availability."); }
@@ -307,7 +315,7 @@ exports.handler = async (event) => {
     const { data: conflicts, error: conflictErr } = await supabase
       .from("bookings")
       .select("pickup, dropoff")
-      .eq("trailer_id", trailerId)
+      .in("trailer_id", linkedIds(trailerId))
       .lte("pickup", dropoff)
       .gte("dropoff", pickup)
       .not("status", "in", '("cancelled","declined","completed")');

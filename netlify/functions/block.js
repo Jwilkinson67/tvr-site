@@ -29,7 +29,7 @@ function adminPage(blocks) {
     ? `<tr><td colspan="5" style="padding:16px;text-align:center;color:#9a9a9a;font-size:13px;">No dates currently blocked.</td></tr>`
     : blocks.map(b => `
       <tr>
-        <td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-size:13px;">${b.trailer_id === "hauler" ? "Car Hauler" : b.trailer_id === "cargo" ? "Enclosed Cargo" : b.trailer_id}</td>
+        <td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-size:13px;">${{hauler:"Car Hauler",cargo:"Enclosed Cargo",bundle:"Trailer + Bin Bundle",totes:"Moving Bins"}[b.trailer_id] || b.trailer_id}</td>
         <td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-size:13px;">${b.pickup}</td>
         <td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-size:13px;">${b.dropoff}</td>
         <td style="padding:10px 14px;border-bottom:1px solid #e6e6e6;font-size:13px;color:#6b6b6b;">${b.trip_purpose || "—"}</td>
@@ -98,7 +98,9 @@ th{padding:10px 14px;background:#f4f6f9;font-size:11px;font-weight:700;letter-sp
         <select id="trailer">
           <option value="both">Both Trailers</option>
           <option value="hauler">Car Hauler</option>
-          <option value="cargo">Enclosed Cargo</option>
+          <option value="cargo">Enclosed Cargo (also blocks Bundle)</option>
+          <option value="bundle">Trailer + Bin Bundle (also blocks Cargo)</option>
+          <option value="totes">Moving Bins (standalone)</option>
         </select>
       </div>
       <div class="grid" style="margin-bottom:16px;">
