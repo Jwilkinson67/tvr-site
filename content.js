@@ -117,11 +117,7 @@ window.TVR_CONTENT = {
       subheading:"40 bins · 4 dollies",
       tagline:   "Skip the cardboard. 40 sturdy, stackable plastic bins and 4 rolling dollies — ready for pickup in Ooltewah. Perfect for home moves, office relocations, and renovations. First week $180, each additional week $100.",
       detailTagline: "40 bins · 4 dollies · labels & zip ties included. First week $180, additional weeks $100 each.",
-      photo:     "assets/fleet/tvr-totes-trailer.jpg",
-      photoExtra: [
-        "assets/fleet/tvr-totes-kitchen.jpg",
-        "assets/fleet/tvr-totes-delivery.jpg",
-      ],
+      photo:     "assets/fleet/tvr-totes-kitchen.jpg",
       photoScale: 1,
       daily:     0,
       weekly:    180,
