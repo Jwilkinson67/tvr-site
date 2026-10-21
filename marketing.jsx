@@ -719,8 +719,14 @@ function LocationBand() {
         gap: isMobile ? 32 : 64, alignItems: "center"
       }}>
         {/* Map */}
-        <div style={{ borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
-          <LocationMap height={isMobile ? 260 : 360} />
+        <div>
+          <div style={{ borderRadius: "4px 4px 0 0", overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
+            <LocationMap height={isMobile ? 260 : 360} />
+          </div>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", background: "#fff8e6", border: "1px solid #f0c040", borderTop: "none", borderRadius: "0 0 4px 4px" }}>
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="8" cy="8" r="7" stroke="#b88017" strokeWidth="1.4"/><path d="M8 5v3.5M8 10.5v.5" stroke="#b88017" strokeWidth="1.4" strokeLinecap="round"/></svg>
+            <span style={{ font: '400 13px/1.5 "Inter", sans-serif', color: "#7a5200" }}><strong style={{ fontWeight: 700 }}>Private property.</strong> Do not visit without an approved booking — the trailer may not be ready and unscheduled arrivals cannot be accommodated.</span>
+          </div>
         </div>
         {/* Text */}
         <div>
