@@ -368,18 +368,18 @@ function FleetRequest({ isMobile }) {
       borderTop: "1px solid #e6e6e6",
       marginTop: isMobile ? 40 : 56,
       paddingTop: isMobile ? 32 : 48,
+      textAlign: "center",
     }}>
-      <div style={{ maxWidth: 540, margin: "0 auto" }}>
       <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 12, display: "inline-flex", alignItems: "center", gap: 10 }}>
         <span style={{ width: 24, height: 1, background: "#b5212b" }} />
         Fleet Request
       </div>
       <h3 style={{ font: `700 ${isMobile ? "22px" : "28px"}/1.1 "Inter", sans-serif`, color: "#262626", margin: "0 0 8px" }}>Not finding what you need?</h3>
-      <p style={{ font: '400 15px/1.5 "Inter", sans-serif', color: "#6b6b6b", margin: "0 0 24px", maxWidth: 480 }}>
+      <p style={{ font: '400 15px/1.5 "Inter", sans-serif', color: "#6b6b6b", margin: "0 auto 24px", maxWidth: 480 }}>
         Select any trailer types you'd like to see on our lot. We track demand to decide what to add to the fleet next.
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16, maxWidth: 420 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}>
         {OPTIONS.map(opt => {
           const on = selected.has(opt);
           return (
@@ -407,13 +407,13 @@ function FleetRequest({ isMobile }) {
         })}
       </div>
 
-      <div style={{ marginBottom: 20 }}>
+      <div style={{ marginBottom: 20, maxWidth: 420, marginLeft: "auto", marginRight: "auto", textAlign: "left" }}>
         <div style={{ font: '600 11px/1 "Inter", sans-serif', letterSpacing: "0.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 6 }}>Something else?</div>
         <input
           type="text" value={other} onChange={e => setOther(e.target.value)} maxLength={200}
           placeholder="Describe what you're looking for…"
           style={{
-            width: "100%", maxWidth: 420, padding: "10px 12px",
+            width: "100%", padding: "10px 12px",
             background: "#fff", border: "1.5px solid #e6e6e6", borderRadius: 4,
             font: '400 14px/1.4 "Inter", sans-serif', color: "#262626", outline: "none",
             boxSizing: "border-box",
@@ -426,7 +426,7 @@ function FleetRequest({ isMobile }) {
           ✓ Got it — thanks! We'll consider this for our next fleet addition.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, maxWidth: 420 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, maxWidth: 420, marginLeft: "auto", marginRight: "auto" }}>
           <button onClick={handleSubmit} disabled={status === "sending"} style={{
             padding: "13px 24px", background: "#1568be", color: "#fff", border: "none", borderRadius: 4,
             font: '700 14px/1 "Inter", sans-serif', cursor: "pointer", opacity: status === "sending" ? 0.7 : 1, width: "100%",
@@ -436,7 +436,6 @@ function FleetRequest({ isMobile }) {
           <span style={{ font: '400 13px/1 "Inter", sans-serif', color: "#6b6b6b" }}>No account needed · takes 5 seconds</span>
         </div>
       )}
-      </div>
     </div>
   );
 }
