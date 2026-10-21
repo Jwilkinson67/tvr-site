@@ -141,10 +141,9 @@ window.TVR_CONTENT = {
       subheading:"5-day bundle · save over $100",
       tagline:   "Everything you need to move in one booking. The 7×14 enclosed cargo trailer and 40 moving bins with 4 dollies, all at one flat rate. Trailer includes hand truck, furniture dollies, straps, and blankets.",
       detailTagline: "Enclosed 7×14 trailer + 40 bins + 4 dollies. All trailer accessories included. Flat 5-day rate.",
-      photo:     "assets/fleet/tvr-totes-trailer.jpg",
+      photo:     "assets/fleet/tvr-bundle-trailer-bins.jpg",
       photoExtra: [
         "assets/fleet/tvr-totes-kitchen.jpg",
-        "assets/fleet/tvr-totes-delivery.jpg",
         "assets/fleet/Spartan-enclosed-14ft.jpg.png",
         "assets/fleet/Spartan-enclosed-back-14ft.jpg",
       ],
