@@ -677,33 +677,19 @@ function CTABand({ setRoute }) {
 
 /* ----------- Location Band ----------- */
 function LocationMap({ height }) {
-  const mapRef = React.useRef(null);
-  React.useEffect(() => {
-    const ADDRESS = "4217 Shady Oak Dr, Ooltewah TN 37363";
-    function init() {
-      if (!window.google?.maps || !mapRef.current) return;
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: ADDRESS }, (results, status) => {
-        if (status !== "OK" || !results[0]) return;
-        const map = new window.google.maps.Map(mapRef.current, {
-          center: results[0].geometry.location,
-          zoom: 15,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-        });
-        new window.google.maps.Marker({
-          map,
-          position: results[0].geometry.location,
-          title: "Tennessee Valley Rentals",
-        });
-      });
-    }
-    if (window.google?.maps) { init(); return; }
-    const iv = setInterval(() => { if (window.google?.maps) { clearInterval(iv); init(); } }, 150);
-    return () => clearInterval(iv);
-  }, []);
-  return <div ref={mapRef} style={{ width: "100%", height }} />;
+  const src = "https://maps.google.com/maps?q=4217+Shady+Oak+Dr,+Ooltewah+TN+37363&output=embed&zoom=15";
+  return (
+    <iframe
+      src={src}
+      width="100%"
+      height={height}
+      style={{ border: 0, display: "block" }}
+      allowFullScreen
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      title="Tennessee Valley Rentals location"
+    />
+  );
 }
 
 function LocationBand() {
