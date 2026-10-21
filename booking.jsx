@@ -740,7 +740,9 @@ function StepCustomer({ state, setState, onNext, onBack }) {
   const isMobile = useWindowWidth() < 768;
   const { lang } = useLang();
   const tr = TRANSLATIONS[lang];
-  const valid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
+  const noTow = !!TRAILERS[state.trailerId]?.noTow;
+  const valid = state.name && state.email && state.phone && state.address &&
+    (noTow || (state.tow && state.hitch && state.brakeController));
   return (
     <StepShell title={tr.step2Title} kicker={tr.step2Kicker}>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
@@ -756,17 +758,17 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         <Field label={tr.address} style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete state={state} setState={setState}/>
         </Field>
-        <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
+        {!noTow && <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder={tr.towVehiclePlaceholder}/>
-        </Field>
-        <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
+        </Field>}
+        {!noTow && <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
             options={[{value: "Yes — I have the right hitch ball", label: tr.hitchYes}, {value: "No — I will use TVR's", label: tr.hitchNo}]}/>
-        </Field>
-        <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
+        </Field>}
+        {!noTow && <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
             options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
-        </Field>
+        </Field>}
         <Field label={tr.tripPurpose}>
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
         </Field>
@@ -951,7 +953,9 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
     { id: "insurance", t: tr.insuranceCard,   s: tr.insuranceCardHint },
   ];
 
-  const customerValid = state.name && state.email && state.phone && state.tow && state.address && state.hitch && state.brakeController;
+  const noTow2 = !!TRAILERS[state.trailerId]?.noTow;
+  const customerValid = state.name && state.email && state.phone && state.address &&
+    (noTow2 || (state.tow && state.hitch && state.brakeController));
   const docsValid     = docs.every(d => state.docs?.[d.id] && state.docs[d.id].status !== "uploading");
   const valid         = customerValid && docsValid;
 
@@ -1060,17 +1064,17 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
         <Field label={tr.address} style={{ gridColumn: isMobile ? "1" : "1 / -1" }}>
           <AddressAutocomplete key={addressKey} state={state} setState={setState}/>
         </Field>
-        <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
+        {!noTow2 && <Field label={tr.towVehicle} hint={tr.towVehicleHint}>
           <Input value={state.tow} onChange={v => setState({...state, tow: v})} placeholder={tr.towVehiclePlaceholder}/>
-        </Field>
-        <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
+        </Field>}
+        {!noTow2 && <Field label={tr.hitchQuestion} hint={tr.hitchHint}>
           <Select value={state.hitch} onChange={v => setState({...state, hitch: v})}
             options={[{value: "Yes — I have the right hitch ball", label: tr.hitchYes}, {value: "No — I will use TVR's", label: tr.hitchNo}]}/>
-        </Field>
-        <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
+        </Field>}
+        {!noTow2 && <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
             options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
-        </Field>
+        </Field>}
         <Field label={tr.tripPurpose}>
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
         </Field>
