@@ -676,8 +676,41 @@ function CTABand({ setRoute }) {
 }
 
 /* ----------- Location Band ----------- */
+function LocationMap({ height }) {
+  const mapRef = React.useRef(null);
+  React.useEffect(() => {
+    const ADDRESS = "4217 Shady Oak Dr, Ooltewah TN 37363";
+    function init() {
+      if (!window.google?.maps || !mapRef.current) return;
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address: ADDRESS }, (results, status) => {
+        if (status !== "OK" || !results[0]) return;
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: results[0].geometry.location,
+          zoom: 15,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+        });
+        new window.google.maps.Marker({
+          map,
+          position: results[0].geometry.location,
+          title: "Tennessee Valley Rentals",
+        });
+      });
+    }
+    if (window.google?.maps) { init(); return; }
+    const iv = setInterval(() => { if (window.google?.maps) { clearInterval(iv); init(); } }, 150);
+    return () => clearInterval(iv);
+  }, []);
+  return <div ref={mapRef} style={{ width: "100%", height }} />;
+}
+
 function LocationBand() {
+  const c = C();
   const isMobile = useWindowWidth() < 768;
+  const address = c.brand?.pickupAddress || "4217 Shady Oak Dr, Ooltewah TN 37363";
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   return (
     <section style={{ background: "#fff", padding: isMobile ? "48px 24px" : "72px 80px" }}>
       <div style={{
@@ -687,11 +720,7 @@ function LocationBand() {
       }}>
         {/* Map */}
         <div style={{ borderRadius: 4, overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
-          <img
-            src="assets/assetsmap-pickup-area.png.png"
-            alt="TVR pickup area map"
-            style={{ width: "100%", height: isMobile ? 260 : 360, objectFit: "cover", objectPosition: "center" }}
-          />
+          <LocationMap height={isMobile ? 260 : 360} />
         </div>
         {/* Text */}
         <div>
@@ -702,12 +731,20 @@ function LocationBand() {
           <h2 style={{ font: `700 ${isMobile ? "26px" : "32px"}/1.15 "Inter", sans-serif`, margin: "0 0 16px", color: "#262626" }}>
             Easy Access from the Chattanooga Area
           </h2>
-          <p style={{ font: '400 16px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 16px" }}>
+          <p style={{ font: '400 16px/1.65 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 20px" }}>
             Tennessee Valley Rentals LLC is located just 5 minutes from US Hwy 74 / Exit 178, making pickup easy from Chattanooga, Ooltewah, Cleveland, Hixson, Soddy Daisy, and surrounding areas.
           </p>
-          <p style={{ font: '400 14px/1.6 "Inter", sans-serif', color: "#6b6b6b", margin: 0, padding: "12px 16px", borderLeft: "3px solid #b5212b", background: "#f9f9f9" }}>
-            For security and privacy, the exact pickup address will be provided after booking is confirmed.
-          </p>
+          <div style={{ padding: "14px 16px", borderLeft: "3px solid #1568be", background: "#f4f6f9", marginBottom: 16 }}>
+            <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 6 }}>Address</div>
+            <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{address}</div>
+          </div>
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            font: '600 14px/1 "Inter", sans-serif', color: "#1568be", textDecoration: "none",
+          }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1.5A4.5 4.5 0 0 0 3.5 6c0 3.5 4.5 8.5 4.5 8.5S12.5 9.5 12.5 6A4.5 4.5 0 0 0 8 1.5zm0 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" stroke="#1568be" strokeWidth="1.2" strokeLinejoin="round"/></svg>
+            Get directions
+          </a>
         </div>
       </div>
     </section>
