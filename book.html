@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a Trailer | Tennessee Valley Rentals</title>
+  <meta name="description" content="Reserve an enclosed cargo or car hauler trailer online. Pick up in Ooltewah, TN. Takes about 3 minutes.">
+  <link rel="canonical" href="https://rentwithtvr.com/book">
+  <meta name="robots" content="noindex">
+
+  <link rel="stylesheet" href="colors_and_type.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/tvr-logo-mark.png">
+
+  <script src="image-slot.js"></script>
+  <script src="content.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    window.TVR_STRIPE_KEY = "pk_live_51TayEq1WG2CZeNCEiOUrlGdDvDrak9eydl3h0zmPtmTGHeFG9zgHO67jgBlbfDZ7lcYFVBhMMIGrtKm4JsO2okPB008CBAtUG4";
+  </script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFjy7T6OGNfzFCXXqfN8Rts2a4iF7AT7c&libraries=places&loading=async"></script>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { background: #f6f7f9; }
+    .tvr-booking-bg { background: #f6f7f9; }
+    .booking-shell {
+      max-width: 1280px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 380px; gap: 48px;
+      padding: 48px 32px;
+      align-items: start;
+    }
+    .booking-main { background: #fff; padding: 48px; }
+    @media (max-width: 900px) {
+      .booking-shell { grid-template-columns: 1fr; padding: 24px 16px; }
+      .booking-main { padding: 24px; }
+    }
+    .pac-container { z-index: 99999 !important; font-family: "Inter", sans-serif; }
+    .pac-item { font: 300 14px/2 "Inter", sans-serif; padding: 0 12px; }
+    .pac-item:hover { background: #f4f6f9; }
+    .pac-item-query { font-weight: 700; color: #262626; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="booking.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const STEPS_EN = ["Trailer", "Info & Docs", "Sign & Pay", "Done"];
+    const STEPS_ES = ["Remolque", "Info y Docs", "Firmar y Pagar", "Listo"];
+
+    function App() {
+      const C = window.TVR_CONTENT.booking;
+      const {
+        LangContext, TopBar, Stepper, OrderSummary,
+        StepTrailerDates, StepCustomerDocs, StepAgreementPay, StepDone,
+      } = window.BK;
+
+      const [lang, setLang] = useState("en");
+
+      const today = new Date();
+      const inThree = new Date(today.getTime() + 3 * 86400 * 1000);
+      const fmt = d => d.toISOString().slice(0, 10);
+
+      const initial = {
+        trailerId: "",
+        pickup: fmt(today), dropoff: fmt(inThree), pickupNote: "",
+        days: 3,
+        name: "", email: "", phone: "", tow: "", hitch: "", purpose: "",
+        docs: {},
+        sessionId: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        docPaths: {},
+        signature: "", agreed: false,
+        card: "", exp: "", cvv: "", cardName: "", zip: "",
+      };
+
+      const [state, setState] = useState(initial);
+      const [step, setStep]   = useState(0);
+
+      const STEPS = lang === "es" ? STEPS_ES : STEPS_EN;
+      const goNext = () => { setStep(s => Math.min(STEPS.length - 1, s + 1)); window.scrollTo(0, 0); };
+      const goBack = () => { setStep(s => Math.max(0, s - 1)); window.scrollTo(0, 0); };
+      const reset  = () => { setState(initial); setStep(0); };
+
+      const StepComp = [StepTrailerDates, StepCustomerDocs, StepAgreementPay, StepDone][step];
+
+      return (
+        <LangContext.Provider value={{ lang, setLang }}>
+          <div className="tvr-booking-bg">
+            <div style={{
+              background: "#1568be", color: "#fff",
+              padding: "10px 32px",
+              font: '400 12px/1 "Inter", sans-serif', letterSpacing: "0.3px",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <a href="/" style={{
+                background: "transparent", border: 0, color: "#fff", cursor: "pointer", padding: 0,
+                font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
+                display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none",
+              }}>← {C.backToSite}</a>
+              <span style={{ opacity: 0.75 }}>{C.secureNote}</span>
+            </div>
+
+            <TopBar/>
+            <Stepper steps={STEPS} current={step} />
+            <div className="booking-shell">
+              <div className="booking-main">
+                <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
+              </div>
+              {step < STEPS.length - 1 && <OrderSummary state={state}/>}
+            </div>
+          </div>
+        </LangContext.Provider>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  </script>
+</body>
+</html>
