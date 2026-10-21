@@ -240,7 +240,7 @@ function HeroDark({ setRoute }) {
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             {h.kicker}
           </div>
-          <h1 style={{ font: '700 72px/1.05 "Inter", sans-serif', margin: 0, color: "#262626", whiteSpace: "nowrap" }}>
+          <h1 style={{ font: '700 clamp(44px, 4.8vw, 72px)/1.05 "Inter", sans-serif', margin: 0, color: "#262626" }}>
             {h.titleLine1}<br />{h.titleLine2}
           </h1>
           <p style={{ font: '300 18px/1.55 "Inter", sans-serif', color: "#3c3c3c", maxWidth: 480, marginTop: 24, marginBottom: 32 }}>
