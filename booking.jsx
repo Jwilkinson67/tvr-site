@@ -2005,7 +2005,7 @@ function StepDone({ state, onReset }) {
         </span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 0, border: "1px solid #e6e6e6", marginBottom: 0 }}>
         {[
           { k: tr.pickupLabel, v: state.pickup + (state.pickupTime ? " · " + fmtTime(state.pickupTime) : "") },
           { k: tr.returnLabel, v: state.dropoff + (state.dropoffTime ? " · " + fmtTime(state.dropoffTime) : "") },
@@ -2017,8 +2017,13 @@ function StepDone({ state, onReset }) {
           </div>
         ))}
       </div>
+      <div style={{ padding: "20px 24px", border: "1px solid #e6e6e6", borderTop: "none", marginBottom: 16 }}>
+        <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 8 }}>Pickup Address</div>
+        <div style={{ font: '700 17px/1.3 "Inter", sans-serif', color: "#262626", marginBottom: 6 }}>{(window.TVR_CONTENT?.brand?.pickupAddress) || "4217 Shady Oak Dr, Ooltewah TN 37363"}</div>
+        <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#b5212b" }}>Do not arrive early without TVR approval — your trailer may not be ready yet.</div>
+      </div>
 
-      <div style={{ display: "flex", gap: 12 }}>
+      <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
         <BkButton>{tr.addToCalendar}</BkButton>
         <BkButton variant="secondary" onClick={onReset}>{tr.newReservation}</BkButton>
       </div>

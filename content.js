@@ -19,6 +19,7 @@ window.TVR_CONTENT = {
     email:    "info@rentwithtvr.com",
     city:     "Chattanooga, TN",
     yearFooter: "© 2026 Tennessee Valley Rentals, LLC",
+    pickupAddress: "4217 Shady Oak Dr, Ooltewah TN 37363",
   },
 
   /* ---------- Marketing · top nav ----------
