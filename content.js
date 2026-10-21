@@ -145,6 +145,7 @@ window.TVR_CONTENT = {
       photoScale: 1,
       daily:     136,
       weekly:    679,
+      flatRateLabel: "5-day flat rate",
       deposit:   100,
       noTow:     false,
       kickerLong:"TVR Bundle",
