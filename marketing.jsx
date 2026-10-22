@@ -261,8 +261,139 @@ function HeroDark({ setRoute }) {
 
 }
 
+/* ----------- Contact modal ----------- */
+function ContactModal({ trailer, onClose }) {
+  const [form, setForm] = React.useState({ name: "", phone: "", email: "", message: "" });
+  const [status, setStatus] = React.useState("idle"); // idle | sending | done | error
+
+  React.useEffect(() => {
+    function onKey(e) { if (e.key === "Escape") onClose(); }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  function set(field, val) { setForm(f => ({ ...f, [field]: val })); }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!form.name || !form.phone || !form.email) return;
+    setStatus("sending");
+    try {
+      const res = await fetch("/.netlify/functions/bin-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, product: trailer.name }),
+      });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const inputStyle = {
+    width: "100%", height: 44, padding: "0 12px",
+    border: "1.5px solid #e6e6e6", borderRadius: 0,
+    font: '400 14px/1 "Inter", sans-serif', color: "#262626",
+    outline: "none", background: "#fff", boxSizing: "border-box",
+  };
+  const labelStyle = {
+    display: "block", font: '700 11px/1 "Inter", sans-serif',
+    letterSpacing: "1px", textTransform: "uppercase",
+    color: "#262626", marginBottom: 6,
+  };
+
+  return (
+    <div onClick={onClose} style={{
+      position: "fixed", inset: 0,
+      background: "rgba(10,15,30,0.55)", zIndex: 9998,
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: "#fff", width: "100%", maxWidth: 460,
+        boxShadow: "0 20px 60px rgba(0,0,0,0.3)", position: "relative",
+      }}>
+        {/* Header */}
+        <div style={{ background: "#1568be", padding: "24px 28px", position: "relative" }}>
+          <button onClick={onClose} aria-label="Close" style={{
+            position: "absolute", top: 14, right: 16,
+            width: 28, height: 28, borderRadius: "50%",
+            border: 0, background: "rgba(255,255,255,0.2)", color: "#fff",
+            fontSize: 16, fontWeight: 700, cursor: "pointer",
+          }}>×</button>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#a8c8f0", marginBottom: 8 }}>
+            {trailer.name}
+          </div>
+          <div style={{ font: '700 22px/1.2 "Inter", sans-serif', color: "#fff" }}>
+            Get notified when available
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "28px 28px 32px" }}>
+          {status === "done" ? (
+            <div style={{ textAlign: "center", padding: "24px 0" }}>
+              <div style={{ fontSize: 40, marginBottom: 16 }}>✓</div>
+              <div style={{ font: '700 18px/1.3 "Inter", sans-serif', color: "#262626", marginBottom: 10 }}>
+                You're on the list.
+              </div>
+              <p style={{ font: '300 14px/1.6 "Inter", sans-serif', color: "#6b6b6b", margin: 0 }}>
+                We'll reach out as soon as {trailer.name} is ready to rent.
+              </p>
+              <button onClick={onClose} style={{
+                marginTop: 24, background: "#1568be", color: "#fff", border: 0,
+                padding: "12px 32px", font: '700 14px/1 "Inter", sans-serif',
+                cursor: "pointer",
+              }}>Close</button>
+            </div>
+          ) : (
+            <form onSubmit={submit}>
+              <p style={{ font: '300 14px/1.55 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 24px" }}>
+                Leave your info and we'll contact you when this is ready to book.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div>
+                  <label style={labelStyle}>Name</label>
+                  <input style={inputStyle} value={form.name} onChange={e => set("name", e.target.value)} required placeholder="Your name" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Phone</label>
+                  <input type="tel" style={inputStyle} value={form.phone} onChange={e => set("phone", e.target.value)} required placeholder="(423) 555-0100" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Email</label>
+                  <input type="email" style={inputStyle} value={form.email} onChange={e => set("email", e.target.value)} required placeholder="you@example.com" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Message <span style={{ fontWeight: 400, color: "#9a9a9a" }}>(optional)</span></label>
+                  <textarea style={{ ...inputStyle, height: 80, padding: "10px 12px", resize: "vertical" }}
+                    value={form.message} onChange={e => set("message", e.target.value)}
+                    placeholder="Anything we should know…" />
+                </div>
+              </div>
+              {status === "error" && (
+                <div style={{ marginTop: 12, font: '400 13px/1 "Inter", sans-serif', color: "#b5212b" }}>
+                  Something went wrong. Try again or call us directly.
+                </div>
+              )}
+              <button type="submit" disabled={status === "sending"} style={{
+                marginTop: 20, width: "100%", height: 48,
+                background: status === "sending" ? "#8ab0da" : "#1568be",
+                color: "#fff", border: 0,
+                font: '700 14px/1 "Inter", sans-serif', cursor: "pointer",
+              }}>
+                {status === "sending" ? "Sending…" : "Notify me"}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ----------- Fleet card ----------- */
 function FleetCard({ trailer, onSpecs, onReserve }) {
+  const [showContact, setShowContact] = React.useState(false);
   const [activeIdx, setActiveIdx] = React.useState(0);
   const extras = trailer.photoExtra
     ? (Array.isArray(trailer.photoExtra) ? trailer.photoExtra : [trailer.photoExtra])
@@ -275,6 +406,7 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
 
   return (
     <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column" }}>
+      {showContact && <ContactModal trailer={trailer} onClose={() => setShowContact(false)} />}
       <PhotoSlot id={active.id} src={active.src} scale={active.scale}
       placeholder={`Drop a photo of the ${trailer.name}`}
       plateStyle={{ aspectRatio: "16 / 10", overflow: "hidden" }}
@@ -316,7 +448,16 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
           <UpperLink onClick={onSpecs}>More details</UpperLink>
         </div>
         <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}>
-          <MkButton onClick={onReserve} style={{ height: 42, padding: "0 36px", fontSize: "14px", background: "#1568be", color: "#fff", border: 0, fontWeight: 800, letterSpacing: "0.5px" }}>Reserve</MkButton>
+          {trailer.contactOnly
+            ? <button onClick={() => setShowContact(true)} style={{
+                height: 42, padding: "0 36px", fontSize: "14px",
+                background: "transparent", color: "#1568be",
+                border: "1.5px solid #1568be", fontWeight: 800,
+                letterSpacing: "0.5px", cursor: "pointer",
+                font: '800 14px/1 "Inter", sans-serif',
+              }}>Contact Us</button>
+            : <MkButton onClick={onReserve} style={{ height: 42, padding: "0 36px", fontSize: "14px", background: "#1568be", color: "#fff", border: 0, fontWeight: 800, letterSpacing: "0.5px" }}>Reserve</MkButton>
+          }
         </div>
       </div>
     </article>);

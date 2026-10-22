@@ -123,7 +123,8 @@ window.TVR_CONTENT = {
       weekly:    180,
       additionalWeekly: 100,
       deposit:   50,
-      noTow:     true,
+      noTow:       true,
+      contactOnly: true,
       kickerLong:"TVR Moving Bins",
       kickerBooking: "TVR · 40 Bins + 4 Dollies",
       specs: [
@@ -148,6 +149,7 @@ window.TVR_CONTENT = {
       flatRateLabel: "5-day flat rate",
       deposit:   100,
       noTow:     false,
+      contactOnly: true,
       kickerLong:"TVR Bundle",
       kickerBooking: "TVR Bundle · Enclosed Trailer + 40 Bins",
       specs: [
