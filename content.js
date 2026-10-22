@@ -89,8 +89,9 @@ window.TVR_CONTENT = {
       subheading:"7ft x 20ft, holds up to 7,000lbs",
       tagline:   "Heavy-duty open-deck car hauler with loading ramps, perfect for vehicles, ATVs, equipment, and project hauls. Holds loads up to 7,000 lbs. Includes a toolbox with various straps, a 12K winch, and a roadside kit for a smoother, more prepared rental.",
       detailTagline: "Oversized Winch, Loading ramp, Car Straps Included. Vehicles, ATVs, equipment — loads up to 7,000 lb.",
-      photo:     "assets/fleet/Liberty-car-hauler-20ft.jpg",
+      photo:     "assets/fleet/Liberty-car-hauler-hero.png",
       photoExtra: [
+        "assets/fleet/Liberty-car-hauler-20ft.jpg",
         "assets/fleet/Liberty-car-hauler-front-20ft.jpg",
         "assets/fleet/Liberty-car-hauler-ramps-20ft.jpg",
         "assets/fleet/Liberty-car-hauler-winch-20ft.jpg",
