@@ -1595,7 +1595,7 @@ function StepPayment({ state, setState, onNext, onBack }) {
               style={{
                 flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6",
                 borderRadius: 0, outline: "none", background: "#fff", color: "#262626",
-                font: '300 14px/1 "Inter", sans-serif',
+                font: '300 16px/1 "Inter", sans-serif',
               }}
             />
             <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{
@@ -1911,7 +1911,7 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
           {couponOpen && (
             <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
               <input value={couponCode} onChange={e => { setCouponCode(e.target.value); setCoupon(null); setCouponError(null); }} onKeyDown={e => e.key === "Enter" && applyCoupon()} placeholder={tr.enterCode}
-                style={{ flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", borderRadius: 0, outline: "none", background: "#fff", color: "#262626", font: '300 14px/1 "Inter", sans-serif' }}/>
+                style={{ flex: 1, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", borderRadius: 0, outline: "none", background: "#fff", color: "#262626", font: '300 16px/1 "Inter", sans-serif' }}/>
               <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponCode.trim()} style={{ height: 40, padding: "0 16px", background: "#262626", color: "#fff", border: 0, cursor: couponLoading || !couponCode.trim() ? "not-allowed" : "pointer", font: '700 12px/1 "Inter", sans-serif', letterSpacing: "0.5px", opacity: couponLoading || !couponCode.trim() ? 0.5 : 1 }}>
                 {couponLoading ? "…" : tr.apply}
               </button>
