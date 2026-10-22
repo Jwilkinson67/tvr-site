@@ -92,12 +92,14 @@
 
       const StepComp = [StepTrailerDates, StepCustomerDocs, StepAgreementPay, StepDone][step];
 
+      const isMobile = window.innerWidth < 768;
+
       return (
         <LangContext.Provider value={{ lang, setLang }}>
-          <div className="tvr-booking-bg">
+          <div style={{ background: "#f6f7f9" }}>
             <div style={{
               background: "#1568be", color: "#fff",
-              padding: "10px 32px",
+              padding: isMobile ? "10px 16px" : "10px 32px",
               font: '400 12px/1 "Inter", sans-serif', letterSpacing: "0.3px",
               display: "flex", alignItems: "center", justifyContent: "space-between",
             }}>
@@ -111,8 +113,15 @@
 
             <TopBar/>
             <Stepper steps={STEPS} current={step} />
-            <div className="booking-shell">
-              <div className="booking-main">
+            <div style={{
+              maxWidth: 1280, margin: "0 auto",
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "1fr 380px",
+              gap: isMobile ? 0 : 48,
+              padding: isMobile ? "16px" : "48px 32px",
+              alignItems: "start",
+            }}>
+              <div style={{ background: "#fff", padding: isMobile ? "20px 16px" : "48px" }}>
                 <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
               </div>
               {step < STEPS.length - 1 && <OrderSummary state={state}/>}
