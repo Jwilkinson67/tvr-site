@@ -25,21 +25,25 @@
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFjy7T6OGNfzFCXXqfN8Rts2a4iF7AT7c&libraries=places&loading=async"></script>
   <style>
-    html, body { margin: 0; padding: 0; overflow-x: hidden; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
     body { background: #f6f7f9; }
 
-    .bk-shell {
-      max-width: 1280px; margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 380px; gap: 48px;
-      padding: 48px 32px;
-      box-sizing: border-box; width: 100%;
-      align-items: start;
-    }
-    .bk-main { background: #fff; padding: 48px; min-width: 0; overflow: hidden; }
+    /* Mobile-first: single column, no grid */
+    .bk-shell { padding: 16px; }
+    .bk-main { background: #fff; padding: 20px 16px; overflow: hidden; }
+    .bk-sidebar { margin-top: 16px; }
 
-    @media (max-width: 767px) {
-      .bk-shell { grid-template-columns: 1fr; gap: 0; padding: 16px; }
-      .bk-main { padding: 20px 16px; }
+    /* Desktop: switch to grid */
+    @media (min-width: 768px) {
+      .bk-shell {
+        max-width: 1280px; margin: 0 auto;
+        display: grid; grid-template-columns: 1fr 380px; gap: 48px;
+        padding: 48px 32px;
+        align-items: start;
+      }
+      .bk-main { padding: 48px; }
+      .bk-sidebar { margin-top: 0; }
     }
 
     .pac-container { z-index: 99999 !important; font-family: "Inter", sans-serif; }
@@ -97,29 +101,27 @@
 
       return (
         <LangContext.Provider value={{ lang, setLang }}>
-          <div style={{ background: "#f6f7f9" }}>
-            <div style={{
-              background: "#1568be", color: "#fff",
-              padding: "10px 16px",
-              font: '400 12px/1 "Inter", sans-serif', letterSpacing: "0.3px",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-            }}>
-              <a href="/" style={{
-                background: "transparent", border: 0, color: "#fff", cursor: "pointer", padding: 0,
-                font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
-                display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none",
-              }}>← {C.backToSite}</a>
-              <span style={{ opacity: 0.75 }}>{C.secureNote}</span>
-            </div>
+          <div style={{
+            background: "#1568be", color: "#fff",
+            padding: "10px 16px",
+            font: '400 12px/1 "Inter", sans-serif', letterSpacing: "0.3px",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <a href="/" style={{
+              background: "transparent", border: 0, color: "#fff", cursor: "pointer", padding: 0,
+              font: '700 11px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase",
+              display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none",
+            }}>← {C.backToSite}</a>
+            <span style={{ opacity: 0.75 }}>{C.secureNote}</span>
+          </div>
 
-            <TopBar/>
-            <Stepper steps={STEPS} current={step} />
-            <div className="bk-shell">
-              <div className="bk-main">
-                <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
-              </div>
-              {step < STEPS.length - 1 && <OrderSummary state={state}/>}
+          <TopBar/>
+          <Stepper steps={STEPS} current={step} />
+          <div className="bk-shell">
+            <div className="bk-main">
+              <StepComp state={state} setState={setState} onNext={goNext} onBack={step > 0 ? goBack : null} onReset={reset}/>
             </div>
+            {step < STEPS.length - 1 && <div className="bk-sidebar"><OrderSummary state={state}/></div>}
           </div>
         </LangContext.Provider>
       );
