@@ -2085,8 +2085,23 @@ function StepShell({ kicker, title, children, wide }) {
 }
 
 function StepFooter({ onBack, onNext, nextLabel, disabled }) {
+  const isMobile = useWindowWidth() < 768;
   const { lang } = useLang();
   const tr = TRANSLATIONS[lang];
+  if (isMobile) {
+    return (
+      <div style={{ paddingTop: 24, borderTop: "1px solid #e6e6e6" }}>
+        <BkButton onClick={onNext} disabled={disabled} full>{nextLabel} →</BkButton>
+        {onBack && (
+          <button onClick={onBack} style={{
+            display: "block", width: "100%", marginTop: 12, background: "none", border: 0,
+            padding: "8px 0", cursor: "pointer", textAlign: "center",
+            font: '700 13px/1 "Inter", sans-serif', color: "#6b6b6b", letterSpacing: "0.5px",
+          }}>{tr.back}</button>
+        )}
+      </div>
+    );
+  }
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 24, borderTop: "1px solid #e6e6e6" }}>
       {onBack ? <BkButton variant="ghost" onClick={onBack}>{tr.back}</BkButton> : <span/>}
