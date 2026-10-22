@@ -112,7 +112,7 @@ window.TVR_CONTENT = {
     {
       id:        "deckover",
       kicker:    "PJ Trailers",
-      name:      "Deckover Tilt 8.5 × 22",
+      name:      "Deckover Tilt",
       navLabel:  "Deckover Tilt 22ft",
       subheading:"8.5ft x 22ft, 14,000lbs",
       tagline:   "Deckover trailer with hydraulic tilt bed and electric winch. This trailer is perfect for loading and transporting equipment, vehicles, materials, and oversized items like sheds. The full hydraulic tilt deck eliminates the hassle of ramps, making loading safer, faster, and more efficient.",
