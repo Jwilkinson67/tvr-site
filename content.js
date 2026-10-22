@@ -59,8 +59,9 @@ window.TVR_CONTENT = {
       subheading:"7ft x 14ft, 6000lbs",
       tagline:   "Secure, weather-protected enclosed trailer perfect for moving, storage, and keeping your items protected. Includes a hand truck, two furniture dollies, straps, motorcycle wheel chock, moving blankets, and an adjustable hitch for an easy pickup-and-go rental.",
       detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather. Includes a hand truck, two furniture dollies, ratchet straps, moving blankets, motorcycle wheel chock, and a hitch if you need it.",
-      photo:     "assets/fleet/Spartan-enclosed-14ft.jpg.png",
+      photo:     "assets/fleet/Spartan-enclosed-14ft-hero.png",
       photoExtra: [
+        "assets/fleet/Spartan-enclosed-14ft.jpg.png",
         "assets/fleet/Spartan-enclosed-back-14ft.jpg",
         "assets/fleet/Spartan-enclosed-14ft-3.jpg",
         "assets/fleet/Spartan-enclosed-14ft-4.jpg",
