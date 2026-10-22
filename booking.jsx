@@ -292,11 +292,12 @@ function Field({ label, hint, error, children }) {
 }
 
 function Input({ value, onChange, placeholder, type = "text", min, max, autoComplete }) {
+  const isMobile = useWindowWidth() < 768;
   return (
     <input value={value || ""} onChange={e => onChange?.(e.target.value)} placeholder={placeholder} type={type}
       min={min} max={max} autoComplete={autoComplete}
       style={{
-        display: "block", width: "100%", height: 48, padding: "14px 16px",
+        display: "block", width: "100%", height: isMobile ? 44 : 48, padding: isMobile ? "10px 14px" : "14px 16px",
         background: "#fff", color: "#262626", border: "1px solid #e6e6e6", borderRadius: 0,
         font: '300 16px/1.55 "Inter", sans-serif', outline: "none",
       }}
@@ -1053,7 +1054,7 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
       )}
 
       {/* ── Customer fields ── */}
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20, marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 16 : 20, marginBottom: isMobile ? 24 : 32 }}>
         <Field label={tr.fullName} hint={tr.fullNameHint}>
           <Input value={state.name} onChange={v => setState({...state, name: v})} placeholder="Walker Boyd" autoComplete="name"/>
         </Field>
@@ -2076,8 +2077,8 @@ function StepShell({ kicker, title, children, wide }) {
   const isMobile = useWindowWidth() < 768;
   return (
     <div>
-      {kicker && <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16 }}>{kicker}</div>}
-      {title && <h1 style={{ font: `700 ${isMobile ? "26px" : "36px"}/1.1 "Inter", sans-serif`, color: "#262626", margin: 0, marginBottom: 40 }}>{title}</h1>}
+      {kicker && <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: isMobile ? 10 : 16 }}>{kicker}</div>}
+      {title && <h1 style={{ font: `700 ${isMobile ? "22px" : "36px"}/1.1 "Inter", sans-serif`, color: "#262626", margin: 0, marginBottom: isMobile ? 24 : 40 }}>{title}</h1>}
       {children}
     </div>
   );
