@@ -445,7 +445,7 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
                 : <>${trailer.weekly}<span style={{ font: '300 14px/1 "Inter", sans-serif', color: "#6b6b6b" }}> / week</span></>
             }
           </div>
-          <UpperLink onClick={onSpecs}>More details</UpperLink>
+          {!trailer.contactOnly && <UpperLink onClick={onSpecs}>More details</UpperLink>}
         </div>
         <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}>
           {trailer.contactOnly
