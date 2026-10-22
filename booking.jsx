@@ -84,7 +84,7 @@ const TRANSLATIONS = {
     step3Title: "Upload documents", step3Kicker: "STEP 3 · ID & INSURANCE",
     driverLicense: "Driver's license", driverLicenseHint: "Front of ID.",
     insuranceCard: "Insurance card", insuranceCardHint: "Auto policy that covers driver and vehicle used.",
-    uploading: "uploading…", uploaded: "uploaded", replace: "Replace", upload: "Upload",
+    uploading: "uploading…", uploaded: "uploaded", replace: "Replace", upload: "Upload", tapUpload: "Tap to upload", tapReplace: "Tap to replace",
     privacyTitle: "Privacy",
     privacyText: "Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return. See the rental agreement for details.",
     privacyTextShort: "Documents are stored encrypted, viewable only by TVR yard staff for the rental period, and deleted 90 days after return.",
@@ -165,7 +165,7 @@ const TRANSLATIONS = {
     step3Title: "Subir documentos", step3Kicker: "PASO 3 · ID Y SEGURO",
     driverLicense: "Licencia de conducir", driverLicenseHint: "Parte frontal de la identificación.",
     insuranceCard: "Tarjeta de seguro", insuranceCardHint: "Póliza de auto que cubre al conductor y el vehículo utilizado.",
-    uploading: "subiendo…", uploaded: "subido", replace: "Reemplazar", upload: "Subir",
+    uploading: "subiendo…", uploaded: "subido", replace: "Reemplazar", upload: "Subir", tapUpload: "Toca para subir", tapReplace: "Toca para reemplazar",
     privacyTitle: "Privacidad",
     privacyText: "Los documentos se almacenan cifrados, visibles únicamente por el personal de TVR durante el período de alquiler, y se eliminan 90 días después de la devolución. Consulte el contrato de alquiler para más detalles.",
     privacyTextShort: "Los documentos se almacenan cifrados, visibles únicamente por el personal de TVR durante el período de alquiler, y se eliminan 90 días después de la devolución.",
@@ -790,6 +790,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
 
 /* ---------- 3. Documents ---------- */
 function StepDocs({ state, setState, onNext, onBack }) {
+  const isMobile = useWindowWidth() < 768;
   const { lang } = useLang();
   const tr = TRANSLATIONS[lang];
   const docs = [
@@ -873,11 +874,14 @@ function StepDocs({ state, setState, onNext, onBack }) {
         {docs.map(d => {
           const f = state.docs?.[d.id];
           return (
-            <div key={d.id} style={{
-              border: f ? "1px solid #e6e6e6" : "1px dashed #cccccc",
-              background: f ? "#fff" : "#f4f6f9",
-              padding: 22, display: "flex", gap: 16, alignItems: "center",
-            }}>
+            <div key={d.id}
+              onClick={isMobile ? () => triggerPick(d.id) : undefined}
+              style={{
+                border: f ? "1px solid #e6e6e6" : "1px dashed #cccccc",
+                background: f ? "#fff" : "#f4f6f9",
+                padding: 22, display: "flex", gap: 16, alignItems: "center",
+                cursor: isMobile ? "pointer" : "default",
+              }}>
               <input
                 id={`tvr-upload-${d.id}`}
                 type="file"
@@ -895,14 +899,14 @@ function StepDocs({ state, setState, onNext, onBack }) {
               <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
                 <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : (isMobile ? (f ? tr.tapReplace : tr.tapUpload) : d.s)}
                 </div>
               </div>
-              {f ? (
+              {!isMobile && (f ? (
                 <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>{tr.replace}</BkButton>
               ) : (
                 <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>{tr.upload}</BkButton>
-              )}
+              ))}
             </div>
           );
         })}
@@ -1096,7 +1100,9 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
         {docs.map(d => {
           const f = state.docs?.[d.id];
           return (
-            <div key={d.id} style={{ border: f ? "1px solid #e6e6e6" : "1px dashed #cccccc", background: f ? "#fff" : "#f4f6f9", padding: 22, display: "flex", gap: 16, alignItems: "center" }}>
+            <div key={d.id}
+              onClick={isMobile ? () => triggerPick(d.id) : undefined}
+              style={{ border: f ? "1px solid #e6e6e6" : "1px dashed #cccccc", background: f ? "#fff" : "#f4f6f9", padding: 22, display: "flex", gap: 16, alignItems: "center", cursor: isMobile ? "pointer" : "default" }}>
               <input id={`tvr-upload2-${d.id}`} type="file" accept="image/*,application/pdf"
                 style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none" }}
                 onChange={(e) => handleFile(d.id, e)}/>
@@ -1110,14 +1116,14 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
               <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
                 <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
+                  {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : (isMobile ? (f ? tr.tapReplace : tr.tapUpload) : d.s)}
                 </div>
               </div>
-              {f ? (
+              {!isMobile && (f ? (
                 <BkButton variant="ghost" onClick={() => triggerPick(d.id)}>{tr.replace}</BkButton>
               ) : (
                 <BkButton variant="secondary" onClick={() => triggerPick(d.id)}>{tr.upload}</BkButton>
-              )}
+              ))}
             </div>
           );
         })}
