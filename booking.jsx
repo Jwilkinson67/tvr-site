@@ -617,21 +617,21 @@ function StepTrailerDates({ state, setState, onNext }) {
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.pickupDate}</div>
               <input type="date" min={today} value={state.pickup || ""}
                 onChange={e => { const d = computeDays(e.target.value, state.pickupTime, state.dropoff, state.dropoffTime); setState({...state, pickup: e.target.value, days: d}); }}
-                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+                style={{ border: 0, outline: "none", font: '300 16px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
             <div style={{ padding: "14px 16px", borderBottom: "1px solid #e6e6e6" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.returnDate}</div>
               <input type="date" min={state.pickup || today} value={state.dropoff || ""}
                 onChange={e => { const d = computeDays(state.pickup, state.pickupTime, e.target.value, state.dropoffTime); setState({...state, dropoff: e.target.value, days: d}); }}
-                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+                style={{ border: 0, outline: "none", font: '300 16px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               />
             </div>
             <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.pickupTime}</div>
               <select value={state.pickupTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, e.target.value, state.dropoff, state.dropoffTime); setState({...state, pickupTime: e.target.value, days: d}); }}
-                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+                style={{ border: 0, outline: "none", font: '300 16px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               >
                 {HOUR_OPTIONS.map(h => <option key={h.value} value={h.value}>{h.label}</option>)}
               </select>
@@ -640,7 +640,7 @@ function StepTrailerDates({ state, setState, onNext }) {
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.returnTime}</div>
               <select value={state.dropoffTime || DEFAULT_PICKUP_TIME}
                 onChange={e => { const d = computeDays(state.pickup, state.pickupTime, state.dropoff, e.target.value); setState({...state, dropoffTime: e.target.value, days: d}); }}
-                style={{ border: 0, outline: "none", font: '300 15px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
+                style={{ border: 0, outline: "none", font: '300 16px/1.4 "Inter", sans-serif', color: "#262626", width: "100%", background: "transparent", padding: 0 }}
               >
                 {HOUR_OPTIONS.map(h => <option key={h.value} value={h.value}>{h.label}</option>)}
               </select>
@@ -1035,11 +1035,11 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
               <div style={{ font: '700 13px/1 "Inter", sans-serif', color: "#262626", marginBottom: 14, letterSpacing: "0.3px" }}>{tr.signInTitle}</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 <input type="email" placeholder={tr.emailPlaceholder} value={loginEmail} onChange={e => { setLoginEmail(e.target.value); setLoginError(""); }}
-                  style={{ flex: 1, minWidth: 160, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
+                  style={{ flex: 1, minWidth: 160, height: 44, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 16px/1 "Inter", sans-serif', outline: "none" }}
                   onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
                   onKeyDown={e => e.key === "Enter" && handleLogin()}/>
                 <input type="password" placeholder={tr.passwordPlaceholder} value={loginPass} onChange={e => { setLoginPass(e.target.value); setLoginError(""); }}
-                  style={{ flex: 1, minWidth: 140, height: 40, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 14px/1 "Inter", sans-serif', outline: "none" }}
+                  style={{ flex: 1, minWidth: 140, height: 44, padding: "0 12px", border: "1px solid #e6e6e6", background: "#fff", font: '300 16px/1 "Inter", sans-serif', outline: "none" }}
                   onFocus={e => e.target.style.borderColor = "#262626"} onBlur={e => e.target.style.borderColor = "#e6e6e6"}
                   onKeyDown={e => e.key === "Enter" && handleLogin()}/>
                 <BkButton onClick={handleLogin} disabled={loginStatus === "loading"}>
@@ -2055,7 +2055,7 @@ function StepDone({ state, onReset }) {
               value={password}
               onChange={e => { setPassword(e.target.value); setAcctError(""); }}
               style={{ flex: 1, minWidth: 180, height: 44, padding: "0 14px", border: "1px solid #e6e6e6",
-                background: "#fff", font: '300 15px/1 "Inter", sans-serif', outline: "none" }}
+                background: "#fff", font: '300 16px/1 "Inter", sans-serif', outline: "none" }}
               onFocus={e => e.target.style.borderColor = "#262626"}
               onBlur={e  => e.target.style.borderColor = "#e6e6e6"}
             />
