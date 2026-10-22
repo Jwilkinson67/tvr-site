@@ -110,6 +110,30 @@ window.TVR_CONTENT = {
     },
 
     {
+      id:        "deckover",
+      kicker:    "PJ Trailers",
+      name:      "Deckover Tilt 8.5 × 22",
+      navLabel:  "Deckover Tilt 22ft",
+      subheading:"8.5ft x 22ft, 14,000lbs",
+      tagline:   "Deckover trailer with hydraulic tilt bed and electric winch. This trailer is perfect for loading and transporting equipment, vehicles, materials, and oversized items like sheds. The full hydraulic tilt deck eliminates the hassle of ramps, making loading safer, faster, and more efficient.",
+      detailTagline: "Hydraulic tilt deck · electric winch · no ramps needed. Ideal for equipment, vehicles, materials, and oversized loads up to 14,000 lb.",
+      photo:     "assets/fleet/deckover-tilt-22ft.webp",
+      photoScale: 1,
+      daily:     145,
+      weekly:    725,
+      deposit:   150,
+      contactOnly: true,
+      kickerLong:"PJ Trailers",
+      kickerBooking: "PJ · 14,000 lb GVWR Deckover Tilt",
+      specs: [
+        { v: "8.5 × 22", u: "Dimensions (ft)" },
+        { v: "14,000 lb", u: "GVWR" },
+        { v: "Tandem",    u: "Axle config" },
+        { v: "Hydraulic", u: "Tilt type" },
+      ],
+    },
+
+    {
       id:        "totes",
       kicker:    "TVR",
       name:      "Moving Bin Rental",
