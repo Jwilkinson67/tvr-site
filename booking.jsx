@@ -612,7 +612,7 @@ function StepTrailerDates({ state, setState, onNext }) {
 
       {isMobile ? (
         <div style={{ border: "1px solid #e6e6e6", marginBottom: 12 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)" }}>
             <div style={{ padding: "14px 16px", borderRight: "1px solid #e6e6e6", borderBottom: "1px solid #e6e6e6" }}>
               <div style={{ font: '700 10px/1 "Inter", sans-serif', letterSpacing: "1.5px", textTransform: "uppercase", color: "#6b6b6b", marginBottom: 10 }}>{tr.pickupDate}</div>
               <input type="date" min={today} value={state.pickup || ""}
