@@ -405,12 +405,12 @@ function FleetCard({ trailer, onSpecs, onReserve }) {
   const active = photos[activeIdx] || photos[0];
 
   return (
-    <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column" }}>
+    <article style={{ background: "#fff", padding: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
       {showContact && <ContactModal trailer={trailer} onClose={() => setShowContact(false)} />}
       <PhotoSlot id={active.id} src={active.src} scale={active.scale}
       placeholder={`Drop a photo of the ${trailer.name}`}
-      plateStyle={{ aspectRatio: "16 / 10", overflow: "hidden" }}
-      style={{ width: "100%", height: "100%" }} />
+      plateStyle={{ aspectRatio: "16 / 10", overflow: "hidden", display: "block", width: "100%" }}
+      style={{ width: "100%", height: "100%", display: "block" }} />
       {photos.length > 1 && (
         <div style={{ display: "flex", justifyContent: "center", gap: 6, padding: "10px 24px 0", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
           {photos.map((p, i) => (
