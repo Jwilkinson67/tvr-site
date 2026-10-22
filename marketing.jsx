@@ -852,7 +852,7 @@ function LocationBand() {
         gap: isMobile ? 32 : 64, alignItems: "center"
       }}>
         {/* Map */}
-        <div>
+        <div style={{ order: isMobile ? 2 : 1 }}>
           <div style={{ borderRadius: "4px 4px 0 0", overflow: "hidden", boxShadow: "0 2px 16px rgba(0,0,0,0.10)", lineHeight: 0 }}>
             <LocationMap height={isMobile ? 260 : 360} />
           </div>
@@ -862,7 +862,7 @@ function LocationBand() {
           </div>
         </div>
         {/* Text */}
-        <div>
+        <div style={{ order: isMobile ? 1 : 2 }}>
           <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 20, display: "inline-flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 24, height: 1, background: "#b5212b" }} />
             Pickup Location
