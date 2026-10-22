@@ -29,10 +29,13 @@
     html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
     body { background: #f6f7f9; }
 
-    /* Mobile-first: single column, no grid */
-    .bk-shell { padding: 16px; }
-    .bk-main { background: #fff; padding: 20px 16px; overflow: hidden; }
-    .bk-sidebar { margin-top: 16px; }
+    /* Mobile-first: explicit width using viewport units to avoid any box-model ambiguity */
+    .bk-shell { padding: 16px 0; }
+    .bk-main {
+      background: #fff; padding: 20px 16px; overflow: hidden;
+      box-sizing: border-box; width: calc(100vw - 32px); margin: 0 16px;
+    }
+    .bk-sidebar { margin: 16px; }
 
     /* Desktop: switch to grid */
     @media (min-width: 768px) {
@@ -42,8 +45,8 @@
         padding: 48px 32px;
         align-items: start;
       }
-      .bk-main { padding: 48px; }
-      .bk-sidebar { margin-top: 0; }
+      .bk-main { padding: 48px; width: auto; margin: 0; min-width: 0; }
+      .bk-sidebar { margin: 0; }
     }
 
     .pac-container { z-index: 99999 !important; font-family: "Inter", sans-serif; }
