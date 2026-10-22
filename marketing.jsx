@@ -202,7 +202,7 @@ function HeroDark({ setRoute }) {
 
   if (isMobile) {
     return (
-      <section style={{ position: "relative", background: "#f4f6f9" }}>
+      <section style={{ position: "relative", background: "#f4f6f9", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, width: 6, height: "100%", background: "#b5212b", zIndex: 2 }} />
         <PhotoSlot id="hero-photo" src={h.photo} placeholder="Drop a hero photo"
           fit="cover"
