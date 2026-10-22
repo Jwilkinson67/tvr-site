@@ -892,8 +892,8 @@ function StepDocs({ state, setState, onNext, onBack }) {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 )}
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
+              <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+                <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
                 </div>
@@ -1107,8 +1107,8 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1568be" strokeWidth="1.5" strokeLinecap="square"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 )}
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626" }}>{d.t}</div>
+              <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+                <div style={{ font: '700 16px/1.4 "Inter", sans-serif', color: "#262626", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.t}</div>
                 <div style={{ font: '300 13px/1.5 "Inter", sans-serif', color: "#6b6b6b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {f ? <><span style={{ color: "#262626", fontWeight: 700 }}>{f.name}</span> · {f.size} · <span style={{ color: f.status === "uploading" ? "#b88017" : "#22c55e", fontWeight: 700 }}>{f.status === "uploading" ? tr.uploading : tr.uploaded}</span></> : d.s}
                 </div>
