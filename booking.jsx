@@ -530,8 +530,10 @@ const TRAILERS = new Proxy({}, {
 // Helper used inside the trailer-picker step
 function listTrailers() {
   const fleet = (window.TVR_CONTENT && window.TVR_CONTENT.fleet) || [];
-  return fleet.map(t => ({ id: t.id, name: t.name, kicker: t.kickerBooking || t.kicker,
-                           photo: t.photo, daily: t.daily, weekly: t.weekly, photoScale: t.photoScale || 1 }));
+  return fleet
+    .filter(t => !t.contactOnly)
+    .map(t => ({ id: t.id, name: t.name, kicker: t.kickerBooking || t.kicker,
+                 photo: t.photo, daily: t.daily, weekly: t.weekly, photoScale: t.photoScale || 1 }));
 }
 
 /* ====================================================
