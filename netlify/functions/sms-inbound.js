@@ -126,9 +126,19 @@ exports.handler = async (event) => {
     customerName = data?.customer_name || null;
   } catch {}
 
-  // Save as active customer
+  // Check if this customer has texted before (suppress repeat auto-replies)
+  let firstContact = true;
+  try {
+    const { data } = await supabase.from("sms_relay").select("id").eq("id", from).maybeSingle();
+    firstContact = !data;
+  } catch {}
+
+  // Save as active customer and mark as seen
   try {
     await supabase.from("sms_relay").upsert({ id: "active", customer_phone: from });
+    if (firstContact) {
+      await supabase.from("sms_relay").upsert({ id: from, customer_phone: from });
+    }
   } catch (e) {
     console.error("sms_relay upsert failed:", e);
   }
@@ -147,7 +157,10 @@ exports.handler = async (event) => {
     }
   }
 
-  // Auto-reply to customer
-  const reply = "Thanks for texting Tennessee Valley Rentals! We'll get back to you shortly — or book online anytime at https://rentwithtvr.com.";
-  return twimlReply(reply);
+  // Auto-reply only on first contact
+  if (firstContact) {
+    const reply = "Thanks for texting Tennessee Valley Rentals! We'll get back to you shortly — or book online anytime at https://rentwithtvr.com.";
+    return twimlReply(reply);
+  }
+  return emptyTwiml();
 };
