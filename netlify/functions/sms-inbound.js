@@ -50,12 +50,16 @@ exports.handler = async (event) => {
   const params   = new URLSearchParams(body);
   const from     = params.get("From");
   const text     = (params.get("Body") || "").trim();
+  const digitsOnly = (s) => (s || "").replace(/\D/g, "");
   const ownerCell = process.env.OWNER_CELL_NUMBER;
   const tvrNumber = process.env.TWILIO_PHONE_NUMBER;
   const client   = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  const isOwner  = !!ownerCell && digitsOnly(from).endsWith(digitsOnly(ownerCell).slice(-10));
+
+  console.log(`SMS from=${from} ownerCell=${ownerCell} isOwner=${isOwner}`);
 
   // ── Owner is replying through the TVR number ──────────────────────────────
-  if (from === ownerCell) {
+  if (isOwner) {
     // Check if message starts with last 4 digits: "1234 message"
     const phonePrefix = text.match(/^(\d{4})\s+([\s\S]+)/);
     let targetPhone, outboundText;
