@@ -468,7 +468,19 @@ exports.handler = async (event) => {
       });
       if (booking.customer_phone) {
         const trailerName = booking.trailer_name || booking.trailer_id || "trailer";
-        const smsBody = `TVR confirmed! Your ${trailerName} rental is set for ${booking.pickup}. Before pickup, please upload your photos here: ${photoUrls.pickup} — Tennessee Valley Rentals`;
+        const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
+        const code = lockboxCode(booking.trailer_id);
+        const smsBody = [
+          `Tennessee Valley Rentals | Booking Confirmed`,
+          `Trailer: ${trailerName}, Pickup: ${fmtDate(booking.pickup)}, Return: ${fmtDate(booking.dropoff)}`,
+          ``,
+          `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
+          code ? `Lockbox Code: ${code}` : null,
+          `Lockbox Location: Black lockbox on mailbox`,
+          ``,
+          `Once the trailer is connected, please use the link below to take photos of the trailer before leaving.`,
+          `Photo Link: ${photoUrls.pickup}`,
+        ].filter(l => l !== null).join("\n");
         await sendSms({ to: booking.customer_phone, body: smsBody });
       }
     } catch (e) {
