@@ -458,10 +458,17 @@ exports.handler = async (event) => {
               `New TVR booking request!`,
               `${customer.name} — ${trailerName || trailerId}`,
               `Pickup: ${pickup}  Return: ${dropoff}`,
+              customer.tow    ? `Vehicle: ${customer.tow}` : null,
+              customer.hitch  ? `Hitch: ${customer.hitch}` : null,
+              customer.purpose  ? `Trip: ${customer.purpose}` : null,
+              customer.pickupNote ? `Note: ${customer.pickupNote}` : null,
+              ``,
+              docUrls.license   ? `License: ${docUrls.license}` : null,
+              docUrls.insurance ? `Insurance: ${docUrls.insurance}` : null,
               ``,
               `Approve: ${approveUrl}`,
               `Decline: ${declineUrl}`,
-            ].join("\n"),
+            ].filter(l => l !== null).join("\n"),
           }).catch(e => console.error("Owner SMS notification failed:", e))
         );
       }
