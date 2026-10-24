@@ -480,6 +480,8 @@ exports.handler = async (event) => {
           ``,
           `Once the trailer is connected, please use the link below to take photos of the trailer before leaving.`,
           `Photo Link: ${photoUrls.pickup}`,
+          ``,
+          `Thank you for choosing TVR!`,
         ].filter(l => l !== null).join("\n");
         await sendSms({ to: booking.customer_phone, body: smsBody });
       }
