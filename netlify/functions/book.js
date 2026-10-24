@@ -456,7 +456,7 @@ exports.handler = async (event) => {
             to: ownerPhone,
             body: [
               `New TVR booking request!`,
-              `${customer.name} — ${trailerName || trailerId}`,
+              `${customer.name} (${(customer.phone || "").slice(-4)}) — ${trailerName || trailerId}`,
               `Pickup: ${pickup}  Return: ${dropoff}`,
               customer.tow    ? `Vehicle: ${customer.tow}` : null,
               customer.purpose  ? `Trip: ${customer.purpose}` : null,
