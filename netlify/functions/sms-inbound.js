@@ -161,7 +161,7 @@ exports.handler = async (event) => {
 
   // Auto-reply only on first contact or after 48h cooldown
   if (sendAutoReply) {
-    const reply = "Thanks for texting Tennessee Valley Rentals! We'll get back to you shortly — or book online anytime at https://rentwithtvr.com.";
+    const reply = "Thanks for texting Tennessee Valley Rentals! We'll get back to you shortly — or book online anytime at rentwithtvr.com.";
     return twimlReply(reply);
   }
   return emptyTwiml();
