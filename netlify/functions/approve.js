@@ -474,7 +474,7 @@ exports.handler = async (event) => {
           `Tennessee Valley Rentals | Booking Confirmed`,
           `Trailer: ${trailerName}, Pickup: ${fmtDate(booking.pickup)}, Return: ${fmtDate(booking.dropoff)}`,
           ``,
-          `Pickup Address: https://maps.google.com/?q=4217+Shady+Oak+Dr,+Ooltewah+TN+37363`,
+          `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
           code ? `Lockbox Code: ${code}` : null,
           `Lockbox Location: Black lockbox on mailbox`,
           ``,

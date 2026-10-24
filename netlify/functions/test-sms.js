@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     `Tennessee Valley Rentals | Booking Confirmed`,
     `Trailer: Enclosed Cargo 7×14, Pickup: Dec 3, 2024, Return: Dec 8, 2024`,
     ``,
-    `Pickup Address: https://maps.google.com/?q=4217+Shady+Oak+Dr,+Ooltewah+TN+37363`,
+    `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
     `Lockbox Code: 3020`,
     `Lockbox Location: Black lockbox on mailbox`,
     ``,
