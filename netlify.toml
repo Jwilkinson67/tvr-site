@@ -6,6 +6,9 @@
 [functions]
   node_bundler = "esbuild"
 
+[functions."pickup-reminder"]
+  schedule = "0 13 * * *"
+
 [[redirects]]
   from = "/b/:id"
   to   = "/.netlify/functions/go?id=:id"

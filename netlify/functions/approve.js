@@ -468,20 +468,38 @@ exports.handler = async (event) => {
       });
       if (booking.customer_phone) {
         const trailerName = booking.trailer_name || booking.trailer_id || "trailer";
-        const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
         const code = lockboxCode(booking.trailer_id);
-        const smsBody = [
-          `Tennessee Valley Rentals | Booking Confirmed!`,
-          ``,
-          `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
-          `Lockbox Location: Black lockbox on mailbox`,
-          code ? `Lockbox Code: ${code}` : null,
-          ``,
-          `Once the trailer is connected, please use the link below to take pickup photos before leaving.`,
-          photoUrls.pickup,
-          ``,
-          `Thank you for choosing TVR!`,
-        ].filter(l => l !== null).join("\n");
+        const todayET = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+        const isSameDay = booking.pickup === todayET;
+
+        let smsBody;
+        if (isSameDay) {
+          smsBody = [
+            `Tennessee Valley Rentals | Booking Confirmed!`,
+            ``,
+            `Trailer: ${trailerName}`,
+            `Pickup: ${booking.pickup?.slice(5)}  Return: ${booking.dropoff?.slice(5)}`,
+            `Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
+            `Lockbox: Black lockbox on mailbox`,
+            code ? `Code: ${code}` : null,
+            ``,
+            `Once connected, please take pickup photos before leaving:`,
+            photoUrls.pickup,
+            ``,
+            `Thank you for choosing TVR!`,
+          ].filter(l => l !== null).join("\n");
+        } else {
+          smsBody = [
+            `Tennessee Valley Rentals | Booking Confirmed!`,
+            ``,
+            `Trailer: ${trailerName}`,
+            `Pickup: ${booking.pickup?.slice(5)}  Return: ${booking.dropoff?.slice(5)}`,
+            ``,
+            `You'll receive pickup details the morning of your rental.`,
+            ``,
+            `Thank you for choosing TVR!`,
+          ].join("\n");
+        }
         await sendSms({ to: booking.customer_phone, body: smsBody });
       }
     } catch (e) {
