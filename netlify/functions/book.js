@@ -458,7 +458,9 @@ exports.handler = async (event) => {
               `New TVR booking request!`,
               `${customer.name} — ${trailerName || trailerId}`,
               `Pickup: ${pickup}  Return: ${dropoff}`,
-              `Check email to approve.`,
+              ``,
+              `Approve: ${approveUrl}`,
+              `Decline: ${declineUrl}`,
             ].join("\n"),
           }).catch(e => console.error("Owner SMS notification failed:", e))
         );
