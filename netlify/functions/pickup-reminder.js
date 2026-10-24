@@ -79,6 +79,8 @@ exports.handler = async () => {
       ``,
       `Once connected, please take pickup photos before leaving:`,
       photoUrl,
+      ``,
+      `Let me know if you have any questions. -Julian`,
     ].filter(l => l !== null).join("\n");
 
     try {
