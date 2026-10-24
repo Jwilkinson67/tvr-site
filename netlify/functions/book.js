@@ -459,7 +459,6 @@ exports.handler = async (event) => {
               `${customer.name} — ${trailerName || trailerId}`,
               `Pickup: ${pickup}  Return: ${dropoff}`,
               customer.tow    ? `Vehicle: ${customer.tow}` : null,
-              customer.hitch  ? `Hitch: ${customer.hitch}` : null,
               customer.purpose  ? `Trip: ${customer.purpose}` : null,
               customer.pickupNote ? `Note: ${customer.pickupNote}` : null,
               ``,
