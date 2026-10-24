@@ -20,15 +20,14 @@ exports.handler = async (event) => {
   }
 
   const body = [
-    `Tennessee Valley Rentals | Booking Confirmed`,
-    `Trailer: Enclosed Cargo 7×14, Pickup: Dec 3, 2024, Return: Dec 8, 2024`,
+    `Tennessee Valley Rentals | Booking Confirmed!`,
     ``,
     `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
-    `Lockbox Code: 3020`,
     `Lockbox Location: Black lockbox on mailbox`,
+    `Lockbox Code: 3020`,
     ``,
-    `Once the trailer is connected, please use the link below to take photos of the trailer before leaving.`,
-    `Photo Link: https://rentwithtvr.com/p/TEST123/pickup`,
+    `Once the trailer is connected, please use the link below to take pickup photos before leaving.`,
+    `https://rentwithtvr.com/p/TEST123/pickup`,
     ``,
     `Thank you for choosing TVR!`,
   ].join("\n");

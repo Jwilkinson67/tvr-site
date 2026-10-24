@@ -471,15 +471,14 @@ exports.handler = async (event) => {
         const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—";
         const code = lockboxCode(booking.trailer_id);
         const smsBody = [
-          `Tennessee Valley Rentals | Booking Confirmed`,
-          `Trailer: ${trailerName}, Pickup: ${fmtDate(booking.pickup)}, Return: ${fmtDate(booking.dropoff)}`,
+          `Tennessee Valley Rentals | Booking Confirmed!`,
           ``,
           `Pickup Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
-          code ? `Lockbox Code: ${code}` : null,
           `Lockbox Location: Black lockbox on mailbox`,
+          code ? `Lockbox Code: ${code}` : null,
           ``,
-          `Once the trailer is connected, please use the link below to take photos of the trailer before leaving.`,
-          `Photo Link: ${photoUrls.pickup}`,
+          `Once the trailer is connected, please use the link below to take pickup photos before leaving.`,
+          photoUrls.pickup,
           ``,
           `Thank you for choosing TVR!`,
         ].filter(l => l !== null).join("\n");
