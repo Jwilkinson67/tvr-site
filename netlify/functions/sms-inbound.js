@@ -126,19 +126,21 @@ exports.handler = async (event) => {
     customerName = data?.customer_name || null;
   } catch {}
 
-  // Check if this customer has texted before (suppress repeat auto-replies)
-  let firstContact = true;
+  // Check if this customer has texted recently (suppress repeat auto-replies within 48h)
+  const REPLY_COOLDOWN_MS = 48 * 60 * 60 * 1000;
+  let sendAutoReply = true;
   try {
-    const { data } = await supabase.from("sms_relay").select("id").eq("id", from).maybeSingle();
-    firstContact = !data;
+    const { data } = await supabase.from("sms_relay").select("last_seen").eq("id", from).maybeSingle();
+    if (data?.last_seen) {
+      const elapsed = Date.now() - new Date(data.last_seen).getTime();
+      sendAutoReply = elapsed > REPLY_COOLDOWN_MS;
+    }
   } catch {}
 
-  // Save as active customer and mark as seen
+  // Save as active customer and update last_seen
   try {
     await supabase.from("sms_relay").upsert({ id: "active", customer_phone: from });
-    if (firstContact) {
-      await supabase.from("sms_relay").upsert({ id: from, customer_phone: from });
-    }
+    await supabase.from("sms_relay").upsert({ id: from, customer_phone: from, last_seen: new Date().toISOString() });
   } catch (e) {
     console.error("sms_relay upsert failed:", e);
   }
@@ -157,8 +159,8 @@ exports.handler = async (event) => {
     }
   }
 
-  // Auto-reply only on first contact
-  if (firstContact) {
+  // Auto-reply only on first contact or after 48h cooldown
+  if (sendAutoReply) {
     const reply = "Thanks for texting Tennessee Valley Rentals! We'll get back to you shortly — or book online anytime at https://rentwithtvr.com.";
     return twimlReply(reply);
   }
