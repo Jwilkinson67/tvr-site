@@ -32,7 +32,7 @@ exports.handler = async (event) => {
       await client.messages.create({
         from: process.env.TWILIO_PHONE_NUMBER,
         to: caller,
-        body: "Sorry we missed your call! This is Tennessee Valley Rentals — book online in under 2 min: rentwithtvr.com or call us back anytime.",
+        body: "Sorry we missed your call! This is Tennessee Valley Rentals — book online in under 2 min: rentwithtvr.com or text or call us back anytime!",
       });
     } catch (e) {
       console.error("Missed-call SMS failed:", e);
