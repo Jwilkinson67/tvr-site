@@ -56,13 +56,34 @@ exports.handler = async (event) => {
 
   // ── Owner is replying through the TVR number ──────────────────────────────
   if (from === ownerCell) {
-    // Check if message starts with a phone number: "+1XXXXXXXXXX message"
-    const phonePrefix = text.match(/^(\+1\d{10})\s+([\s\S]+)/);
+    // Check if message starts with last 4 digits: "1234 message"
+    const phonePrefix = text.match(/^(\d{4})\s+([\s\S]+)/);
     let targetPhone, outboundText;
 
     if (phonePrefix) {
-      targetPhone  = phonePrefix[1];
+      const last4 = phonePrefix[1];
       outboundText = phonePrefix[2].trim();
+      // Look up the full number by last 4 digits in bookings or sms_relay
+      const { data: bookings } = await supabase
+        .from("bookings")
+        .select("customer_phone")
+        .like("customer_phone", `%${last4}`)
+        .limit(5);
+      const { data: relay } = await supabase
+        .from("sms_relay")
+        .select("customer_phone")
+        .like("customer_phone", `%${last4}`)
+        .limit(5);
+      const matches = [...(bookings || []), ...(relay || [])]
+        .map(r => r.customer_phone)
+        .filter((v, i, a) => v && a.indexOf(v) === i);
+      if (matches.length === 1) {
+        targetPhone = matches[0];
+      } else if (matches.length > 1) {
+        return twimlReply(`${last4} matches multiple numbers. Use more digits or full number.`);
+      } else {
+        return twimlReply(`No customer found with number ending in ${last4}.`);
+      }
       // Set this number as the new active customer
       await supabase.from("sms_relay").upsert({ id: "active", customer_phone: targetPhone });
     } else {
@@ -73,7 +94,7 @@ exports.handler = async (event) => {
     }
 
     if (!targetPhone) {
-      return twimlReply("No active conversation. Start your message with the customer's number: +1XXXXXXXXXX your message");
+      return twimlReply("No active conversation. Start your message with the last 4 digits of their number: 1234 your message");
     }
 
     try {
