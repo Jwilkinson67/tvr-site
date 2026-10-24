@@ -385,8 +385,8 @@ exports.handler = async (event) => {
     if (booking.status === "approved" || booking.status === "completed") {
       const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
       const refundUrl     = `${siteUrl}/.netlify/functions/refund?id=${id}&token=${makeToken("refund", id)}`;
-      const pickupPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=pickup&id=${id}&token=${makeToken("photos-pickup", id)}`;
-      const returnPhotoUrl = `${siteUrl}/.netlify/functions/photos?type=return&id=${id}&token=${makeToken("photos-return", id)}`;
+      const pickupPhotoUrl = `${siteUrl}/p/${id}/pickup`;
+      const returnPhotoUrl = `${siteUrl}/p/${id}/return`;
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/html" },
@@ -448,8 +448,8 @@ exports.handler = async (event) => {
     try {
       const approvedAt = new Date().toISOString();
       const photoUrls = {
-        pickup: `${siteUrl}/.netlify/functions/photos?type=pickup&id=${id}&token=${makeToken("photos-pickup", id)}`,
-        return: `${siteUrl}/.netlify/functions/photos?type=return&id=${id}&token=${makeToken("photos-return", id)}`,
+        pickup: `${siteUrl}/p/${id}/pickup`,
+        return: `${siteUrl}/p/${id}/return`,
       };
       await sendEmail({
         to: booking.customer_email,
