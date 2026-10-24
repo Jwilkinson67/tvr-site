@@ -432,6 +432,10 @@ exports.handler = async (event) => {
       const declineUrl = `${fnBase}?action=decline&id=${bookingId}&token=${makeToken("decline", bookingId)}`;
       const docUrls = await signedDocUrls(docPaths);
 
+      const ownerPhone = process.env.OWNER_CELL_NUMBER;
+      const twilioSid  = process.env.TWILIO_ACCOUNT_SID;
+      const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
+      const tvrNumber  = process.env.TWILIO_PHONE_NUMBER;
       const emailTasks = [
         sendEmail({
           to: process.env.OWNER_EMAIL,
@@ -444,6 +448,21 @@ exports.handler = async (event) => {
           html: customerRequestEmail(bookingRow),
         }),
       ];
+      if (ownerPhone && twilioSid && twilioAuth && tvrNumber) {
+        const twilio = require("twilio");
+        emailTasks.push(
+          twilio(twilioSid, twilioAuth).messages.create({
+            from: tvrNumber,
+            to: ownerPhone,
+            body: [
+              `New TVR booking request!`,
+              `${customer.name} — ${trailerName || trailerId}`,
+              `Pickup: ${pickup}  Return: ${dropoff}`,
+              `Check email to approve.`,
+            ].join("\n"),
+          }).catch(e => console.error("Owner SMS notification failed:", e))
+        );
+      }
 
       if (customer.marketingOptIn && process.env.RESEND_AUDIENCE_ID) {
         const [firstName, ...rest] = (customer.name || "").split(" ");
