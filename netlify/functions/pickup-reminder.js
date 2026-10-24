@@ -71,7 +71,7 @@ exports.handler = async () => {
     const code = lockboxCode(booking.trailer_id);
     const photoUrl = `${siteUrl}/p/${booking.id}/pickup`;
     const body = [
-      `Good morning! Your TVR trailer is ready for pickup today.`,
+      `Good morning! Your TVR trailer will be ready for pickup today.`,
       ``,
       `Address: 4217 Shady Oak Dr, Ooltewah TN 37363`,
       `Lockbox: Black lockbox on mailbox`,
