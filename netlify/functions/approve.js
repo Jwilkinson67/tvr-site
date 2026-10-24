@@ -46,6 +46,16 @@ async function sendEmail({ to, subject, html }) {
   }
 }
 
+/* ── Twilio SMS helper ──────────────────────────────────────────────────── */
+async function sendSms({ to, body }) {
+  const sid   = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const from  = process.env.TWILIO_PHONE_NUMBER;
+  if (!sid || !token || !from || !to) return;
+  const twilio = require("twilio");
+  await twilio(sid, token).messages.create({ from, to, body });
+}
+
 /* ── Lockbox code by trailer ────────────────────────────────────────────── */
 function lockboxCode(trailerId) {
   if (trailerId === "cargo")  return process.env.CARGO_LOCKBOX_CODE  || null;
@@ -456,8 +466,13 @@ exports.handler = async (event) => {
         subject: `Your TVR rental is confirmed — ${booking.trailer_name || booking.trailer_id}, ${booking.pickup}`,
         html: customerConfirmationEmail(booking, approvedAt, photoUrls),
       });
+      if (booking.customer_phone) {
+        const trailerName = booking.trailer_name || booking.trailer_id || "trailer";
+        const smsBody = `TVR confirmed! Your ${trailerName} rental is set for ${booking.pickup}. Before pickup, please upload your photos here: ${photoUrls.pickup} — Tennessee Valley Rentals`;
+        await sendSms({ to: booking.customer_phone, body: smsBody });
+      }
     } catch (e) {
-      console.error("Customer email failed:", e);
+      console.error("Customer email/SMS failed:", e);
     }
 
     const refundToken = makeToken("refund", id);
