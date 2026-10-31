@@ -137,6 +137,7 @@ window.TVR_CONTENT = {
 
     {
       id:        "utility",
+      hidden:    true,
       kicker:    "TVR",
       name:      "Utility Trailer",
       navLabel:  "Utility Trailer 16ft",
@@ -161,6 +162,7 @@ window.TVR_CONTENT = {
 
     {
       id:        "totes",
+      hidden:    true,
       kicker:    "TVR",
       name:      "Moving Bin Rental",
       navLabel:  "Moving Bins",
@@ -186,6 +188,7 @@ window.TVR_CONTENT = {
     },
     {
       id:        "bundle",
+      hidden:    true,
       kicker:    "TVR",
       name:      "Enclosed Trailer + Bin Bundle",
       navLabel:  "Trailer + Bin Bundle",

@@ -168,7 +168,7 @@ function TopNav({ route, setRoute }) {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   const items = [
-  ...c.fleet.map((t) => ({ id: t.id, label: t.navLabel || t.name }))];
+  ...c.fleet.filter((t) => !t.hidden).map((t) => ({ id: t.id, label: t.navLabel || t.name }))];
 
   return (
     <header style={{
@@ -477,7 +477,7 @@ function FleetGrid({ setRoute }) {
         <UpperLink onClick={() => setRoute("booking")}>{c.fleetSection.link}</UpperLink>
       </header>
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: isMobile ? 16 : 32 }}>
-        {c.fleet.map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} onReserve={() => setRoute("booking:" + t.id)} />)}
+        {c.fleet.filter((t) => !t.hidden).map((t) => <FleetCard key={t.id} trailer={t} onSpecs={() => setRoute(t.id)} onReserve={() => setRoute("booking:" + t.id)} />)}
       </div>
       <FleetRequest isMobile={isMobile} />
     </section>);
