@@ -745,7 +745,7 @@ function FAQBand() {
   const faq = c.faq;
   if (!faq) return null;
   return (
-    <section style={{ background: "#fff", padding: isMobile ? "56px 24px 56px 32px" : "80px 80px 80px 96px" }}>
+    <section id="faq-section" style={{ background: "#fff", padding: isMobile ? "56px 24px 56px 32px" : "80px 80px 80px 96px" }}>
       <header style={{ marginBottom: isMobile ? 32 : 56 }}>
         <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#1568be", marginBottom: 16, display: "inline-flex", alignItems: "center", gap: 12 }}>
           <span style={{ width: 24, height: 1, background: "#b5212b" }} />
