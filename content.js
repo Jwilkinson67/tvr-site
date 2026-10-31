@@ -71,7 +71,7 @@ window.TVR_CONTENT = {
       photoScale: 1,        // visual zoom inside the card / summary plate
       daily:     110,
       weekly:    600,
-      deposit:   100,
+      deposit:   50,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
       specs: [
@@ -100,7 +100,7 @@ window.TVR_CONTENT = {
       photoScale: 1,
       daily:     90,
       weekly:    500,
-      deposit:   100,
+      deposit:   50,
       kickerLong:"Liberty",
       kickerBooking: "Liberty · 9,000 lb GVWR",
       specs: [
@@ -197,7 +197,7 @@ window.TVR_CONTENT = {
       daily:     130,
       weekly:    650,
       flatRateLabel: "5-day flat rate",
-      deposit:   100,
+      deposit:   50,
       noTow:     false,
       contactOnly: true,
       kickerLong:"TVR Bundle",

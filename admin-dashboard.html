@@ -578,8 +578,8 @@
   });
 
   const TRAILER_RATES = {
-    "Enclosed Cargo Trailer": { daily: 120, deposit: 100 },
-    "Car Hauler / Equipment Trailer": { daily: 95, deposit: 100 },
+    "Enclosed Cargo Trailer": { daily: 110, deposit: 50 },
+    "Car Hauler / Equipment Trailer": { daily: 90, deposit: 50 },
   };
   const TAX_RATE = 0.0925;
 
@@ -589,7 +589,7 @@
     const dropoff = document.getElementById("inv-dropoff").value;
     const calcEl  = document.getElementById("booking-calc");
     if (!trailer || !pickup || !dropoff || dropoff < pickup) { calcEl.style.display = "none"; return; }
-    const rates = TRAILER_RATES[trailer] || { daily: 0, deposit: 100 };
+    const rates = TRAILER_RATES[trailer] || { daily: 0, deposit: 50 };
     const days   = Math.max(1, Math.round((new Date(dropoff + "T12:00:00") - new Date(pickup + "T12:00:00")) / 86400000) + 1);
     const rental = rates.daily * days;
     const tax    = Math.round(rental * TAX_RATE * 100) / 100;
@@ -620,7 +620,7 @@
       alertEl.className = "alert alert-error"; alertEl.textContent = "Return date must be on or after pickup date."; alertEl.style.display = "block"; return;
     }
 
-    const rates  = TRAILER_RATES[trailer] || { daily: 0, deposit: 100 };
+    const rates  = TRAILER_RATES[trailer] || { daily: 0, deposit: 50 };
     const days   = Math.max(1, Math.round((new Date(dropoff + "T12:00:00") - new Date(pickup + "T12:00:00")) / 86400000) + 1);
     const rental = rates.daily * days;
     const dep    = rates.deposit;
