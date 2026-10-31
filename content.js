@@ -99,7 +99,7 @@ window.TVR_CONTENT = {
       ],
       photoScale: 1,
       daily:     90,
-      weekly:    475,
+      weekly:    500,
       deposit:   100,
       kickerLong:"Liberty",
       kickerBooking: "Liberty · 9,000 lb GVWR",
