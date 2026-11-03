@@ -8,7 +8,7 @@
  * "A call comes in" → Webhook (HTTP POST) →
  * https://rentwithtvr.com/.netlify/functions/voice
  *
- * Env vars: TWILIO_AUTH_TOKEN, OWNER_CELL_NUMBER
+ * Env vars: TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, OWNER_CELL_NUMBER
  */
 
 const { rawBody, verifyTwilioRequest, escapeXml } = require("./lib/twilio-webhook");
@@ -25,7 +25,7 @@ exports.handler = async (event) => {
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="Polly.Joanna">Thanks for calling Tennessee Valley Rentals. Please hold while we connect you.</Say>
-  <Dial timeout="20" action="${escapeXml(actionUrl)}" method="POST">
+  <Dial timeout="20" action="${escapeXml(actionUrl)}" method="POST" callerId="${escapeXml(process.env.TWILIO_PHONE_NUMBER)}">
     <Number>${escapeXml(process.env.OWNER_CELL_NUMBER)}</Number>
   </Dial>
 </Response>`;
