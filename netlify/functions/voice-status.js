@@ -26,16 +26,19 @@ exports.handler = async (event) => {
   const caller = params.get("From");
   const missed = MISSED.has(dialStatus);
 
-  if (missed && caller) {
+  if (caller) {
     const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    const message = missed
+      ? "Sorry we missed your call! This is Tennessee Valley Rentals — book online in under 2 min: rentwithtvr.com or text or call us back anytime!"
+      : "Thanks for calling Tennessee Valley Rentals! Let us know if you have any questions or book online anytime at rentwithtvr.com.";
     try {
       await client.messages.create({
         from: process.env.TWILIO_PHONE_NUMBER,
         to: caller,
-        body: "Sorry we missed your call! This is Tennessee Valley Rentals — book online in under 2 min: rentwithtvr.com or text or call us back anytime!",
+        body: message,
       });
     } catch (e) {
-      console.error("Missed-call SMS failed:", e);
+      console.error("Post-call SMS failed:", e);
     }
   }
 
