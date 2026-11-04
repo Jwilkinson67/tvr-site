@@ -18,7 +18,8 @@ function verifyTwilioRequest(event, body) {
   const signature = event.headers["x-twilio-signature"];
   if (!signature) return false;
   const host = event.headers["x-forwarded-host"] || event.headers.host;
-  const url = `https://${host}${event.path}`;
+  const qs = event.rawQuery || new URLSearchParams(event.queryStringParameters || {}).toString();
+  const url = `https://${host}${event.path}${qs ? `?${qs}` : ""}`;
   const params = Object.fromEntries(new URLSearchParams(body));
   return twilio.validateRequest(process.env.TWILIO_AUTH_TOKEN, signature, url, params);
 }

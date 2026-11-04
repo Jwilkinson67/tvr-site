@@ -20,14 +20,12 @@ exports.handler = async (event) => {
   }
 
   const host = event.headers["x-forwarded-host"] || event.headers.host;
-  const actionUrl = `https://${host}/.netlify/functions/voice-status`;
+  const screenUrl = `https://${host}/.netlify/functions/voice-screen`;
 
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Joanna">Thanks for calling Tennessee Valley Rentals. Please hold while we connect you.</Say>
-  <Dial timeout="20" action="${escapeXml(actionUrl)}" method="POST" callerId="${escapeXml(process.env.TWILIO_PHONE_NUMBER)}">
-    <Number>${escapeXml(process.env.OWNER_CELL_NUMBER)}</Number>
-  </Dial>
+  <Say voice="Polly.Joanna">Thanks for calling Tennessee Valley Rentals. Please say your name and reason for calling after the tone, then press pound.</Say>
+  <Record maxLength="10" finishOnKey="#" action="${escapeXml(screenUrl)}" playBeep="true" timeout="4" />
 </Response>`;
 
   return { statusCode: 200, headers: { "Content-Type": "text/xml" }, body: twiml };
