@@ -1268,6 +1268,27 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const [cardError,    setCardError]    = React.useState(null);
   const [processing,   setProcessing]   = React.useState(false);
 
+  // Save partial booking on mount so abandoned sessions can be followed up
+  React.useEffect(() => {
+    if (!state.email) return;
+    const fleet = window.TVR_CONTENT?.fleet || [];
+    const trailerName = (fleet.find(t => t.id === state.trailerId) || {}).name || state.trailerId;
+    fetch("/.netlify/functions/partial-booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        trailerId:   state.trailerId,
+        trailerName,
+        name:        state.name,
+        email:       state.email,
+        phone:       state.phone,
+        pickup:      state.pickup,
+        dropoff:     state.dropoff,
+        days:        state.days,
+      }),
+    }).catch(() => {});
+  }, []);
+
   // Mount the Stripe Card Element once Stripe.js has loaded.
   React.useEffect(() => {
     let cancelled = false;

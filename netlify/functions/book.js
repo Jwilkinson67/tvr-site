@@ -424,6 +424,13 @@ exports.handler = async (event) => {
       });
     }
 
+    // Mark any partial booking as completed so follow-up SMS is suppressed
+    try {
+      await supabase.from("partial_bookings").update({ completed: true }).eq("customer_email", customer.email);
+    } catch (e) {
+      console.error("partial_bookings completion mark failed:", e);
+    }
+
     // Generate signed document URLs and send owner notification
     try {
       const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");

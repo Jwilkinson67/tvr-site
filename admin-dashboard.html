@@ -186,6 +186,16 @@
       <div id="bookings-table" style="overflow-x:auto;"></div>
     </div>
 
+    <!-- ── Abandoned bookings ── -->
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+        Abandoned Bookings
+        <button class="btn-sm" onclick="loadAbandoned()">Refresh</button>
+      </div>
+      <div id="abandoned-status" class="alert alert-info" style="display:none;"></div>
+      <div id="abandoned-table" style="overflow-x:auto;"></div>
+    </div>
+
     <!-- ── New manual booking ── -->
     <div class="card">
       <div class="card-title">New Manual Booking</div>
@@ -362,6 +372,7 @@
     document.getElementById("lock-screen").style.display = "none";
     document.getElementById("app").style.display = "block";
     loadBookings();
+    loadAbandoned();
   }
 
   const saved = getSecret();
@@ -391,6 +402,50 @@
       allBookings = bookings;
       populateMonthFilter(bookings);
       renderBookings();
+    } catch (e) {
+      statusEl.className = "alert alert-error";
+      statusEl.textContent = "Error: " + e.message;
+      statusEl.style.display = "block";
+    }
+  }
+
+  async function loadAbandoned() {
+    const statusEl = document.getElementById("abandoned-status");
+    const tableEl  = document.getElementById("abandoned-table");
+    statusEl.textContent = "Loading…";
+    statusEl.style.display = "block";
+    statusEl.className = "alert alert-info";
+    tableEl.innerHTML = "";
+    try {
+      const res = await fetch("/.netlify/functions/partial-booking?action=list", {
+        headers: { "Authorization": "Bearer " + adminSecret }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error");
+      statusEl.style.display = "none";
+      const partials = data.partials || [];
+      if (!partials.length) {
+        statusEl.textContent = "No abandoned bookings.";
+        statusEl.style.display = "block";
+        return;
+      }
+      const rows = partials.map(function(p) {
+        const created = p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+        const dates = (p.pickup && p.dropoff) ? p.pickup.slice(5) + " → " + p.dropoff.slice(5) : "—";
+        const followUp = p.follow_up_sent ? "<span style='color:#1568be;font-size:11px;'>SMS sent</span>" : "<span style='color:#9b9b9b;font-size:11px;'>pending</span>";
+        return "<tr>" +
+          "<td>" + (p.customer_name || "—") + "</td>" +
+          "<td>" + (p.customer_phone || "—") + "</td>" +
+          "<td>" + (p.customer_email || "—") + "</td>" +
+          "<td>" + (p.trailer_name || "—") + "</td>" +
+          "<td>" + dates + "</td>" +
+          "<td>" + created + "</td>" +
+          "<td>" + followUp + "</td>" +
+          "</tr>";
+      }).join("");
+      tableEl.innerHTML = "<table class='bookings'><thead><tr>" +
+        "<th>Name</th><th>Phone</th><th>Email</th><th>Trailer</th><th>Dates</th><th>Started</th><th>Follow-up</th>" +
+        "</tr></thead><tbody>" + rows + "</tbody></table>";
     } catch (e) {
       statusEl.className = "alert alert-error";
       statusEl.textContent = "Error: " + e.message;

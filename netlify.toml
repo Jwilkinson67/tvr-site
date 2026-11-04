@@ -9,6 +9,9 @@
 [functions."pickup-reminder"]
   schedule = "0 13 * * *"
 
+[functions."abandoned-followup"]
+  schedule = "0 */3 * * *"
+
 [[redirects]]
   from = "/b/:id"
   to   = "/.netlify/functions/go?id=:id"
