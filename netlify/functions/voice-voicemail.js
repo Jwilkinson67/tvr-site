@@ -59,7 +59,7 @@ exports.handler = async (event) => {
     headers: { "Content-Type": "text/xml" },
     body: `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Salli-Neural">Thank you for your message. We'll get back to you shortly. Goodbye.</Say>
+  <Say voice="Polly.Matthew-Neural">Thank you for your message. We'll get back to you shortly. Goodbye.</Say>
 </Response>`,
   };
 };
