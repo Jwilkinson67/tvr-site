@@ -46,7 +46,7 @@ exports.handler = async (event) => {
         await client.messages.create({
           from: tvrNumber,
           to: caller,
-          body: "Sorry we missed your call! This is Tennessee Valley Rentals — book online in under 2 min: rentwithtvr.com or text or call us back anytime!",
+          body: "Sorry we missed your call! This is Tennessee Valley Rentals. Feel free to text us here with any questions, or reserve your trailer online in under 2 minutes at rentwithTVR.com!",
         });
       } catch (e) {
         console.error("Voicemail caller SMS failed:", e);
