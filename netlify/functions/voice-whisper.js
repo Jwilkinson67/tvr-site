@@ -46,10 +46,10 @@ exports.handler = async (event) => {
   if (recUrl) {
     twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Joanna">TVR call.</Say>
+  <Say voice="Polly.Kendra-Neural">TVR call.</Say>
   <Play>${escapeXml(recUrl)}</Play>
   <Gather numDigits="1" action="${escapeXml(gatherAction)}" method="POST" timeout="10">
-    <Say voice="Polly.Joanna">Press 1 to connect, or hang up to decline.</Say>
+    <Say voice="Polly.Kendra-Neural">Press 1 to connect, or hang up to decline.</Say>
   </Gather>
   <Hangup/>
 </Response>`;
@@ -57,7 +57,7 @@ exports.handler = async (event) => {
     twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Gather numDigits="1" action="${escapeXml(gatherAction)}" method="POST" timeout="10">
-    <Say voice="Polly.Joanna">TVR call. Press 1 to connect, or hang up to decline.</Say>
+    <Say voice="Polly.Kendra-Neural">TVR call. Press 1 to connect, or hang up to decline.</Say>
   </Gather>
   <Hangup/>
 </Response>`;
