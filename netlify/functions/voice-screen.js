@@ -27,7 +27,7 @@ exports.handler = async (event) => {
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Say voice="Polly.Joanna">Please hold while we connect you.</Say>
-  <Dial timeout="20" action="${escapeXml(actionUrl)}" method="POST" callerId="${escapeXml(process.env.TWILIO_PHONE_NUMBER)}">
+  <Dial timeout="15" action="${escapeXml(actionUrl)}" method="POST" callerId="${escapeXml(process.env.TWILIO_PHONE_NUMBER)}">
     <Number url="${escapeXml(whisperUrl)}" method="POST">${escapeXml(process.env.OWNER_CELL_NUMBER)}</Number>
   </Dial>
 </Response>`;
