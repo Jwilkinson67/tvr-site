@@ -24,7 +24,7 @@ exports.handler = async (event) => {
 
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Kendra-Neural">Thanks for calling Tennessee Valley Rentals. Please say your name and reason for calling after the tone, then press pound.</Say>
+  <Say voice="Polly.Salli-Neural">Thanks for calling Tennessee Valley Rentals. Please say your name and reason for calling after the tone, then press pound.</Say>
   <Record maxLength="10" finishOnKey="#" action="${escapeXml(screenUrl)}" playBeep="true" timeout="4" />
 </Response>`;
 
