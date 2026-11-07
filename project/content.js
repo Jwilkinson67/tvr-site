@@ -59,9 +59,9 @@ window.TVR_CONTENT = {
       detailTagline: "Dry, lockable, ramp-equipped. Built for moves and freight in any weather.",
       photo:     "assets/fleet/cargo-8x16.png",
       photoScale: 1,        // visual zoom inside the card / summary plate
-      daily:     120,
+      daily:     110,
       weekly:    600,
-      deposit:   200,
+      deposit:   50,
       kickerLong:"Spartan",
       kickerBooking: "Spartan · 6,000 lb GVWR",
       specs: [
@@ -81,9 +81,9 @@ window.TVR_CONTENT = {
       detailTagline: "Oversized Winch, Loading ramp, Car Straps Included. Vehicles, ATVs, equipment up to 9,000 lb.",
       photo:     "assets/fleet/hauler-8x20.png",
       photoScale: 1,
-      daily:     100,
+      daily:     90,
       weekly:    500,
-      deposit:   150,
+      deposit:   50,
       kickerLong:"Liberty",
       kickerBooking: "Liberty · 9,000 lb GVWR",
       specs: [
