@@ -196,6 +196,27 @@
       <div id="abandoned-table" style="overflow-x:auto;"></div>
     </div>
 
+    <!-- ── Review SMS Blast ── -->
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+        Review Request Blast
+        <button class="btn-sm" onclick="loadReviewBlast()">Refresh</button>
+      </div>
+      <div class="hint" style="margin-bottom:16px;">Send a one-time review request SMS to past customers. Customers with damage charges are flagged — uncheck anyone you want to skip. Already-sent customers are hidden.</div>
+      <div id="blast-status" class="alert" style="display:none;margin-bottom:12px;"></div>
+      <div id="blast-table" style="overflow-x:auto;margin-bottom:16px;"></div>
+      <div id="blast-actions" style="display:none;">
+        <div style="font-size:13px;color:#3c3c3c;margin-bottom:12px;padding:12px;background:#f4f6f9;border-left:4px solid #1568be;">
+          <strong>Message preview:</strong><br>
+          <span style="color:#555;">Tennessee Valley Rentals: Thanks for renting with us! We'd love to hear about your experience — leave us a quick Google review and get $10 off your next rental (just show us the review at pickup): https://g.page/r/CWniJIMNhoVzEAI/review</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="btn" id="blast-send-btn" onclick="sendBlast()">Send to Selected</button>
+          <span id="blast-count" style="font-size:13px;color:#6b6b6b;"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- ── New manual booking ── -->
     <div class="card">
       <div class="card-title">New Manual Booking</div>
@@ -373,6 +394,7 @@
     document.getElementById("app").style.display = "block";
     loadBookings();
     loadAbandoned();
+    loadReviewBlast();
   }
 
   const saved = getSecret();
@@ -451,6 +473,96 @@
       statusEl.textContent = "Error: " + e.message;
       statusEl.style.display = "block";
     }
+  }
+
+  var blastCustomers = [];
+
+  async function loadReviewBlast() {
+    const statusEl = document.getElementById("blast-status");
+    const tableEl  = document.getElementById("blast-table");
+    const actionsEl = document.getElementById("blast-actions");
+    statusEl.textContent = "Loading…";
+    statusEl.className = "alert alert-info";
+    statusEl.style.display = "block";
+    tableEl.innerHTML = "";
+    actionsEl.style.display = "none";
+    try {
+      const res = await fetch("/.netlify/functions/review-blast?action=list", {
+        headers: { "x-admin-secret": adminSecret }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error");
+      statusEl.style.display = "none";
+      blastCustomers = (data || []).filter(function(b) { return !b.review_sms_sent; });
+      if (!blastCustomers.length) {
+        statusEl.textContent = "No eligible customers — all have already been sent.";
+        statusEl.style.display = "block";
+        return;
+      }
+      const rows = blastCustomers.map(function(b) {
+        const hasDamages = b.refund_amount != null && b.deposit_amount != null && b.refund_amount < b.deposit_amount;
+        const withheld = hasDamages ? "$" + (b.deposit_amount - b.refund_amount).toFixed(2) + " withheld" : "";
+        const checked = hasDamages ? "" : "checked";
+        const flag = hasDamages ? "<span style='color:#b5212b;font-size:11px;font-weight:700;'>⚠ Damages</span>" : "<span style='color:#22c55e;font-size:11px;'>✓ Full refund</span>";
+        const rental = new Date(b.refunded_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        return "<tr id='blast-row-" + b.id + "'>" +
+          "<td style='width:32px;'><input type='checkbox' class='blast-cb' data-id='" + b.id + "' " + checked + " onchange='updateBlastCount()'></td>" +
+          "<td>" + (b.customer_name || "—") + "</td>" +
+          "<td>" + (b.customer_phone || "—") + "</td>" +
+          "<td>" + (b.trailer_name || b.trailer_id || "—") + "</td>" +
+          "<td>" + (b.pickup ? b.pickup.slice(5) : "—") + "</td>" +
+          "<td>" + rental + "</td>" +
+          "<td>" + flag + (withheld ? "<br><span style='color:#b5212b;font-size:11px;'>" + withheld + "</span>" : "") + "</td>" +
+          "</tr>";
+      }).join("");
+      tableEl.innerHTML = "<table class='bookings'><thead><tr>" +
+        "<th></th><th>Name</th><th>Phone</th><th>Trailer</th><th>Pickup</th><th>Refunded</th><th>Status</th>" +
+        "</tr></thead><tbody>" + rows + "</tbody></table>";
+      actionsEl.style.display = "block";
+      updateBlastCount();
+    } catch (e) {
+      statusEl.className = "alert alert-error";
+      statusEl.textContent = "Error: " + e.message;
+      statusEl.style.display = "block";
+    }
+  }
+
+  function updateBlastCount() {
+    const checked = document.querySelectorAll(".blast-cb:checked");
+    document.getElementById("blast-count").textContent = checked.length + " customer" + (checked.length !== 1 ? "s" : "") + " selected";
+  }
+
+  async function sendBlast() {
+    const checked = Array.from(document.querySelectorAll(".blast-cb:checked")).map(function(cb) { return cb.dataset.id; });
+    if (!checked.length) { alert("No customers selected."); return; }
+    if (!confirm("Send review request SMS to " + checked.length + " customer" + (checked.length !== 1 ? "s" : "") + "?")) return;
+    const btn = document.getElementById("blast-send-btn");
+    const statusEl = document.getElementById("blast-status");
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+    try {
+      const res = await fetch("/.netlify/functions/review-blast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+        body: JSON.stringify({ ids: checked })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error");
+      statusEl.className = "alert alert-success";
+      statusEl.textContent = "Sent: " + data.sent.length + " · Skipped: " + data.skipped.length + (data.failed.length ? " · Failed: " + data.failed.length : "");
+      statusEl.style.display = "block";
+      // grey out sent rows
+      data.sent.forEach(function(id) {
+        const row = document.getElementById("blast-row-" + id);
+        if (row) row.style.opacity = "0.4";
+      });
+    } catch (e) {
+      statusEl.className = "alert alert-error";
+      statusEl.textContent = "Error: " + e.message;
+      statusEl.style.display = "block";
+    }
+    btn.disabled = false;
+    btn.textContent = "Send to Selected";
   }
 
   function populateMonthFilter(bookings) {
