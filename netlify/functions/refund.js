@@ -241,7 +241,7 @@ exports.handler = async (event) => {
       try {
         const smsText = amount < maxRefund
           ? `Tennessee Valley Rentals: Your deposit refund of $${amount.toFixed(2)} has been issued (${`$${(maxRefund - amount).toFixed(2)} withheld for fees/damages`}). Funds typically appear within 5–10 business days.`
-          : `Tennessee Valley Rentals: Your $${amount.toFixed(2)} deposit refund has been issued. Funds typically appear within 5–10 business days. Thanks for renting with us!`;
+          : `Tennessee Valley Rentals: Your $${amount.toFixed(2)} deposit refund has been issued. Funds typically appear within 5–10 business days. If you had a great experience, we'd love a quick Google review: https://g.page/r/CWniJIMNhoVzEAI/review`;
         await twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN).messages.create({
           from: process.env.TWILIO_PHONE_NUMBER,
           to: booking.customer_phone,
