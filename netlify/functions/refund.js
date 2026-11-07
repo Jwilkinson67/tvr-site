@@ -10,6 +10,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require("@supabase/supabase-js");
 const crypto = require("crypto");
+const twilio = require("twilio");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -234,6 +235,20 @@ exports.handler = async (event) => {
       refunded_at: new Date().toISOString(),
       status: "completed",
     }).eq("id", id);
+
+    // Send refund SMS (non-fatal)
+    if (booking.customer_phone) {
+      try {
+        const smsText = amount < maxRefund
+          ? `Tennessee Valley Rentals: Your deposit refund of $${amount.toFixed(2)} has been issued (${`$${(maxRefund - amount).toFixed(2)} withheld for fees/damages`}). Funds typically appear within 5–10 business days.`
+          : `Tennessee Valley Rentals: Your $${amount.toFixed(2)} deposit refund has been issued. Funds typically appear within 5–10 business days. Thanks for renting with us!`;
+        await twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN).messages.create({
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: booking.customer_phone,
+          body: smsText,
+        });
+      } catch (e) { console.error("Refund SMS failed:", e); }
+    }
 
     // Send review request email (non-fatal)
     try { await sendReviewEmail(booking); } catch (e) { console.error("Review email failed:", e); }
