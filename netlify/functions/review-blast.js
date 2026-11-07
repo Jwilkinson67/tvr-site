@@ -16,7 +16,7 @@ const supabase = createClient(
 );
 
 const REVIEW_URL = "https://g.page/r/CWniJIMNhoVzEAI/review";
-const SMS_BODY = `Tennessee Valley Rentals: Thanks for renting with us! We'd love to hear about your experience — leave us a quick Google review and get $10 off your next rental (just show us the review at pickup): ${REVIEW_URL}`;
+const SMS_BODY = `Tennessee Valley Rentals: Thanks for renting with us! Leave us a Google review and mention it at your next booking for $10 off: ${REVIEW_URL}`;
 
 function authError() {
   return { statusCode: 401, body: JSON.stringify({ error: "Unauthorized" }) };
