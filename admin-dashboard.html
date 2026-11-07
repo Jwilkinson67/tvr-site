@@ -202,7 +202,13 @@
         Review Request Blast
         <button class="btn-sm" onclick="loadReviewBlast()">Refresh</button>
       </div>
-      <div class="hint" style="margin-bottom:16px;">Send a one-time review request SMS to past customers. Customers with damage charges are flagged — uncheck anyone you want to skip. Already-sent customers are hidden.</div>
+      <div class="hint" style="margin-bottom:16px;">Send a one-time review request SMS to past customers. Customers with damage charges are flagged — uncheck anyone you want to skip. Already-sent customers are hidden. Mark customers who have already left a review to hide them permanently.</div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px;color:#6b6b6b;cursor:pointer;">
+          <input type="checkbox" id="show-reviewed" onchange="loadReviewBlast()" style="margin-right:4px;">
+          Show customers who already left a review
+        </label>
+      </div>
       <div id="blast-status" class="alert" style="display:none;margin-bottom:12px;"></div>
       <div id="blast-table" style="overflow-x:auto;margin-bottom:16px;"></div>
       <div id="blast-actions" style="display:none;">
@@ -493,19 +499,27 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error");
       statusEl.style.display = "none";
-      blastCustomers = (data || []).filter(function(b) { return !b.review_sms_sent; });
+      const showReviewed = document.getElementById("show-reviewed").checked;
+      blastCustomers = (data || []).filter(function(b) {
+        if (b.review_sms_sent) return false;
+        if (b.has_review && !showReviewed) return false;
+        return true;
+      });
       if (!blastCustomers.length) {
-        statusEl.textContent = "No eligible customers — all have already been sent.";
+        statusEl.textContent = "No eligible customers.";
         statusEl.style.display = "block";
         return;
       }
       const rows = blastCustomers.map(function(b) {
         const hasDamages = b.refund_amount != null && b.deposit_amount != null && b.refund_amount < b.deposit_amount;
         const withheld = hasDamages ? "$" + (b.deposit_amount - b.refund_amount).toFixed(2) + " withheld" : "";
-        const checked = hasDamages ? "" : "checked";
-        const flag = hasDamages ? "<span style='color:#b5212b;font-size:11px;font-weight:700;'>⚠ Damages</span>" : "<span style='color:#22c55e;font-size:11px;'>✓ Full refund</span>";
+        const checked = (hasDamages || b.has_review) ? "" : "checked";
+        const flag = hasDamages ? "<span style='color:#b5212b;font-size:11px;font-weight:700;'>&#9888; Damages</span>" : "<span style='color:#22c55e;font-size:11px;'>&#10003; Full refund</span>";
         const rental = new Date(b.refunded_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-        return "<tr id='blast-row-" + b.id + "'>" +
+        const reviewBtn = b.has_review
+          ? "<button class='btn-sm' style='font-size:10px;color:#15803d;border-color:#15803d;' onclick='markReview(\"" + b.id + "\", false)'>&#11088; Has review</button>"
+          : "<button class='btn-sm' style='font-size:10px;' onclick='markReview(\"" + b.id + "\", true)'>Mark reviewed</button>";
+        return "<tr id='blast-row-" + b.id + "'" + (b.has_review ? " style='opacity:0.5;'" : "") + ">" +
           "<td style='width:32px;'><input type='checkbox' class='blast-cb' data-id='" + b.id + "' " + checked + " onchange='updateBlastCount()'></td>" +
           "<td>" + (b.customer_name || "—") + "</td>" +
           "<td>" + (b.customer_phone || "—") + "</td>" +
@@ -513,10 +527,11 @@
           "<td>" + (b.pickup ? b.pickup.slice(5) : "—") + "</td>" +
           "<td>" + rental + "</td>" +
           "<td>" + flag + (withheld ? "<br><span style='color:#b5212b;font-size:11px;'>" + withheld + "</span>" : "") + "</td>" +
+          "<td>" + reviewBtn + "</td>" +
           "</tr>";
       }).join("");
       tableEl.innerHTML = "<table class='bookings'><thead><tr>" +
-        "<th></th><th>Name</th><th>Phone</th><th>Trailer</th><th>Pickup</th><th>Refunded</th><th>Status</th>" +
+        "<th></th><th>Name</th><th>Phone</th><th>Trailer</th><th>Pickup</th><th>Refunded</th><th>Status</th><th></th>" +
         "</tr></thead><tbody>" + rows + "</tbody></table>";
       actionsEl.style.display = "block";
       updateBlastCount();
@@ -563,6 +578,20 @@
     }
     btn.disabled = false;
     btn.textContent = "Send to Selected";
+  }
+
+  async function markReview(id, hasReview) {
+    try {
+      const res = await fetch("/.netlify/functions/review-blast", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "x-admin-secret": adminSecret },
+        body: JSON.stringify({ id: id, has_review: hasReview })
+      });
+      if (!res.ok) throw new Error("Failed");
+      loadReviewBlast();
+    } catch (e) {
+      alert("Error: " + e.message);
+    }
   }
 
   function populateMonthFilter(bookings) {

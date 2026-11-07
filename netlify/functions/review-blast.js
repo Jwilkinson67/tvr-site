@@ -30,7 +30,7 @@ exports.handler = async (event) => {
   if (event.httpMethod === "GET") {
     const { data, error } = await supabase
       .from("bookings")
-      .select("id, customer_name, customer_phone, trailer_name, trailer_id, pickup, dropoff, deposit_amount, refund_amount, refunded_at, review_sms_sent")
+      .select("id, customer_name, customer_phone, trailer_name, trailer_id, pickup, dropoff, deposit_amount, refund_amount, refunded_at, review_sms_sent, has_review")
       .not("refunded_at", "is", null)
       .order("refunded_at", { ascending: false });
 
@@ -88,6 +88,22 @@ exports.handler = async (event) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(results),
     };
+  }
+
+  // ── PATCH: mark/unmark has_review ───────────────────────────────────────
+  if (event.httpMethod === "PATCH") {
+    let id, has_review;
+    try {
+      ({ id, has_review } = JSON.parse(event.body || "{}"));
+    } catch {
+      return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
+    }
+    if (!id) return { statusCode: 400, body: JSON.stringify({ error: "No ID provided" }) };
+
+    const { error } = await supabase.from("bookings").update({ has_review: !!has_review }).eq("id", id);
+    if (error) return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+
+    return { statusCode: 200, body: JSON.stringify({ ok: true }) };
   }
 
   return { statusCode: 405, body: "Method not allowed" };
