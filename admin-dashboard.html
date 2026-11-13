@@ -89,23 +89,45 @@
     #app { display: none; }
 
     /* ── Fleet Calendar ── */
-    .fc-legend { display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#6b6b6b; }
-    .fc-dot { width:9px;height:9px;border-radius:2px;flex-shrink:0; }
-    .fc-dot.fc-hauler   { background:#1568be; }
-    .fc-dot.fc-enclosed { background:#b5212b; }
-    .fc-dot.fc-upcoming { background:#fff;border:1.5px dashed #888; }
-    .fc-grid { display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid #e0e0e0;border-top:1px solid #e0e0e0;margin-bottom:14px; }
-    .fc-dow  { text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#9a9a9a;padding:7px 2px;background:#f4f6f9;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0; }
-    .fc-day  { position:relative;aspect-ratio:1;overflow:hidden;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0; }
-    .fc-day-inner { position:absolute;inset:0;padding:4px 3px 3px;display:flex;flex-direction:column;gap:2px;overflow:hidden; }
-    .fc-day.fc-other { background:#fafafa;opacity:0.5; }
-    .fc-day.fc-today .fc-dnum { background:#1568be;color:#fff;border-radius:50%; }
-    .fc-dnum { font-size:11px;font-weight:600;color:#9a9a9a;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-    .fc-bar  { font-size:9px;font-weight:700;padding:1px 4px;border-radius:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.5; }
-    .fc-bar.fc-hauler   { background:#dbeafe;color:#1e3a8a; }
-    .fc-bar.fc-enclosed { background:#fee2e2;color:#991b1b; }
-    .fc-bar.fc-hauler.fc-upcoming   { background:#f0f6ff;color:#1568be;border:1px dashed #1568be; }
-    .fc-bar.fc-enclosed.fc-upcoming { background:#fff5f5;color:#b5212b;border:1px dashed #b5212b; }
+    .fc-legend-item { display:flex;align-items:center;gap:7px;font-size:12px;color:#6b6b6b; }
+    .fc-cal-swatch { width:20px;height:8px;border-radius:3px;flex-shrink:0; }
+    .fc-cal-swatch.hauler   { background:#1568be; }
+    .fc-cal-swatch.enclosed { background:#b5212b; }
+    .fc-cal-swatch.upcoming { background:none;border:1.5px solid #888; }
+    .cal-grid { display:grid;grid-template-columns:repeat(7,1fr); }
+    .cal-dow  { text-align:center;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#9a9a9a;padding:9px 2px 7px;border-bottom:1px solid #e0e0e0; }
+    .cal-day  { position:relative;aspect-ratio:1;overflow:hidden;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0; }
+    .cal-day:nth-child(7n) { border-right:none; }
+    .cal-day.other-month { background:#fafafa;opacity:0.45; }
+    .cal-day.today .cal-day-num { background:#1568be;color:#fff; }
+    .cal-day-inner { position:absolute;inset:0;padding:5px 4px 0; }
+    .cal-day-num { font-size:12px;font-weight:600;color:#9a9a9a;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%; }
+    .ind-stack { position:absolute;bottom:0;left:0;right:0;display:flex;flex-direction:column;gap:2px;padding-bottom:3px; }
+    .ind { height:8px;flex-shrink:0; }
+    .ind.p-single { margin:0 4px;border-radius:3px; }
+    .ind.p-start  { border-radius:3px 0 0 3px; }
+    .ind.p-end    { border-radius:0 3px 3px 0; }
+    .ind.p-mid    { border-radius:0; }
+    .ind.hauler   { background:#1568be; }
+    .ind.enclosed { background:#b5212b; }
+    .ind-ph { height:8px;flex-shrink:0; }
+    .ind.upcoming           { background:none!important;height:6px; }
+    .ind.upcoming.hauler    { border:1.5px solid #1568be; }
+    .ind.upcoming.enclosed  { border:1.5px solid #b5212b; }
+    .fc-cal-tile { flex:1;padding:14px 16px;border-right:1px solid #e0e0e0; }
+    .fc-cal-tile:last-child { border-right:none; }
+    .fc-cal-tile .s-label { font-size:10px;font-weight:700;letter-spacing:0.9px;text-transform:uppercase;color:#6b6b6b;margin-bottom:4px; }
+    .fc-cal-tile .s-val { font-size:20px;font-weight:700;letter-spacing:-0.5px; }
+    .fc-cal-tile .s-sub { font-size:11px;color:#6b6b6b;margin-top:2px; }
+    .fc-cal-tile .s-val.hc { color:#1568be; }
+    .fc-cal-tile .s-val.ec { color:#b5212b; }
+    @media (max-width:480px) {
+      .ind { height:6px; }
+      .ind.upcoming { height:5px; }
+      .cal-day-num { font-size:10px;width:18px;height:18px; }
+      .fc-cal-tile { padding:10px; }
+      .fc-cal-tile .s-val { font-size:16px; }
+    }
 
     /* ── Mobile ── */
     @media (max-width: 600px) {
@@ -199,32 +221,32 @@
     </div>
 
     <!-- ── Fleet Calendar ── -->
-    <div class="card">
-      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-        Fleet Calendar
-        <div style="display:flex;align-items:center;gap:6px;">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid #e0e0e0;gap:10px;flex-wrap:wrap;">
+        <div class="card-title" style="margin:0;">Fleet Calendar</div>
+        <div style="display:flex;align-items:center;gap:4px;">
           <button class="btn-sm" onclick="shiftFleetMonth(-1)" style="padding:5px 10px;font-size:14px;">&#8249;</button>
-          <span id="fc-month-label" style="font-size:13px;font-weight:600;min-width:120px;text-align:center;text-transform:none;letter-spacing:0;color:#262626;"></span>
+          <span id="fc-month-label" style="font-size:14px;font-weight:600;min-width:130px;text-align:center;color:#262626;"></span>
           <button class="btn-sm" onclick="shiftFleetMonth(1)" style="padding:5px 10px;font-size:14px;">&#8250;</button>
-          <button class="btn-sm" onclick="loadFleetCalendar()">Refresh</button>
+          <button class="btn-sm" onclick="loadFleetCalendar()" style="width:32px;height:32px;padding:0;font-size:17px;display:flex;align-items:center;justify-content:center;" title="Refresh">&#8635;</button>
         </div>
       </div>
-      <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
-        <span class="fc-legend"><span class="fc-dot fc-hauler"></span>Car Hauler</span>
-        <span class="fc-legend"><span class="fc-dot fc-enclosed"></span>Enclosed Cargo</span>
-        <span class="fc-legend"><span class="fc-dot fc-upcoming"></span>Upcoming (Approved)</span>
+      <div style="display:flex;gap:16px;padding:10px 18px;border-bottom:1px solid #e0e0e0;flex-wrap:wrap;align-items:center;">
+        <div class="fc-legend-item"><span class="fc-cal-swatch hauler"></span>Car Hauler</div>
+        <div class="fc-legend-item"><span class="fc-cal-swatch enclosed"></span>Enclosed</div>
+        <div class="fc-legend-item"><span class="fc-cal-swatch upcoming"></span>Upcoming</div>
       </div>
-      <div id="fc-status" style="display:none;margin-bottom:12px;" class="alert alert-info"></div>
-      <div id="fc-grid" class="fc-grid">
-        <div class="fc-dow">Sun</div>
-        <div class="fc-dow">Mon</div>
-        <div class="fc-dow">Tue</div>
-        <div class="fc-dow">Wed</div>
-        <div class="fc-dow">Thu</div>
-        <div class="fc-dow">Fri</div>
-        <div class="fc-dow">Sat</div>
+      <div id="fc-status" style="display:none;margin:12px 18px 0;" class="alert alert-info"></div>
+      <div id="fc-grid" class="cal-grid">
+        <div class="cal-dow">Sun</div>
+        <div class="cal-dow">Mon</div>
+        <div class="cal-dow">Tue</div>
+        <div class="cal-dow">Wed</div>
+        <div class="cal-dow">Thu</div>
+        <div class="cal-dow">Fri</div>
+        <div class="cal-dow">Sat</div>
       </div>
-      <div id="fc-summary" class="tiles" style="border-top:1px solid #e0e0e0;padding-top:14px;"></div>
+      <div id="fc-summary" style="display:flex;border-top:1px solid #e0e0e0;"></div>
     </div>
 
     <!-- ── Bookings table ── -->
@@ -985,19 +1007,36 @@
   }
 
   // ── Fleet Calendar ──────────────────────────────────────────────────────
-  let fcData = {};
-  let fcCur  = { y: new Date().getFullYear(), m: new Date().getMonth() };
+  let fcSpans = [];
+  let fcCur   = { y: new Date().getFullYear(), m: new Date().getMonth() };
+  const FC_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const FC_RATES  = { hauler: 90, enclosed: 110 };
 
-  function fcPad(n) { return String(n).padStart(2, "0"); }
-  function fcDateKey(d) { return d.getFullYear() + "-" + fcPad(d.getMonth()+1) + "-" + fcPad(d.getDate()); }
+  function fcPad(n) { return String(n).padStart(2,"0"); }
+  function fcDkey(d) { return d.getFullYear()+"-"+fcPad(d.getMonth()+1)+"-"+fcPad(d.getDate()); }
 
-  function fcExpandDays(pickup, dropoff) {
-    const days = [];
-    const start = new Date(pickup.substring(0,10) + "T12:00:00");
-    const end   = new Date(dropoff.substring(0,10) + "T12:00:00");
-    const cur   = new Date(start);
-    while (cur <= end) { days.push(fcDateKey(cur)); cur.setDate(cur.getDate()+1); }
-    return days;
+  function fcBuildDayMap() {
+    const map = {};
+    fcSpans.forEach(function(span) {
+      const s = new Date(span.s+"T12:00:00");
+      const e = new Date(span.e+"T12:00:00");
+      const c = new Date(s);
+      while (c <= e) {
+        const key   = fcDkey(c);
+        const dow   = c.getDay();
+        const first = c.getTime() === s.getTime();
+        const last  = c.getTime() === e.getTime();
+        const isSat = dow === 6, isSun = dow === 0;
+        const vStart = first || isSun;
+        const vEnd   = last  || isSat;
+        const pos = (vStart && vEnd) ? "single" : vStart ? "start" : vEnd ? "end" : "mid";
+        if (!map[key]) map[key] = [];
+        if (!map[key].some(function(x){ return x.t === span.t; }))
+          map[key].push({ t: span.t, u: !!span.u, pos: pos });
+        c.setDate(c.getDate()+1);
+      }
+    });
+    return map;
   }
 
   function shiftFleetMonth(d) {
@@ -1015,73 +1054,76 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       const rows = await res.json();
       const today = new Date().toISOString().substring(0,10);
-      fcData = {};
+      fcSpans = [];
       rows.forEach(function(b) {
         if (!b.pickup || !b.dropoff) return;
-        const type     = /hauler|equipment/i.test(b.trailer_name || b.trailer_id || "") ? "hauler" : "enclosed";
-        const upcoming = b.status === "approved" && b.pickup.substring(0,10) >= today;
-        fcExpandDays(b.pickup, b.dropoff).forEach(function(key) {
-          if (!fcData[key]) fcData[key] = [];
-          if (!fcData[key].some(function(x){ return x.type === type; }))
-            fcData[key].push({ type: type, label: type === "hauler" ? "Hauler" : "Enclosed", upcoming: upcoming });
-        });
+        const t = /hauler|equipment/i.test(b.trailer_name || b.trailer_id || "") ? "hauler" : "enclosed";
+        const u = b.status === "approved" && b.pickup.substring(0,10) >= today;
+        const s = b.pickup.substring(0,10), e = b.dropoff.substring(0,10);
+        if (!fcSpans.some(function(x){ return x.t===t && x.s===s && x.e===e; }))
+          fcSpans.push({ t: t, s: s, e: e, u: u });
       });
       statusEl.style.display = "none";
       renderFleetCalendar();
-    } catch(e) {
-      statusEl.className = "alert alert-error"; statusEl.textContent = "Error: " + e.message;
+    } catch(err) {
+      statusEl.className = "alert alert-error"; statusEl.textContent = "Error: " + err.message;
     }
   }
 
   function renderFleetCalendar() {
-    const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    document.getElementById("fc-month-label").textContent = MONTHS[fcCur.m] + " " + fcCur.y;
-    const grid = document.getElementById("fc-grid");
-    while (grid.children.length > 7) grid.removeChild(grid.lastChild);
-    const first       = new Date(fcCur.y, fcCur.m, 1).getDay();
+    document.getElementById("fc-month-label").textContent = FC_MONTHS[fcCur.m] + " " + fcCur.y;
+    const dayMap      = fcBuildDayMap();
+    const grid        = document.getElementById("fc-grid");
+    const firstDow    = new Date(fcCur.y, fcCur.m, 1).getDay();
     const daysInMonth = new Date(fcCur.y, fcCur.m+1, 0).getDate();
     const prevDays    = new Date(fcCur.y, fcCur.m, 0).getDate();
     const today       = new Date();
     let haulerDays = 0, enclosedDays = 0;
-    const RATES = { hauler: 90, enclosed: 110 };
 
-    for (let i = 0; i < first; i++) {
-      const c = document.createElement("div"); c.className = "fc-day fc-other";
-      const inn = document.createElement("div"); inn.className = "fc-day-inner";
-      const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = prevDays - first + 1 + i;
-      inn.appendChild(n); c.appendChild(inn); grid.appendChild(c);
+    while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+
+    function mk(tag, cls) { const el = document.createElement(tag); el.className = cls; return el; }
+
+    for (let i = 0; i < firstDow; i++) {
+      const c = mk("div","cal-day other-month"); const inn = mk("div","cal-day-inner"); c.appendChild(inn);
+      const dn = mk("div","cal-day-num"); dn.textContent = prevDays-firstDow+1+i; inn.appendChild(dn); grid.appendChild(c);
     }
     for (let d = 1; d <= daysInMonth; d++) {
-      const key = fcCur.y + "-" + fcPad(fcCur.m+1) + "-" + fcPad(d);
-      const isToday = fcCur.y === today.getFullYear() && fcCur.m === today.getMonth() && d === today.getDate();
-      const c = document.createElement("div"); c.className = "fc-day" + (isToday ? " fc-today" : "");
-      const inn = document.createElement("div"); inn.className = "fc-day-inner";
-      const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = d;
-      inn.appendChild(n);
-      (fcData[key] || []).forEach(function(b) {
-        const bar = document.createElement("div");
-        bar.className = "fc-bar fc-" + b.type + (b.upcoming ? " fc-upcoming" : "");
-        bar.textContent = b.label; inn.appendChild(bar);
-        if (!b.upcoming) { if (b.type === "hauler") haulerDays++; else enclosedDays++; }
-      });
-      c.appendChild(inn); grid.appendChild(c);
+      const key     = fcCur.y+"-"+fcPad(fcCur.m+1)+"-"+fcPad(d);
+      const isToday = fcCur.y===today.getFullYear() && fcCur.m===today.getMonth() && d===today.getDate();
+      const c = mk("div","cal-day"+(isToday?" today":"")); const inn = mk("div","cal-day-inner"); c.appendChild(inn);
+      const dn = mk("div","cal-day-num"); dn.textContent = d; inn.appendChild(dn);
+      const bookings = dayMap[key] || [];
+      if (bookings.length) {
+        const stack = mk("div","ind-stack");
+        ["enclosed","hauler"].forEach(function(type) {
+          const b = bookings.find(function(x){ return x.t === type; });
+          if (b) {
+            const bar = mk("span","ind "+type+" p-"+b.pos+(b.u?" upcoming":""));
+            stack.appendChild(bar);
+            if (!b.u) { if (type==="hauler") haulerDays++; else enclosedDays++; }
+          } else {
+            stack.appendChild(mk("span","ind-ph"));
+          }
+        });
+        inn.appendChild(stack);
+      }
+      grid.appendChild(c);
     }
-    const remaining = (first + daysInMonth) % 7 === 0 ? 0 : 7 - ((first + daysInMonth) % 7);
-    for (let i = 1; i <= remaining; i++) {
-      const c = document.createElement("div"); c.className = "fc-day fc-other";
-      const inn = document.createElement("div"); inn.className = "fc-day-inner";
-      const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = i;
-      inn.appendChild(n); c.appendChild(inn); grid.appendChild(c);
+    const rem = (firstDow+daysInMonth)%7===0 ? 0 : 7-((firstDow+daysInMonth)%7);
+    for (let i = 1; i <= rem; i++) {
+      const c = mk("div","cal-day other-month"); const inn = mk("div","cal-day-inner"); c.appendChild(inn);
+      const dn = mk("div","cal-day-num"); dn.textContent = i; inn.appendChild(dn); grid.appendChild(c);
     }
 
-    const totalDays    = haulerDays + enclosedDays;
-    const fleetUtil    = daysInMonth > 0 ? Math.round((totalDays    / (daysInMonth*2)) * 100) : 0;
-    const haulerUtil   = daysInMonth > 0 ? Math.round((haulerDays   / daysInMonth) * 100) : 0;
-    const enclosedUtil = daysInMonth > 0 ? Math.round((enclosedDays / daysInMonth) * 100) : 0;
+    const totalDays = haulerDays + enclosedDays;
+    const flu   = daysInMonth>0 ? Math.round(totalDays/(daysInMonth*2)*100) : 0;
+    const hutil = daysInMonth>0 ? Math.round(haulerDays/daysInMonth*100) : 0;
+    const eutil = daysInMonth>0 ? Math.round(enclosedDays/daysInMonth*100) : 0;
     document.getElementById("fc-summary").innerHTML =
-      "<div class='tile'><div class='t-label'>Fleet Utilization</div><div class='t-value'>" + fleetUtil + "%</div><div class='t-sub'>" + totalDays + " of " + (daysInMonth*2) + " trailer-days</div></div>" +
-      "<div class='tile blue'><div class='t-label'>Car Hauler</div><div class='t-value'>" + haulerDays + " days</div><div class='t-sub'>" + haulerUtil + "% · $" + (haulerDays*RATES.hauler).toLocaleString() + " rev</div></div>" +
-      "<div class='tile red'><div class='t-label'>Enclosed Cargo</div><div class='t-value'>" + enclosedDays + " days</div><div class='t-sub'>" + enclosedUtil + "% · $" + (enclosedDays*RATES.enclosed).toLocaleString() + " rev</div></div>";
+      "<div class='fc-cal-tile'><div class='s-label'>Utilization</div><div class='s-val'>"+flu+"%</div><div class='s-sub'>"+totalDays+" of "+(daysInMonth*2)+" trailer-days</div></div>"+
+      "<div class='fc-cal-tile'><div class='s-label'>Car Hauler</div><div class='s-val hc'>"+haulerDays+" days</div><div class='s-sub'>"+hutil+"% · $"+(haulerDays*FC_RATES.hauler).toLocaleString()+" rev</div></div>"+
+      "<div class='fc-cal-tile'><div class='s-label'>Enclosed</div><div class='s-val ec'>"+enclosedDays+" days</div><div class='s-sub'>"+eutil+"% · $"+(enclosedDays*FC_RATES.enclosed).toLocaleString()+" rev</div></div>";
   }
 </script>
 </body>
