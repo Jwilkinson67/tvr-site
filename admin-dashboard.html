@@ -96,7 +96,8 @@
     .fc-dot.fc-upcoming { background:#fff;border:1.5px dashed #888; }
     .fc-grid { display:grid;grid-template-columns:repeat(7,1fr);border-left:1px solid #e0e0e0;border-top:1px solid #e0e0e0;margin-bottom:14px; }
     .fc-dow  { text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#9a9a9a;padding:7px 2px;background:#f4f6f9;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0; }
-    .fc-day  { min-height:62px;padding:5px 4px 4px;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0;display:flex;flex-direction:column;gap:2px; }
+    .fc-day  { position:relative;aspect-ratio:1;overflow:hidden;border-right:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0; }
+    .fc-day-inner { position:absolute;inset:0;padding:4px 3px 3px;display:flex;flex-direction:column;gap:2px;overflow:hidden; }
     .fc-day.fc-other { background:#fafafa;opacity:0.5; }
     .fc-day.fc-today .fc-dnum { background:#1568be;color:#fff;border-radius:50%; }
     .fc-dnum { font-size:11px;font-weight:600;color:#9a9a9a;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
@@ -1022,7 +1023,7 @@
         fcExpandDays(b.pickup, b.dropoff).forEach(function(key) {
           if (!fcData[key]) fcData[key] = [];
           if (!fcData[key].some(function(x){ return x.type === type; }))
-            fcData[key].push({ type: type, label: type === "hauler" ? "Car Hauler" : "Enclosed", upcoming: upcoming });
+            fcData[key].push({ type: type, label: type === "hauler" ? "Hauler" : "Enclosed", upcoming: upcoming });
         });
       });
       statusEl.style.display = "none";
@@ -1046,28 +1047,31 @@
 
     for (let i = 0; i < first; i++) {
       const c = document.createElement("div"); c.className = "fc-day fc-other";
+      const inn = document.createElement("div"); inn.className = "fc-day-inner";
       const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = prevDays - first + 1 + i;
-      c.appendChild(n); grid.appendChild(c);
+      inn.appendChild(n); c.appendChild(inn); grid.appendChild(c);
     }
     for (let d = 1; d <= daysInMonth; d++) {
       const key = fcCur.y + "-" + fcPad(fcCur.m+1) + "-" + fcPad(d);
       const isToday = fcCur.y === today.getFullYear() && fcCur.m === today.getMonth() && d === today.getDate();
       const c = document.createElement("div"); c.className = "fc-day" + (isToday ? " fc-today" : "");
+      const inn = document.createElement("div"); inn.className = "fc-day-inner";
       const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = d;
-      c.appendChild(n);
+      inn.appendChild(n);
       (fcData[key] || []).forEach(function(b) {
         const bar = document.createElement("div");
         bar.className = "fc-bar fc-" + b.type + (b.upcoming ? " fc-upcoming" : "");
-        bar.textContent = b.label; c.appendChild(bar);
+        bar.textContent = b.label; inn.appendChild(bar);
         if (!b.upcoming) { if (b.type === "hauler") haulerDays++; else enclosedDays++; }
       });
-      grid.appendChild(c);
+      c.appendChild(inn); grid.appendChild(c);
     }
     const remaining = (first + daysInMonth) % 7 === 0 ? 0 : 7 - ((first + daysInMonth) % 7);
     for (let i = 1; i <= remaining; i++) {
       const c = document.createElement("div"); c.className = "fc-day fc-other";
+      const inn = document.createElement("div"); inn.className = "fc-day-inner";
       const n = document.createElement("div"); n.className = "fc-dnum"; n.textContent = i;
-      c.appendChild(n); grid.appendChild(c);
+      inn.appendChild(n); c.appendChild(inn); grid.appendChild(c);
     }
 
     const totalDays    = haulerDays + enclosedDays;
