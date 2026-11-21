@@ -224,7 +224,7 @@
     <div class="stats-card" id="trailer-stats-card" style="display:none;">
       <div class="stats-header" style="margin-bottom:16px;">
         <div class="stats-title">Lifetime by Trailer</div>
-        <div style="font-size:11px;color:#9a9a9a;">All time · excludes deposits</div>
+        <div id="trailer-combined" style="font-size:13px;font-weight:700;color:#155a30;"></div>
       </div>
       <div id="trailer-tiles" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
     </div>
@@ -1047,6 +1047,8 @@
         "</div>";
     }).join("");
 
+    var combined = groups.hauler.net + groups.enclosed.net;
+    document.getElementById("trailer-combined").textContent = "$" + combined.toFixed(2) + " combined lifetime";
     card.style.display = "block";
   }
 
