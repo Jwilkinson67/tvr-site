@@ -1026,7 +1026,7 @@
       groups[key].count++;
       groups[key].net += parseFloat(b.total_charged || 0) - parseFloat(b.deposit_amount || 0);
       if (b.pickup && b.dropoff) {
-        var d = Math.round((new Date(b.dropoff + "T12:00:00") - new Date(b.pickup + "T12:00:00")) / 86400000) + 1;
+        var d = Math.round((new Date(b.dropoff + "T12:00:00") - new Date(b.pickup + "T12:00:00")) / 86400000);
         groups[key].days += Math.max(1, d);
       } else {
         groups[key].days += 1;
