@@ -14,9 +14,8 @@
 
 [[redirects]]
   from = "/book"
-  to   = "/?autobook=1"
-  status = 302
-  force = true
+  to   = "/index.html"
+  status = 200
 
 [[redirects]]
   from = "/b/:id"

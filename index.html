@@ -250,11 +250,10 @@
       const { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, PromoPopup, AboutBand } = window.MK;
       const [route, setRouteRaw] = useState("home");
 
-      // Intercept setRoute: "booking" or "booking:<trailerId>" jumps to the booking view.
+      // Intercept setRoute: "booking" or "booking:<trailerId>" navigates to /book.
       const setRoute = (r) => {
         if (r === "booking" || r.startsWith("booking:")) {
-          setView(r);
-          window.scrollTo(0, 0);
+          window.location.href = "/book";
           return;
         }
         setRouteRaw(r);
@@ -361,7 +360,7 @@
     function App() {
       const params = new URLSearchParams(window.location.search);
       const urlBook = params.get("book");
-      const autobook = params.get("autobook");
+      const autobook = params.get("autobook") || window.location.pathname === "/book";
       const [view, setView] = useState(urlBook ? "booking:" + urlBook : autobook ? "booking" : "marketing"); // "marketing" | "booking" | "booking:<trailerId>"
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       applyTweaks(t); // run before child renders so they read updated content
