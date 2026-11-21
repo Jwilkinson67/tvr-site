@@ -1117,53 +1117,48 @@ function AboutBand({ setRoute }) {
   const isMobile = useWindowWidth() < 768;
   return (
     <div>
-      {/* Hero photo */}
-      <div style={{ position: "relative", height: isMobile ? 260 : 420, overflow: "hidden", background: "#1a1a1a" }}>
+      {/* Hero photo — no text overlay */}
+      <div style={{ height: isMobile ? 260 : 420, overflow: "hidden", background: "#1a1a1a" }}>
         <img
           src="/assets/car-hauler-action.png"
           alt="Classic truck loaded on TVR car hauler"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%", display: "block", opacity: 0.85 }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%", display: "block" }}
         />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55))" }} />
-        <div style={{ position: "absolute", bottom: isMobile ? 24 : 40, left: isMobile ? 24 : 56 }}>
-          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#fff", opacity: 0.8, marginBottom: 10 }}>ABOUT US</div>
-          <h1 style={{ font: `800 ${isMobile ? "28px" : "44px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#fff" }}>Tennessee Valley<br/>Rentals LLC</h1>
-        </div>
       </div>
 
       {/* Story */}
       <section style={{ background: "#fff", padding: isMobile ? "52px 24px" : "80px 56px" }}>
-        <div style={{ maxWidth: 760, marginInline: "auto" }}>
-          <div style={{ width: 48, height: 4, background: "#b5212b", marginBottom: 24 }} />
-          <h2 style={{ font: `700 ${isMobile ? "24px" : "30px"}/1.2 "Inter", sans-serif`, color: "#1a1a1a", margin: "0 0 24px" }}>
-            Local trailers. No hassle.
-          </h2>
-          <p style={{ font: '400 16px/1.75 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 20px" }}>
-            Tennessee Valley Rentals is a locally owned and operated trailer rental company based in Ooltewah, TN — just outside Chattanooga. We started TVR because renting a trailer in the area meant dealing with big-box lots, long lines, and equipment that showed up bare. We wanted something better: a simple online reservation, fully equipped trailers, and a pickup that actually takes a few minutes.
+        <div style={{ maxWidth: 720, marginInline: "auto" }}>
+          <div style={{ width: 48, height: 4, background: "#b5212b", marginBottom: 28 }} />
+          <h1 style={{ font: `700 ${isMobile ? "26px" : "32px"}/1.15 "Inter", sans-serif`, color: "#1a1a1a", margin: "0 0 6px" }}>
+            About Tennessee Valley Rentals
+          </h1>
+          <p style={{ font: `600 ${isMobile ? "16px" : "18px"}/1.4 "Inter", sans-serif`, color: "#1568be", margin: "0 0 32px" }}>
+            Locally Owned. Family Owned. Built on Trust.
           </p>
-          <p style={{ font: '400 16px/1.75 "Inter", sans-serif', color: "#3c3c3c", margin: 0 }}>
-            Every rental comes loaded with the accessories you actually need — straps, dollies, a winch, whatever fits the job. We review bookings fast, approve within minutes, and have your trailer ready when you show up. When you're done, drop it off on your schedule with our contactless return. That's it.
-          </p>
-        </div>
-      </section>
 
-      {/* Values */}
-      <section style={{ background: "#f4f6f9", padding: isMobile ? "52px 24px" : "72px 56px" }}>
-        <div style={{ maxWidth: 900, marginInline: "auto" }}>
-          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#b5212b", marginBottom: 32 }}>WHY TVR</div>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 28 : 40 }}>
-            {[
-              { title: "Fully equipped", body: "Straps, dollies, hand trucks, moving blankets, wheel chocks, and a 12K winch — everything's already on the trailer." },
-              { title: "Book in minutes", body: "Reserve online any time of day. We review your documents and confirm your booking fast — often the same day." },
-              { title: "Contactless return", body: "Drop off when you're done. No need to call ahead or wait around — just bring it back and go." },
-              { title: "Local & accountable", body: "We're based in Ooltewah and serve the Chattanooga area. When you call, you reach a person who knows your rental." },
-            ].map((item) => (
-              <div key={item.title}>
-                <div style={{ width: 32, height: 3, background: "#1568be", marginBottom: 14 }} />
-                <h3 style={{ font: '700 17px/1.2 "Inter", sans-serif', color: "#1a1a1a", margin: "0 0 10px" }}>{item.title}</h3>
-                <p style={{ font: '400 15px/1.65 "Inter", sans-serif', color: "#555", margin: 0 }}>{item.body}</p>
-              </div>
-            ))}
+          {[
+            "My name is Julian, and I'm the owner and founder of Tennessee Valley Rentals (TVR), a family-owned small business proudly serving Chattanooga and the surrounding Tennessee Valley.",
+            "I started TVR in 2026 with a simple goal: to provide high-quality equipment backed by exceptional customer service.",
+            "As a former firefighter, I understand the importance of safety, reliability, and attention to detail. I personally inspect our equipment before every rental to make sure it's safe, dependable, and ready to serve you.",
+            "When you call or text TVR, you'll always hear directly from me. I believe in providing personal, dependable customer service and making sure every customer has a great experience.",
+            "With easy online booking and 24/7 contactless pickup and drop-off, we strive to make every rental experience simple and hassle-free.",
+            "We're proud to serve our community and look forward to growing alongside it.",
+          ].map((text, i) => (
+            <p key={i} style={{ font: '400 16px/1.8 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 18px" }}>{text}</p>
+          ))}
+
+          <p style={{ font: '700 17px/1.4 "Inter", sans-serif', color: "#1a1a1a", margin: "32px 0 36px" }}>
+            Haul With Confidence. Haul With TVR.
+          </p>
+
+          <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: 32 }}>
+            <p style={{ font: 'italic 400 16px/1.7 "Inter", sans-serif', color: "#555", margin: "0 0 6px" }}>
+              "Commit to the Lord whatever you do, and he will establish your plans."
+            </p>
+            <p style={{ font: '600 13px/1 "Inter", sans-serif', color: "#888", margin: 0, letterSpacing: "0.5px" }}>
+              Proverbs 16:3
+            </p>
           </div>
         </div>
       </section>
