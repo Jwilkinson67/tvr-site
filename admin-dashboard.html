@@ -1018,13 +1018,19 @@
 
   // ── Lifetime per-trailer stats ──────────────────────────────────────────
   function renderTrailerStats() {
-    var groups = { hauler: { label: "Car Hauler", color: "blue", count: 0, net: 0 }, enclosed: { label: "Enclosed", color: "red", count: 0, net: 0 } };
+    var groups = { hauler: { label: "Car Hauler", color: "blue", count: 0, days: 0, net: 0 }, enclosed: { label: "Enclosed", color: "red", count: 0, days: 0, net: 0 } };
     allBookings.forEach(function(b) {
       var name = b.trailer_name || "";
       var key  = /hauler|equipment/i.test(name) ? "hauler" : /enclosed/i.test(name) ? "enclosed" : null;
       if (!key) return;
       groups[key].count++;
       groups[key].net += parseFloat(b.total_charged || 0) - parseFloat(b.deposit_amount || 0);
+      if (b.pickup && b.dropoff) {
+        var d = Math.round((new Date(b.dropoff + "T12:00:00") - new Date(b.pickup + "T12:00:00")) / 86400000) + 1;
+        groups[key].days += Math.max(1, d);
+      } else {
+        groups[key].days += 1;
+      }
     });
 
     var card  = document.getElementById("trailer-stats-card");
@@ -1037,7 +1043,7 @@
       return "<div class='tile " + g.color + "'>" +
         "<div class='t-label'>" + g.label + "</div>" +
         "<div class='t-value'>$" + g.net.toFixed(2) + "</div>" +
-        "<div class='t-sub'>" + g.count + " rental" + (g.count !== 1 ? "s" : "") + "</div>" +
+        "<div class='t-sub'>" + g.count + " rental" + (g.count !== 1 ? "s" : "") + " · " + g.days + " day" + (g.days !== 1 ? "s" : "") + "</div>" +
         "</div>";
     }).join("");
 
