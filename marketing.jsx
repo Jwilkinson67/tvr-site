@@ -778,7 +778,7 @@ function CTABand({ setRoute }) {
         alignItems: "stretch", maxWidth: 1200, marginInline: "auto",
       }}>
         {/* Photo */}
-        <div style={{ flex: isMobile ? "none" : "0 0 52%", overflow: "hidden", maxHeight: isMobile ? 260 : "none" }}>
+        <div style={{ flex: isMobile ? "none" : "0 0 52%", overflow: "hidden", maxHeight: isMobile ? 300 : "none", order: isMobile ? 1 : 0 }}>
           <img
             src="/assets/car-hauler-action.png"
             alt="Classic truck loaded on TVR car hauler trailer"
@@ -790,6 +790,7 @@ function CTABand({ setRoute }) {
           flex: 1, display: "flex", flexDirection: "column", justifyContent: "center",
           padding: isMobile ? "48px 24px" : "64px 72px",
           position: "relative", textAlign: isMobile ? "center" : "left",
+          order: isMobile ? 0 : 1,
         }}>
           <div style={{ width: 64, height: 4, background: "#b5212b", marginBottom: 28, marginInline: isMobile ? "auto" : 0 }} />
           <h2 style={{ font: `700 ${isMobile ? "28px" : "34px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#262626" }}>
