@@ -126,12 +126,15 @@
       max-width: 720px; margin-inline: auto;
       padding: 72px 24px 80px;
     }
+    .heading-row {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 32px;
+    }
     .accent-bar {
-      width: 48px; height: 4px; background: #b5212b; margin-bottom: 28px;
+      width: 48px; height: 4px; background: #b5212b; flex-shrink: 0;
     }
     .content h1 {
       font: 700 32px/1.15 "Inter", sans-serif;
-      color: #1a1a1a; margin-bottom: 8px;
+      color: #1a1a1a; margin: 0;
     }
     .tagline {
       font: 600 18px/1.4 "Inter", sans-serif;
@@ -265,8 +268,10 @@
   <!-- Content -->
   <section class="content">
   <div class="content-inner">
-    <div class="accent-bar"></div>
-    <h1>About Us</h1>
+    <div class="heading-row">
+      <div class="accent-bar"></div>
+      <h1>About TVR</h1>
+    </div>
 
     <p>My name is Julian, and I'm the owner of Tennessee Valley Rentals (TVR), a family-owned small business proudly serving Chattanooga and the surrounding areas.</p>
     <p>I started TVR with a simple goal: to provide high-quality equipment backed by exceptional customer service.</p>
