@@ -1020,6 +1020,7 @@
   function renderTrailerStats() {
     var groups = { hauler: { label: "Car Hauler", color: "blue", count: 0, days: 0, net: 0 }, enclosed: { label: "Enclosed", color: "red", count: 0, days: 0, net: 0 } };
     allBookings.forEach(function(b) {
+      if (b.status !== "completed") return;
       var name = b.trailer_name || "";
       var key  = /hauler|equipment/i.test(name) ? "hauler" : /enclosed/i.test(name) ? "enclosed" : null;
       if (!key) return;
