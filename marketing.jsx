@@ -772,16 +772,36 @@ function CTABand({ setRoute }) {
   const c = C();
   const isMobile = useWindowWidth() < 768;
   return (
-    <section style={{ position: "relative", background: "#fff", padding: isMobile ? "48px 24px" : "80px 80px", textAlign: "center" }}>
-      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 64, height: 4, background: "#b5212b" }} />
-      <h2 style={{ font: `700 ${isMobile ? "28px" : "36px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#262626", maxWidth: 760, marginInline: "auto" }}>
-        {c.ctaBand.line1}<br />{c.ctaBand.line2}
-      </h2>
-      <div style={{ marginTop: 32, display: "flex", gap: 12, justifyContent: "center" }}>
-        <MkButton onClick={() => setRoute("booking")}>{c.ctaBand.cta}</MkButton>
+    <section style={{ background: "#fff", overflow: "hidden" }}>
+      <div style={{
+        display: "flex", flexDirection: isMobile ? "column" : "row",
+        alignItems: "stretch", maxWidth: 1200, marginInline: "auto",
+      }}>
+        {/* Photo */}
+        <div style={{ flex: isMobile ? "none" : "0 0 52%", overflow: "hidden", maxHeight: isMobile ? 260 : "none" }}>
+          <img
+            src="/assets/car-hauler-action.png"
+            alt="Classic truck loaded on TVR car hauler trailer"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+          />
+        </div>
+        {/* Text */}
+        <div style={{
+          flex: 1, display: "flex", flexDirection: "column", justifyContent: "center",
+          padding: isMobile ? "48px 24px" : "64px 72px",
+          position: "relative", textAlign: isMobile ? "center" : "left",
+        }}>
+          <div style={{ width: 64, height: 4, background: "#b5212b", marginBottom: 28, marginInline: isMobile ? "auto" : 0 }} />
+          <h2 style={{ font: `700 ${isMobile ? "28px" : "34px"}/1.15 "Inter", sans-serif`, margin: 0, color: "#262626" }}>
+            {c.ctaBand.line1}<br />{c.ctaBand.line2}
+          </h2>
+          <div style={{ marginTop: 32 }}>
+            <MkButton onClick={() => setRoute("booking")}>{c.ctaBand.cta}</MkButton>
+          </div>
+        </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }
 
 /* ----------- Location Band ----------- */
