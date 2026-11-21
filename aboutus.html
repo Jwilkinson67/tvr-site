@@ -136,11 +136,14 @@
       color: #fff; margin-bottom: 28px;
     }
     .cta-btn {
-      display: inline-block;
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 48px; padding: 0 32px; border: 0; border-radius: 0;
       background: #fff; color: #1568be;
-      padding: 16px 36px;
-      font: 700 15px/1 "Inter", sans-serif;
+      font: 700 14px/1 "Inter", sans-serif;
       letter-spacing: 0.5px; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap;
+      transition: background-color 120ms ease-out;
+      -webkit-appearance: none; appearance: none;
     }
     .cta-btn:hover { background: #f0f4ff; }
 
