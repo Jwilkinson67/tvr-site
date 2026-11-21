@@ -1138,12 +1138,11 @@ function AboutBand({ setRoute }) {
           </p>
 
           {[
-            "My name is Julian, and I'm the owner and founder of Tennessee Valley Rentals (TVR), a family-owned small business proudly serving Chattanooga and the surrounding Tennessee Valley.",
-            "I started TVR in 2026 with a simple goal: to provide high-quality equipment backed by exceptional customer service.",
+            "My name is Julian, and I'm the owner of Tennessee Valley Rentals (TVR), a family-owned small business proudly serving Chattanooga and the surrounding areas.",
+            "I started TVR with a simple goal: to provide high-quality equipment backed by exceptional customer service.",
             "As a former firefighter, I understand the importance of safety, reliability, and attention to detail. I personally inspect our equipment before every rental to make sure it's safe, dependable, and ready to serve you.",
             "When you call or text TVR, you'll always hear directly from me. I believe in providing personal, dependable customer service and making sure every customer has a great experience.",
-            "With easy online booking and 24/7 contactless pickup and drop-off, we strive to make every rental experience simple and hassle-free.",
-            "We're proud to serve our community and look forward to growing alongside it.",
+            "We strive to make every rental experience simple and hassle-free. We're proud to serve our community and look forward to growing alongside it.",
           ].map((text, i) => (
             <p key={i} style={{ font: '400 16px/1.8 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 18px" }}>{text}</p>
           ))}
