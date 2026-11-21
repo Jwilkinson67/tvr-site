@@ -64,7 +64,7 @@
       background: #fff; border-bottom: 1px solid #e6e6e6;
     }
     .nav-brand {
-      display: flex; align-items: center; gap: 12; cursor: pointer;
+      display: flex; align-items: center; gap: 12px; text-decoration: none;
     }
     .nav-brand img { height: 32px; width: auto; }
     .nav-brand-name {
@@ -73,14 +73,36 @@
       font-size: 22px; color: #1568be;
       letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap;
     }
-    .nav-cta {
-      display: inline-block;
-      background: #1568be; color: #fff;
-      padding: 11px 24px;
-      font: 700 14px/1 "Inter", sans-serif;
-      letter-spacing: 0.5px; text-transform: uppercase;
+    /* Hamburger button */
+    .menu-btn {
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; gap: 5px;
+      width: 40px; height: 40px; background: none;
+      border: 1.5px solid #e6e6e6; border-radius: 6px;
+      cursor: pointer; flex-shrink: 0;
     }
-    .nav-cta:hover { background: #0f52a0; }
+    .menu-btn.open { border-color: #1568be; }
+    .menu-btn span { width: 18px; height: 2px; background: #262626; border-radius: 2px; display: block; }
+    /* Dropdown */
+    .menu-wrap { position: relative; }
+    .menu-drop {
+      display: none; position: absolute; top: calc(100% + 8px); right: 0;
+      width: 200px; background: #fff;
+      border: 1px solid #e6e6e6; border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      z-index: 50; overflow: hidden;
+    }
+    .menu-drop.open { display: block; }
+    .menu-drop a {
+      display: flex; align-items: center;
+      padding: 14px 16px; width: 100%;
+      border-bottom: 1px solid #e6e6e6;
+      font: 600 14px/1 "Inter", sans-serif; color: #262626;
+      text-decoration: none;
+    }
+    .menu-drop a:last-child { border-bottom: none; }
+    .menu-drop a.primary { color: #1568be; font-weight: 700; }
+    .menu-drop a:hover { background: #f4f6f9; }
 
     /* Hero photo */
     .hero {
@@ -172,7 +194,7 @@
     @media (max-width: 767px) {
       .nav { height: 60px; padding: 0 16px; }
       .nav-brand-name { font-size: 15px; }
-      .nav-cta { padding: 10px 16px; font-size: 13px; }
+      .llc { display: none; }
       .hero { height: 260px; }
       .content-inner { padding: 52px 24px 64px; }
       .content h1 { font-size: 26px; }
@@ -187,11 +209,20 @@
 
   <!-- Nav -->
   <header class="nav">
-    <a href="/" class="nav-brand" style="display:flex;align-items:center;gap:12px;">
+    <a href="/" class="nav-brand">
       <img src="assets/tvr-logo-mark.png" alt="TVR logo">
-      <span class="nav-brand-name">Tennessee Valley Rentals LLC</span>
+      <span class="nav-brand-name">Tennessee Valley Rentals<span class="llc"> LLC</span></span>
     </a>
-    <a href="/" class="nav-cta">Reserve</a>
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="menu-drop" id="menuDrop">
+        <a href="/" class="primary">Book Now</a>
+        <a href="/">Home</a>
+        <a href="tel:+14233951377">(423) 395-1377</a>
+      </div>
+    </div>
   </header>
 
   <!-- Hero photo -->
@@ -237,5 +268,19 @@
     </div>
   </footer>
 
+  <script>
+    function toggleMenu() {
+      var btn = document.getElementById('menuBtn');
+      var drop = document.getElementById('menuDrop');
+      var open = drop.classList.toggle('open');
+      btn.classList.toggle('open', open);
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.menu-wrap')) {
+        document.getElementById('menuDrop').classList.remove('open');
+        document.getElementById('menuBtn').classList.remove('open');
+      }
+    });
+  </script>
 </body>
 </html>
