@@ -118,6 +118,7 @@ function MobileMenu({ onBook, onAbout, phone, isMobile }) {
   const dropItems = [
     { label: "Book", primary: true, action: () => { onBook(); close(); } },
     { label: "About Us", action: () => { close(); window.location.href = "/aboutus"; } },
+    { label: "How To", action: () => { close(); window.location.href = "/howto"; } },
     { label: "FAQ", action: () => { document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" }); close(); } },
     { label: "Call Us", sub: phone, action: () => { window.location.href = `tel:${phone}`; close(); } },
   ];

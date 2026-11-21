@@ -18,6 +18,16 @@
   status = 200
 
 [[redirects]]
+  from = "/howto"
+  to   = "/howto.html"
+  status = 200
+
+[[redirects]]
+  from = "/aboutus"
+  to   = "/aboutus.html"
+  status = 200
+
+[[redirects]]
   from = "/b/:id"
   to   = "/.netlify/functions/go?id=:id"
   status = 301
