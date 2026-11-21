@@ -111,12 +111,13 @@ function PromoPopup({ setRoute }) {
 }
 
 /* ----------- Mobile menu ----------- */
-function MobileMenu({ onBook, phone, isMobile }) {
+function MobileMenu({ onBook, onAbout, phone, isMobile }) {
   const [open, setOpen] = React.useState(false);
   const close = () => setOpen(false);
 
   const dropItems = [
     { label: "Book", primary: true, action: () => { onBook(); close(); } },
+    { label: "About Us", action: () => { onAbout(); close(); } },
     { label: "FAQ", action: () => { document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" }); close(); } },
     { label: "Call Us", sub: phone, action: () => { window.location.href = `tel:${phone}`; close(); } },
   ];
@@ -188,7 +189,7 @@ function TopNav({ route, setRoute }) {
           }}>{isMobile ? "Tennessee Valley Rentals" : "Tennessee Valley Rentals LLC"}</span>
         </a>
       </div>
-      <MobileMenu onBook={() => setRoute("booking")} phone={c.brand.phone} isMobile={isMobile} />
+      <MobileMenu onBook={() => setRoute("booking")} onAbout={() => setRoute("about")} phone={c.brand.phone} isMobile={isMobile} />
     </header>);
 
 }
@@ -1110,4 +1111,74 @@ function Footer() {
 
 }
 
-window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, PromoPopup, Button: MkButton };
+/* ----------- About Us ----------- */
+function AboutBand({ setRoute }) {
+  const c = C();
+  const isMobile = useWindowWidth() < 768;
+  return (
+    <div>
+      {/* Hero photo */}
+      <div style={{ position: "relative", height: isMobile ? 260 : 420, overflow: "hidden", background: "#1a1a1a" }}>
+        <img
+          src="/assets/car-hauler-action.png"
+          alt="Classic truck loaded on TVR car hauler"
+          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%", display: "block", opacity: 0.85 }}
+        />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55))" }} />
+        <div style={{ position: "absolute", bottom: isMobile ? 24 : 40, left: isMobile ? 24 : 56 }}>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#fff", opacity: 0.8, marginBottom: 10 }}>ABOUT US</div>
+          <h1 style={{ font: `800 ${isMobile ? "28px" : "44px"}/1.1 "Inter", sans-serif`, margin: 0, color: "#fff" }}>Tennessee Valley<br/>Rentals LLC</h1>
+        </div>
+      </div>
+
+      {/* Story */}
+      <section style={{ background: "#fff", padding: isMobile ? "52px 24px" : "80px 56px" }}>
+        <div style={{ maxWidth: 760, marginInline: "auto" }}>
+          <div style={{ width: 48, height: 4, background: "#b5212b", marginBottom: 24 }} />
+          <h2 style={{ font: `700 ${isMobile ? "24px" : "30px"}/1.2 "Inter", sans-serif`, color: "#1a1a1a", margin: "0 0 24px" }}>
+            Local trailers. No hassle.
+          </h2>
+          <p style={{ font: '400 16px/1.75 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 20px" }}>
+            Tennessee Valley Rentals is a locally owned and operated trailer rental company based in Ooltewah, TN — just outside Chattanooga. We started TVR because renting a trailer in the area meant dealing with big-box lots, long lines, and equipment that showed up bare. We wanted something better: a simple online reservation, fully equipped trailers, and a pickup that actually takes a few minutes.
+          </p>
+          <p style={{ font: '400 16px/1.75 "Inter", sans-serif', color: "#3c3c3c", margin: 0 }}>
+            Every rental comes loaded with the accessories you actually need — straps, dollies, a winch, whatever fits the job. We review bookings fast, approve within minutes, and have your trailer ready when you show up. When you're done, drop it off on your schedule with our contactless return. That's it.
+          </p>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section style={{ background: "#f4f6f9", padding: isMobile ? "52px 24px" : "72px 56px" }}>
+        <div style={{ maxWidth: 900, marginInline: "auto" }}>
+          <div style={{ font: '700 11px/1 "Inter", sans-serif', letterSpacing: "2px", textTransform: "uppercase", color: "#b5212b", marginBottom: 32 }}>WHY TVR</div>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 28 : 40 }}>
+            {[
+              { title: "Fully equipped", body: "Straps, dollies, hand trucks, moving blankets, wheel chocks, and a 12K winch — everything's already on the trailer." },
+              { title: "Book in minutes", body: "Reserve online any time of day. We review your documents and confirm your booking fast — often the same day." },
+              { title: "Contactless return", body: "Drop off when you're done. No need to call ahead or wait around — just bring it back and go." },
+              { title: "Local & accountable", body: "We're based in Ooltewah and serve the Chattanooga area. When you call, you reach a person who knows your rental." },
+            ].map((item) => (
+              <div key={item.title}>
+                <div style={{ width: 32, height: 3, background: "#1568be", marginBottom: 14 }} />
+                <h3 style={{ font: '700 17px/1.2 "Inter", sans-serif', color: "#1a1a1a", margin: "0 0 10px" }}>{item.title}</h3>
+                <p style={{ font: '400 15px/1.65 "Inter", sans-serif', color: "#555", margin: 0 }}>{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: "#1568be", padding: isMobile ? "48px 24px" : "64px 56px", textAlign: "center" }}>
+        <h2 style={{ font: `700 ${isMobile ? "24px" : "30px"}/1.2 "Inter", sans-serif`, color: "#fff", margin: "0 0 28px" }}>
+          Ready to get moving?
+        </h2>
+        <MkButton onClick={() => setRoute("booking")} style={{ background: "#fff", color: "#1568be" }}>
+          {c.ctaBand.cta}
+        </MkButton>
+      </section>
+    </div>
+  );
+}
+
+window.MK = { TopNav, HeroDark, FleetGrid, FleetDetail, HowItWorksBand, PickupBand, FAQBand, CTABand, LocationBand, ReviewsBand, Footer, PromoPopup, AboutBand, Button: MkButton };
