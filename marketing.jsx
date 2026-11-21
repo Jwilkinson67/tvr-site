@@ -1130,12 +1130,9 @@ function AboutBand({ setRoute }) {
       <section style={{ background: "#fff", padding: isMobile ? "52px 24px" : "80px 56px" }}>
         <div style={{ maxWidth: 720, marginInline: "auto" }}>
           <div style={{ width: 48, height: 4, background: "#b5212b", marginBottom: 28 }} />
-          <h1 style={{ font: `700 ${isMobile ? "26px" : "32px"}/1.15 "Inter", sans-serif`, color: "#1a1a1a", margin: "0 0 6px" }}>
-            About Tennessee Valley Rentals
+          <h1 style={{ font: `700 ${isMobile ? "26px" : "32px"}/1.15 "Inter", sans-serif`, color: "#1a1a1a", margin: "0 0 32px" }}>
+            About Us
           </h1>
-          <p style={{ font: `600 ${isMobile ? "16px" : "18px"}/1.4 "Inter", sans-serif`, color: "#1568be", margin: "0 0 32px" }}>
-            Locally Owned. Family Owned. Built on Trust.
-          </p>
 
           {[
             "My name is Julian, and I'm the owner of Tennessee Valley Rentals (TVR), a family-owned small business proudly serving Chattanooga and the surrounding areas.",
@@ -1147,7 +1144,7 @@ function AboutBand({ setRoute }) {
             <p key={i} style={{ font: '400 16px/1.8 "Inter", sans-serif', color: "#3c3c3c", margin: "0 0 18px" }}>{text}</p>
           ))}
 
-          <p style={{ font: '700 17px/1.4 "Inter", sans-serif', color: "#1a1a1a", margin: "32px 0 36px" }}>
+          <p style={{ font: '800 18px/1.4 "Inter", sans-serif', color: "#1a1a1a", margin: "32px 0 36px" }}>
             Haul With Confidence. Haul With TVR.
           </p>
 
