@@ -13,6 +13,12 @@
   schedule = "0 */3 * * *"
 
 [[redirects]]
+  from = "/book"
+  to   = "/?autobook=1"
+  status = 302
+  force = true
+
+[[redirects]]
   from = "/b/:id"
   to   = "/.netlify/functions/go?id=:id"
   status = 301

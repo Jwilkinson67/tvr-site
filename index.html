@@ -359,8 +359,10 @@
 
     /* ------- Top-level router ------- */
     function App() {
-      const urlBook = new URLSearchParams(window.location.search).get("book");
-      const [view, setView] = useState(urlBook ? "booking:" + urlBook : "marketing"); // "marketing" | "booking" | "booking:<trailerId>"
+      const params = new URLSearchParams(window.location.search);
+      const urlBook = params.get("book");
+      const autobook = params.get("autobook");
+      const [view, setView] = useState(urlBook ? "booking:" + urlBook : autobook ? "booking" : "marketing"); // "marketing" | "booking" | "booking:<trailerId>"
       const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
       applyTweaks(t); // run before child renders so they read updated content
       const isBooking = view === "booking" || view.startsWith("booking:");
