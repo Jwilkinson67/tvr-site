@@ -220,6 +220,15 @@
       </div>
     </div>
 
+    <!-- ── Lifetime per-trailer ── -->
+    <div class="stats-card" id="trailer-stats-card" style="display:none;">
+      <div class="stats-header" style="margin-bottom:16px;">
+        <div class="stats-title">Lifetime by Trailer</div>
+        <div style="font-size:11px;color:#9a9a9a;">All time · excludes deposits</div>
+      </div>
+      <div id="trailer-tiles" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
+    </div>
+
     <!-- ── Fleet Calendar ── -->
     <div class="card" style="padding:0;overflow:hidden;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;border-bottom:1px solid #e0e0e0;gap:10px;flex-wrap:wrap;">
@@ -501,6 +510,7 @@
       allBookings = bookings;
       populateMonthFilter(bookings);
       renderBookings();
+      renderTrailerStats();
     } catch (e) {
       statusEl.className = "alert alert-error";
       statusEl.textContent = "Error: " + e.message;
@@ -1004,6 +1014,43 @@
     const el = document.getElementById("upload-alert");
     el.className = "alert alert-" + type; el.textContent = msg; el.style.display = "block";
     el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // ── Lifetime per-trailer stats ──────────────────────────────────────────
+  function renderTrailerStats() {
+    const groups = {};
+    allBookings.forEach(function(b) {
+      var name = b.trailer_name || "Unknown";
+      if (!groups[name]) groups[name] = { count: 0, net: 0 };
+      groups[name].count++;
+      groups[name].net += parseFloat(b.total_charged || 0) - parseFloat(b.deposit_amount || 0);
+    });
+
+    var card  = document.getElementById("trailer-stats-card");
+    var tiles = document.getElementById("trailer-tiles");
+    var names = Object.keys(groups);
+    if (!names.length) { card.style.display = "none"; return; }
+
+    // Canonical order: hauler first, then enclosed, then anything else
+    names.sort(function(a, b) {
+      var ai = /hauler|equipment/i.test(a) ? 0 : /enclosed/i.test(a) ? 1 : 2;
+      var bi = /hauler|equipment/i.test(b) ? 0 : /enclosed/i.test(b) ? 1 : 2;
+      return ai - bi;
+    });
+
+    var COLORS = ["blue", "red"];
+    tiles.innerHTML = names.map(function(name, i) {
+      var g     = groups[name];
+      var short = /hauler|equipment/i.test(name) ? "Car Hauler" : /enclosed/i.test(name) ? "Enclosed" : name;
+      var color = COLORS[i] || "";
+      return "<div class='tile " + color + "'>" +
+        "<div class='t-label'>" + short + "</div>" +
+        "<div class='t-value'>$" + g.net.toFixed(2) + "</div>" +
+        "<div class='t-sub'>" + g.count + " rental" + (g.count !== 1 ? "s" : "") + "</div>" +
+        "</div>";
+    }).join("");
+
+    card.style.display = "block";
   }
 
   // ── Fleet Calendar ──────────────────────────────────────────────────────
