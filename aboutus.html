@@ -83,7 +83,7 @@
       cursor: pointer; flex-shrink: 0;
     }
     .menu-btn.open { border-color: #1568be; }
-    .menu-btn span { width: 18px; height: 2px; background: #262626; border-radius: 2px; display: block; }
+    .bar { width: 18px; height: 2px; background: #262626; border-radius: 2px; display: block; }
     /* Dropdown */
     .menu-drop {
       display: none; position: absolute; top: calc(100% + 8px); right: 0;
@@ -216,8 +216,8 @@
     </a>
     <div class="menu-wrap">
       <button class="menu-btn" id="menuBtn" aria-label="Menu" onclick="toggleMenu()">
-        <span id="menuIcon">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="#262626"/><rect y="8" width="18" height="2" rx="1" fill="#262626"/><rect y="13" width="18" height="2" rx="1" fill="#262626"/></svg>
+        <span id="menuIcon" style="display:flex;flex-direction:column;gap:5px;align-items:center;">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
         </span>
       </button>
       <div class="menu-drop" id="menuDrop">
@@ -274,7 +274,7 @@
   </footer>
 
   <script>
-    var ICON_BARS = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect y="3" width="18" height="2" rx="1" fill="#262626"/><rect y="8" width="18" height="2" rx="1" fill="#262626"/><rect y="13" width="18" height="2" rx="1" fill="#262626"/></svg>';
+    var ICON_BARS = '<span style="display:flex;flex-direction:column;gap:5px;align-items:center;"><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>';
     var ICON_X    = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="#262626" stroke-width="1.8" stroke-linecap="round"/></svg>';
     function toggleMenu() {
       var btn  = document.getElementById('menuBtn');
