@@ -145,14 +145,19 @@ exports.handler = async (event) => {
     console.error("sms_relay upsert failed:", e);
   }
 
-  // Forward to owner
+  // Forward to owner (with any attached media)
   if (ownerCell) {
     const label = customerName ? `${customerName} (${from})` : from;
+    const mediaUrls = [];
+    for (let i = 0; params.get(`MediaUrl${i}`); i++) {
+      mediaUrls.push(params.get(`MediaUrl${i}`));
+    }
     try {
       await client.messages.create({
         from: tvrNumber,
         to: ownerCell,
         body: `TVR | ${label}:\n${text}`.slice(0, 1500),
+        ...(mediaUrls.length ? { mediaUrl: mediaUrls } : {}),
       });
     } catch (e) {
       console.error("Owner forward failed:", e);
