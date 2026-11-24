@@ -22,6 +22,7 @@ const SLOTS = [
   { key: "passenger", label: "Passenger Side" },
   { key: "hitch",     label: "Hitch & 7-Way Connection" },
   { key: "deck",      label: "Inside / Deck" },
+  { key: "toolbox",   label: "Inside Toolbox" },
 ];
 
 function makeToken(action, bookingId) {
