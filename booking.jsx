@@ -76,8 +76,8 @@ const TRANSLATIONS = {
     towVehiclePlaceholder: "2021 Ford F-150",
     hitchQuestion: "Do you have a 2-5/16 inch hitch ball?", hitchHint: "All TVR trailers require a 2-5/16 inch ball coupler",
     hitchYes: "Yes — I have the right hitch ball", hitchNo: "No — I will use TVR's",
-    brakeQuestion: "7-way trailer plug & brake controller?", brakeHint: "Required to operate TVR trailers — controls trailer brakes",
-    brakeYes: "Yes — my vehicle has both", brakeNo: "No — I don't have one or both",
+    brakeQuestion: "Does your vehicle have a built-in brake controller?", brakeHint: "Tennessee law requires trailer brakes on trailers over 1,500 lbs — both TVR trailers exceed this",
+    brakeYes: "My vehicle has a 7-way plug & built-in brake controller", brakeNo: "My vehicle has the 7-way plug but no trailer brake controller (+$10)",
     tripPurpose: "Trip purpose (optional)", tripPurposePlaceholder: "Moving · Vehicle transport · Equipment",
     marketingOptIn: "Send me occasional deals and reminders from TVR", optional: "(optional)",
     continueUploadDocs: "Continue · upload documents",
@@ -157,8 +157,8 @@ const TRANSLATIONS = {
     towVehiclePlaceholder: "2021 Ford F-150",
     hitchQuestion: "¿Tiene una bola de enganche de 2-5/16 pulgadas?", hitchHint: "Todos los remolques de TVR requieren una bola de 2-5/16 pulgadas",
     hitchYes: "Sí — tengo la bola de enganche correcta", hitchNo: "No — usaré la de TVR",
-    brakeQuestion: "¿Tiene enchufe de 7 vías y controlador de frenos?", brakeHint: "Necesario para operar los remolques de TVR — controla los frenos",
-    brakeYes: "Sí — mi vehículo tiene ambos", brakeNo: "No — no tengo uno o ninguno",
+    brakeQuestion: "¿Su vehículo tiene un controlador de frenos integrado?", brakeHint: "La ley de Tennessee requiere frenos en remolques de más de 1,500 lbs — ambos remolques de TVR superan este límite",
+    brakeYes: "Mi vehículo tiene enchufe de 7 vías y controlador de frenos integrado", brakeNo: "Mi vehículo tiene el enchufe de 7 vías pero no tiene controlador de frenos (+$10)",
     tripPurpose: "Propósito del viaje (opcional)", tripPurposePlaceholder: "Mudanza · Transporte de vehículos · Equipos",
     marketingOptIn: "Envíenme ofertas y recordatorios ocasionales de TVR", optional: "(opcional)",
     continueUploadDocs: "Continuar · subir documentos",
@@ -454,7 +454,9 @@ function OrderSummary({ state }) {
   const trailer = TRAILERS[state.trailerId];
   const days = state.days || 1;
   const rental = trailer ? calcRental(trailer, days) : 0;
-  const subtotal = rental;
+  const brakeControllerFee = state.brakeController === "No — 7-way plug, no built-in brake controller" ? 10 : 0;
+
+  const subtotal = rental + brakeControllerFee;
   const tax = Math.round(subtotal * 0.0925);
   const deposit = trailer?.deposit || 200;
   const total = subtotal + tax + deposit;
@@ -485,6 +487,7 @@ function OrderSummary({ state }) {
 
       <div style={{ display: "grid", gap: 8, padding: "16px 0", borderBottom: "1px solid #e6e6e6" }}>
         <PriceRow k={rentalLabel(trailer, days, lang)} v={rental ? "$" + rental : "—"}/>
+        {brakeControllerFee > 0 && <PriceRow k="Brake controller rental" v="$10"/>}
         <PriceRow k={tr.tax} v={subtotal ? "$" + tax : "—"}/>
         <PriceRow k={tr.refundableDeposit} v={"$" + deposit}/>
       </div>
@@ -770,7 +773,7 @@ function StepCustomer({ state, setState, onNext, onBack }) {
         </Field>}
         {!noTow && <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
-            options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
+            options={[{value: "Yes — 7-way plug & built-in brake controller", label: tr.brakeYes}, {value: "No — 7-way plug, no built-in brake controller", label: tr.brakeNo}]}/>
         </Field>}
         <Field label={tr.tripPurpose}>
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
@@ -1080,7 +1083,7 @@ function StepCustomerDocs({ state, setState, onNext, onBack }) {
         </Field>}
         {!noTow2 && <Field label={tr.brakeQuestion} hint={tr.brakeHint}>
           <Select value={state.brakeController || ""} onChange={v => setState({...state, brakeController: v})}
-            options={[{value: "Yes — my vehicle has both", label: tr.brakeYes}, {value: "No — I don't have one or both", label: tr.brakeNo}]}/>
+            options={[{value: "Yes — 7-way plug & built-in brake controller", label: tr.brakeYes}, {value: "No — 7-way plug, no built-in brake controller", label: tr.brakeNo}]}/>
         </Field>}
         <Field label={tr.tripPurpose}>
           <Input value={state.purpose} onChange={v => setState({...state, purpose: v})} placeholder={tr.tripPurposePlaceholder}/>
@@ -1353,7 +1356,8 @@ function StepPayment({ state, setState, onNext, onBack }) {
   const couponApplied = coupon?.type === "free";
   // 10%-style coupons only ever discount the rental line — tax is computed
   // on the discounted rental, and the deposit is never touched.
-  const rentalAmount = coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental;
+  const brakeControllerFee = state.brakeController === "No — 7-way plug, no built-in brake controller" ? 10 : 0;
+  const rentalAmount = (coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental) + brakeControllerFee;
   const taxAmount    = Math.round(rentalAmount * 0.0925);
   const totalAmount  = rentalAmount + taxAmount + depositAmount;
 
@@ -1739,7 +1743,8 @@ function StepAgreementPay({ state, setState, onNext, onBack }) {
   const [couponLoading, setCouponLoading] = React.useState(false);
 
   const couponApplied = coupon?.type === "free";
-  const rentalAmount  = coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental;
+  const brakeControllerFee = state.brakeController === "No — 7-way plug, no built-in brake controller" ? 10 : 0;
+  const rentalAmount  = (coupon?.type === "percent" ? Math.round(baseRental * (1 - coupon.percent / 100)) : baseRental) + brakeControllerFee;
   const taxAmount     = Math.round(rentalAmount * 0.0925);
   const totalAmount   = rentalAmount + taxAmount + depositAmount;
   const chargeTotal   = couponApplied ? 0 : totalAmount;
